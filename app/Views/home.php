@@ -1,16 +1,10 @@
-<?php 
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil</title>
-    <link rel="stylesheet" href="../assets/style.css"> <!-- Chemin vers votre fichier CSS -->
+    <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
     <header>
@@ -40,15 +34,14 @@ if (session_status() === PHP_SESSION_NONE) {
 
         <h3>Nos Services</h3>
         <ul>
-            <li>Consultations générales</li>
-            <li>Suivi médical personnalisé</li>
-            <li>Examen de santé</li>
-            <li>Vaccinations</li>
+            <?php foreach ($services as $service): ?>
+                <li><?php echo htmlspecialchars($service['name']); ?></li> <!-- Assurez-vous que le nom de la colonne est correct -->
+            <?php endforeach; ?>
         </ul>
 
         <h3>Visitez notre clinique</h3>
         <p>Voici quelques images de notre clinique :</p>
-        <img src="../assets/clinic_image.jpg" alt="Clinique du Dr. Dupont" width="600"> <!-- Remplacez par l'image appropriée -->
+        <img src="../assets/clinic_image.jpg" alt="Clinique du Dr. Dupont" width="600">
 
         <p>
             <a href="index.php?page=appointments" class="cta-button">Prendre rendez-vous</a>

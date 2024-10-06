@@ -1,15 +1,12 @@
 <?php
 
 require_once '../app/Models/Patient.php';
-require_once '../app/Models/Appointment.php';
 
 class PatientController {
     private $patientModel;
-    private $appointmentModel;
 
     public function __construct($db) {
         $this->patientModel = new Patient($db);
-        $this->appointmentModel = new Appointment($db);
         
         // Démarrer la session dans le constructeur si elle n'est pas déjà démarrée
         if (session_status() === PHP_SESSION_NONE) {
@@ -20,93 +17,174 @@ class PatientController {
     // Afficher les informations du compte patient si connecté
     public function index($errorMessage = null, $successMessage = null) {
         $accountData = null;
-
+        $appointments = []; // Initialiser le tableau des rendez-vous
+    
         if ($this->isLoggedIn()) {
-            $patientId = $_SESSION['patient_id'];
+            $patientId = $_SESSION['patient']['id'];
             $accountData = $this->patientModel->getPatientAccountData($patientId); // Récupérer les données du compte patient
             
-            // Récupérer les rendez-vous associés au patient
-            $accountData['appointments'] = $this->appointmentModel->getAppointmentsByPatientId($patientId);
-
+            // Récupérer les rendez-vous du patient
+            $appointments = $this->patientModel->getAppointments($patientId); // Appeler la nouvelle méthode
+    
             // Vérifier le rôle et rediriger si c'est un admin
             if ($accountData['role'] === 'admin') {
                 header("Location: index.php?page=admin"); // Redirection vers la vue admin
                 exit();
             }
+        } else {
+            // Si l'utilisateur n'est pas connecté, afficher un message d'erreur
+            $errorMessage = "Veuillez vous connecter.";
+        }
+    
+        // Charger la vue avec toutes les données nécessaires
+        require '../app/Views/patient.php'; 
+    }
+    
+
+    // Créer un patient (inscription)
+public function create() {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Vérifier si les mots de passe correspondent
+        if ($_POST['password'] !== $_POST['confirm_password']) {
+            $errorMessage = "Les mots de passe ne correspondent pas.";
+            $this->index($errorMessage); // Afficher la vue patients avec le message d'erreur
+            return;
         }
 
-        require '../app/Views/patient.php'; // Charger la vue avec toutes les données
+        // Insérer les données du patient dans la base de données
+        $success = $this->patientModel->create($_POST);
+
+        if ($success) {
+            // Récupérer les données du patient après création
+            $patient = $this->patientModel->getByEmail($_POST['email']);
+
+            // Stocker les informations du patient dans la session pour le connecter automatiquement
+            $_SESSION['patient'] = [
+                'id' => $patient['id'],  // Ajout de l'ID du patient
+                'first_name' => $patient['first_name'],
+                'last_name' => $patient['last_name'],
+                'email' => $patient['email'],
+                'phone' => $patient['phone'],
+                'role' => $patient['role'],
+            ];
+
+            // Rediriger vers la page des patients connectés après inscription réussie
+            header("Location: index.php?page=patients");
+            exit();
+        } else {
+            $errorMessage = "Erreur lors de la création du compte.";
+            $this->index($errorMessage); // Afficher la vue patients avec le message d'erreur
+        }
+    }
+}
+
+    // Authentification du patient
+    public function login() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+
+            // Vérifier si l'email et le mot de passe sont corrects
+            $patient = $this->patientModel->authenticate($email, $password);
+
+            if ($patient) {
+                // Stocker l'ID du patient et ses données dans la session
+                $_SESSION['patient'] = [
+                    'id' => $patient->id,  // Ajout de l'ID du patient
+                    'first_name' => $patient->first_name,
+                    'last_name' => $patient->last_name,
+                    'email' => $patient->email,
+                    'phone' => $patient->phone,
+                    'role' => $patient->role,
+                ];
+
+                // Vérifier le rôle et rediriger en conséquence
+                if ($patient->role === 'admin') {
+                    header("Location: index.php?page=admin"); // Redirection vers la vue admin
+                    exit();
+                } else {
+                    // Rediriger vers la page patients après connexion
+                    header("Location: index.php?page=patients");
+                    exit();
+                }
+            } else {
+                // Si la connexion échoue, afficher un message d'erreur
+                $errorMessage = "Email ou mot de passe incorrect.";
+                $this->index($errorMessage); // Afficher la vue patients avec le message d'erreur
+            }
+        }
     }
 
-    // Créer un patient
-    public function create() {
+    // Vérifier si un utilisateur est connecté
+    public function isLoggedIn() {
+        return isset($_SESSION['patient']['id']);  // Uniformiser l'accès à l'ID
+    }
+
+    // Gérer la déconnexion
+    public function logout() {
+        session_destroy();
+        header("Location: index.php?page=patients"); // Redirection vers la page des patients
+        exit();
+    }
+
+    // Supprimer un patient
+    public function delete($id) {
+        $success = $this->patientModel->delete($id);
+        
+        if ($success) {
+            // Suppression réussie, redirection vers la liste des patients
+            header("Location: index.php?page=patients");
+            exit();
+        } else {
+            // Afficher une erreur si la suppression échoue
+            $errorMessage = "Impossible de supprimer le patient.";
+            $this->index($errorMessage); // Afficher la vue patients avec le message d'erreur
+        }
+    }
+
+    // Mettre à jour un patient
+    public function update() {
+        // Vérifiez que le patient est connecté
+        if (!isset($_SESSION['patient']['id'])) {
+            header("Location: index.php?page=patients");
+            exit();
+        }
+    
+        $id = $_SESSION['patient']['id']; // ID du patient à partir de la session
+    
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Vérifier si les mots de passe correspondent
-            if ($_POST['password'] !== $_POST['confirm_password']) {
-                $errorMessage = "Les mots de passe ne correspondent pas.";
-                $this->index($errorMessage); // Réafficher la page avec le message d'erreur
-                return;
-            }
-            
+            // Récupérer les données du formulaire
             $data = [
                 'first_name' => $_POST['first_name'],
                 'last_name' => $_POST['last_name'],
                 'email' => $_POST['email'],
                 'phone' => $_POST['phone'],
-                'password' => $_POST['password'], // Le hachage se fait dans le modèle
-                'role' => $_POST['role']          // Récupérer le rôle du patient
             ];
-            
-            // Utilisez la méthode create() pour ajouter le patient
-            if ($this->patientModel->create($data)) {
-                $successMessage = "Le patient a été ajouté avec succès.";
-            } else {
-                $errorMessage = "Erreur lors de l'ajout du patient.";
+    
+            // Vérification de l'unicité de l'email (si nécessaire)
+            $existingPatient = $this->patientModel->getByEmail($data['email']);
+            if ($existingPatient && $existingPatient['id'] !== $id) {
+                $errorMessage = "L'email est déjà utilisé par un autre compte.";
+                $this->index($errorMessage); // Afficher la vue avec le message d'erreur
+                return;
             }
-
-            $this->index($successMessage ?? $errorMessage); // Réafficher la page avec le message de succès ou d'erreur
-        }
-    }
-
-    // Gérer la connexion
-    public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-            
-            // Récupérer les informations du patient
-            $patient = $this->patientModel->getByEmail($email);
-            
-            // Vérifier si le mot de passe est correct
-            if ($patient && password_verify($password, $patient['password'])) {
-                $_SESSION['patient_id'] = $patient['id'];
-                $_SESSION['patient'] = $patient; // Stocker les données du patient dans la session
-                
-                // Vérifier le rôle et rediriger en conséquence
-                if ($patient['role'] === 'admin') {
-                    header("Location: index.php?page=admin"); // Redirection vers la vue admin
+    
+            // Appeler la fonction de mise à jour du modèle
+            try {
+                $success = $this->patientModel->update($id, $data);
+                if ($success) {
+                    // Mettre à jour les informations dans la session
+                    $_SESSION['patient'] = array_merge($_SESSION['patient'], $data);
+                    header("Location: index.php?page=patients");
+                    exit();
                 } else {
-                    header("Location: index.php?page=patients"); // Redirection vers la page des patients
+                    throw new Exception("Erreur lors de la mise à jour des informations du patient.");
                 }
-                exit();
-            } else {
-                $errorMessage = "Identifiants incorrects.";
-                $this->index($errorMessage); // Affichez le formulaire de connexion avec un message d'erreur
+            } catch (Exception $e) {
+                $errorMessage = $e->getMessage();
+                error_log("Erreur lors de la mise à jour: " . $errorMessage);
+                $this->index($errorMessage); // Afficher la vue avec le message d'erreur
             }
         }
-    }
-
-    // Déconnexion
-    public function logout() {
-        session_start(); // Assurez-vous que la session est démarrée
-        session_unset(); // Effacer les données de la session
-        session_destroy(); // Détruire la session
-        header("Location: index.php?page=home"); // Redirection vers la page d'accueil
-        exit();
-    }
-
-    // Vérifier si le patient est connecté
-    public function isLoggedIn() {
-        return isset($_SESSION['patient_id']);
     }
 }

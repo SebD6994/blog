@@ -40,6 +40,12 @@ switch ($page) {
             case 'logout':
                 $patientController->logout(); // Déconnecter le patient
                 break;
+            case 'update':
+                $patientController->update(); // Mettre à jour un patient
+                break;
+            case 'delete':
+                $patientController->delete($_GET['id']); // Supprimer un patient
+                break;
             case 'index':
             default:
                 $patientController->index(); // Afficher le tableau de bord du patient
