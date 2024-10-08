@@ -129,13 +129,19 @@ class Patient {
         return $stmt->execute();
     }
 
-    // Récupérer les rendez-vous d'un patient par son ID
     public function getAppointments($patientId) {
-        $query = "SELECT * FROM appointments WHERE patient_id = :patient_id"; // Ajustez le nom de la table et des colonnes si nécessaire
+        // Jointure entre les rendez-vous et les services pour récupérer le nom du service
+        $query = "
+            SELECT a.*, s.name as service_name
+            FROM appointments a
+            JOIN services s ON a.service_id = s.id
+            WHERE a.patient_id = :patient_id
+        ";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':patient_id', $patientId);
         $stmt->execute();
     
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    
 }
