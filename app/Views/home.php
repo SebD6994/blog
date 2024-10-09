@@ -31,20 +31,48 @@
         
         <h3>Horaires d'ouverture</h3>
         <ul>
-            <?php foreach ($openingHours as $hour): ?>
-                <li>
-                    <?php echo htmlspecialchars($hour['day_of_week']); ?> : 
-                    <?php echo htmlspecialchars($hour['opening_time']); ?> - 
-                    <?php echo htmlspecialchars($hour['closing_time']); ?>
-                </li>
-            <?php endforeach; ?>
+            <?php 
+                $daysOfWeek = [
+                    1 => 'Lundi',
+                    2 => 'Mardi',
+                    3 => 'Mercredi',
+                    4 => 'Jeudi',
+                    5 => 'Vendredi',
+                    6 => 'Samedi',
+                    0 => 'Dimanche'
+                ];
+
+                // Créer un tableau pour stocker les horaires d'ouverture triés
+                $openingHoursSorted = [];
+                foreach ($openingHours as $hour) {
+                    $openingHoursSorted[$hour['day_of_week']] = $hour;
+                }
+
+                // Ordre des jours avec Lundi en premier
+                $orderedDays = [1, 2, 3, 4, 5, 6, 0]; 
+
+                foreach ($orderedDays as $day): ?>
+                    <li>
+                        <?php echo htmlspecialchars($daysOfWeek[$day]); ?> : 
+                        <?php if (isset($openingHoursSorted[$day]) && $openingHoursSorted[$day]['start_time'] && $openingHoursSorted[$day]['end_time']): ?>
+                            <?php echo htmlspecialchars($openingHoursSorted[$day]['start_time']); ?> - 
+                            <?php echo htmlspecialchars($openingHoursSorted[$day]['end_time']); ?>
+                        <?php else: ?>
+                            Fermé
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach; ?>
         </ul>
 
         <h3>Nos Services</h3>
         <ul>
-            <?php foreach ($services as $service): ?>
-                <li><?php echo htmlspecialchars($service['name']); ?></li>
-            <?php endforeach; ?>
+            <?php if (!empty($services)): ?>
+                <?php foreach ($services as $service): ?>
+                    <li><?php echo htmlspecialchars($service['name']); ?></li>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <li>Aucun service disponible pour le moment.</li>
+            <?php endif; ?>
         </ul>
 
         <h3>Visitez notre clinique</h3>

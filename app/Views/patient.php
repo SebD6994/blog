@@ -36,7 +36,6 @@ if (session_status() === PHP_SESSION_NONE) {
             <p><strong>Nom :</strong> <?= htmlspecialchars($_SESSION['patient']['last_name'] ?? 'N/A'); ?></p>
             <p><strong>Email :</strong> <?= htmlspecialchars($_SESSION['patient']['email'] ?? 'N/A'); ?></p>
             <p><strong>Téléphone :</strong> <?= htmlspecialchars($_SESSION['patient']['phone'] ?? 'N/A'); ?></p>
-            <p><strong>Rôle :</strong> <?= htmlspecialchars($_SESSION['patient']['role'] ?? 'N/A'); ?></p> <!-- Affichage du rôle -->
 
             <h2>Modifier mes Informations</h2>
             <form action="index.php?page=patients&action=update" method="POST">

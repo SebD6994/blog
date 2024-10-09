@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Rendez-vous</title>
     <link rel="stylesheet" href="../assets/style.css">
+    <!-- Ajouter FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
+    <!-- Inclure votre fichier JavaScript pour le calendrier -->
+    <script src="../assets/js/calendar.js" defer></script> <!-- Fichier JavaScript séparé -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 </head>
 <body>
     <header>
@@ -24,6 +29,10 @@
     </header>
 
     <main>
+
+        <!-- Affichage du calendrier -->
+        <div id="calendar"></div>
+
         <?php if ($patientData): ?>
             <h2>Mes Rendez-vous</h2>
             <ul>

@@ -1,37 +1,22 @@
-$(document).ready(function() {
-    $('#calendar').fullCalendar({
-        header: {
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridWeek',
+        headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'month,agendaWeek,agendaDay'
+            right: 'dayGridWeek,timeGridDay'
         },
-        defaultDate: moment().startOf('week'),
-        editable: true,
-        eventLimit: true, // permet d'afficher le lien "plus" lorsqu'il y a trop d'événements
-        events: function(start, end, timezone, callback) {
-            $.ajax({
-                url: 'index.php?page=appointments&action=getAvailableSlots',
-                dataType: 'json',
-                data: {
-                    start: start.unix(),
-                    end: end.unix()
-                },
-                success: function(data) {
-                    var events = [];
-                    $.each(data, function(i, appointment) {
-                        events.push({
-                            id: appointment.id,
-                            title: appointment.service_name,
-                            start: appointment.appointment_date,
-                            allDay: true // rend l'événement sur toute la journée
-                        });
-                    });
-                    callback(events);
-                },
-                error: function() {
-                    alert('Une erreur est survenue lors de la récupération des rendez-vous.');
-                }
-            });
+        contentHeight: '400px',
+        firstDay: 1,
+        locale: 'fr',
+        
+        // Événement pour cliquer sur une date (fonctionnalité supprimée)
+        dateClick: function(info) {
+            alert("Vous avez cliqué sur la date : " + info.dateStr);
         }
     });
+
+    calendar.render();
 });
