@@ -36,12 +36,15 @@ if (session_status() === PHP_SESSION_NONE) {
         <ul>
             <?php foreach ($newsItems as $news): ?>
                 <li>
-                    Titre: <?php echo htmlspecialchars($news['title']); ?>, 
-                    Contenu: <?php echo htmlspecialchars($news['content']); ?>
+                    <h2><?php echo htmlspecialchars($news['title']); ?></h2> 
+                    <?php echo htmlspecialchars($news['content']); ?>
                 </li>
             <?php endforeach; ?>
         </ul>
     </main>
 
     <footer>
-        <p>&copy; 2024 Cabinet du D
+        <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
+    </footer>
+</body>
+</html>

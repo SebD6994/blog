@@ -224,5 +224,8 @@
     <button type="submit">Mettre à jour les horaires</button>
 </form>
 
+<footer>
+        <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
+    </footer>
 </body>
 </html>

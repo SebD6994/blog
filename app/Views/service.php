@@ -35,14 +35,14 @@ if (session_status() === PHP_SESSION_NONE) {
     <h1>Services Proposés par le Dr. Dupont</h1>
 
         <p>Le Dr. Dupont offre une large gamme de services dentaires pour répondre à vos besoins. Voici les services disponibles :</p>
-            <ul>
-                <li>Soins dentaires courants</li>
-                <li>Orthodontie</li>
-                <li>Implantologie</li>
-                <li>Esthétique dentaire</li>
-                <li>Consultations de prévention</li>
-                <li>Chirurgie dentaire</li>
-            </ul>
+        <ul>
+            <?php foreach ($services as $service): ?>
+                <li>
+                    <h3><?php echo htmlspecialchars($service['name']); ?></h3>
+                    <?php echo htmlspecialchars($service['description']); ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
         <p>Pour prendre rendez-vous pour l'un de ces services, veuillez vous rendre sur la page <a href="index.php?page=appointments">Rendez-vous</a>.</p>
     </main>
 

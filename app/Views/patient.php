@@ -121,7 +121,7 @@ if (session_status() === PHP_SESSION_NONE) {
     </main>
 
     <footer>
-        <p>&copy; <?= date("Y"); ?> Dr. Dupont - Tous droits réservés.</p>
+        <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
     </footer>
 </body>
 </html>

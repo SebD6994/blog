@@ -30,12 +30,20 @@
         <p>Le Cabinet du Dr. Dupont propose divers services adaptés à vos besoins de santé. Nous nous engageons à vous fournir des soins de qualité dans un environnement convivial et professionnel.</p>
         
         <h3>Horaires d'ouverture</h3>
-        <p>Lundi - Vendredi : 9h - 17h</p>
+        <ul>
+            <?php foreach ($openingHours as $hour): ?>
+                <li>
+                    <?php echo htmlspecialchars($hour['day_of_week']); ?> : 
+                    <?php echo htmlspecialchars($hour['opening_time']); ?> - 
+                    <?php echo htmlspecialchars($hour['closing_time']); ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
 
         <h3>Nos Services</h3>
         <ul>
             <?php foreach ($services as $service): ?>
-                <li><?php echo htmlspecialchars($service['name']); ?></li> <!-- Assurez-vous que le nom de la colonne est correct -->
+                <li><?php echo htmlspecialchars($service['name']); ?></li>
             <?php endforeach; ?>
         </ul>
 
@@ -49,7 +57,7 @@
     </main>
 
     <footer>
-        <p>© 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
+        <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
     </footer>
 </body>
 </html>
