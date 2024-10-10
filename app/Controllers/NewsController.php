@@ -9,6 +9,12 @@ class NewsController {
         $this->newsModel = new News($db);
     }
 
+    public function index() {
+        // Récupérer toutes les actualités et les envoyer à la vue
+        $newsItems = $this->newsModel->getAll();
+        require '../app/Views/News.php';
+    }
+
     public function create() {
         // Check if the request is of type POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -29,9 +35,6 @@ class NewsController {
             header('Location: index.php?page=admin');
             exit();
         }
-
-        // If not a POST request, show the form to create news
-        require '../app/Views/CreateNews.php'; // Load form view
     }
 
     public function update($id) {
@@ -46,10 +49,6 @@ class NewsController {
             // Redirect after the update
             header("Location: index.php?page=admin");
             exit();
-        } else {
-            // Fetch existing news item for pre-filling the form
-            $newsItem = $this->newsModel->find($id);
-            require '../app/Views/EditNews.php'; // Load edit form view
         }
     }
 
