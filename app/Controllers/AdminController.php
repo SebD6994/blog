@@ -5,24 +5,27 @@ require_once '../app/Models/Home.php';
 require_once '../app/Models/Service.php';
 require_once '../app/Controllers/ServiceController.php';
 require_once '../app/Controllers/NewsController.php';
+require_once '../app/Controllers/PatientController.php';
 
 class AdminController {
+    private $db;
     private $adminModel;
     private $homeModel;
-    private $db;
+    private $patientController;
 
     public function __construct($db) {
+        $this->db = $db;
         $this->adminModel = new Admin($db);
         $this->homeModel = new Home($db);
-        $this->db = $db;
+        $this->patientController = new PatientController($db);
     }
 
     public function index() {
         // Récupérer les données nécessaires pour la vue
         $appointments = $this->adminModel->getAppointments();
+        $patients = $this->adminModel->getPatients();
         $services = $this->adminModel->getServices();
         $news = $this->adminModel->getNews();
-        $patients = $this->adminModel->getPatients();
         $openingHours = $this->homeModel->getOpeningHours();
 
         // Afficher la vue admin_dashboard
@@ -44,18 +47,19 @@ class AdminController {
         }
     }
     
+    // Delegate patient actions to PatientController
+    public function createPatient() {
+        $this->patientController->create(true); // Delegate to PatientController
+    }
+
+    public function updatePatient() {
+        $this->patientController->update(); // Delegate to PatientController
+    }
+
     public function deletePatient() {
         if (isset($_GET['id'])) {
             $patientId = $_GET['id'];
-
-            if ($this->adminModel->deletePatient($patientId)) {
-                $_SESSION['message'] = "Patient supprimé avec succès.";
-            } else {
-                $_SESSION['message'] = "Erreur lors de la suppression du patient.";
-            }
-
-            header('Location: index.php?page=admin');
-            exit;
+            $this->patientController->delete($patientId); // Delegate to PatientController
         }
     }
 

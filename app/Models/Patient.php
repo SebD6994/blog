@@ -14,35 +14,32 @@ class Patient {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Créer un nouveau patient
-    public function create($data) {
-        try {
-            // Vérification de l'unicité de l'email
-            if ($this->getByEmail($data['email'])) {
-                return false; // Email déjà utilisé
-            }
-
-            $query = "INSERT INTO patients (first_name, last_name, email, phone, password, role) VALUES (:first_name, :last_name, :email, :phone, :password, :role)";
-            $stmt = $this->conn->prepare($query);
-
-            // Hacher le mot de passe avant de l'insérer
-            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-            $stmt->bindParam(':first_name', $data['first_name']);
-            $stmt->bindParam(':last_name', $data['last_name']);
-            $stmt->bindParam(':email', $data['email']);
-            $stmt->bindParam(':phone', $data['phone']);
-            $stmt->bindParam(':password', $hashedPassword);
-
-            // Définir le rôle par défaut à "user"
-            $role = 'user'; 
-            $stmt->bindParam(':role', $role);
-
-            return $stmt->execute();
-        } catch (PDOException $e) {
-            error_log("Erreur lors de l'insertion du patient : " . $e->getMessage());
-            return false;
+// Créer un nouveau patient
+public function create($data) {
+    try {
+        // Vérification de l'unicité de l'email
+        if ($this->getByEmail($data['email'])) {
+            return false; // Email déjà utilisé
         }
+
+        $query = "INSERT INTO patients (first_name, last_name, email, phone, password, role) VALUES (:first_name, :last_name, :email, :phone, :password, :role)";
+        $stmt = $this->conn->prepare($query);
+
+        // Hacher le mot de passe avant de l'insérer
+        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+        $stmt->bindParam(':first_name', $data['first_name']);
+        $stmt->bindParam(':last_name', $data['last_name']);
+        $stmt->bindParam(':email', $data['email']);
+        $stmt->bindParam(':phone', $data['phone']);
+        $stmt->bindParam(':password', $hashedPassword);
+        $stmt->bindParam(':role', $data['role']); // Corrected
+
+        return $stmt->execute();
+    } catch (PDOException $e) {
+        error_log("Erreur lors de l'insertion du patient : " . $e->getMessage());
+        return false;
     }
+}
 
     // Récupérer un patient par son email
     public function getByEmail($email) {

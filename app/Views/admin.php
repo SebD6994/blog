@@ -125,67 +125,122 @@
 
 <!-- Section des Patients -->
 <h2>Gestion des Patients</h2>
-    
-    <form action="add_patient.php" method="POST">
-        <input type="text" name="first_name" placeholder="Prénom" required>
-        <input type="text" name="last_name" placeholder="Nom" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="text" name="phone" placeholder="Téléphone" required>
-        <input type="password" name="password" placeholder="Mot de passe" required>
-
-        <label for="role">Rôle :</label>
-            <select name="role" required>
-                <option value="user">Utilisateur</option>
-                <option value="admin">Administrateur</option>
-            </select>
-
-        <button type="submit">Ajouter Patient</button>
-    </form>
 
     <h3>Liste des Patients</h3>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Prénom</th>
-            <th>Nom</th>
-            <th>Email</th>
-            <th>Téléphone</th>
-            <th>Rôle</th> <!-- Ajout de la colonne Rôle -->
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if (!empty($patients)): ?>
-            <?php foreach ($patients as $patient): ?>
+
+<!-- Formulaire de recherche -->
+<form method="GET" action="index.php?page=admin">
+    <input type="text" name="search" placeholder="Rechercher par prénom, nom, email ou téléphone" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+    <button type="submit">Rechercher</button>
+</form>
+
+<?php
+// Récupérer la valeur de recherche
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Ne pas afficher la table si aucun terme de recherche n'a été soumis
+if (!empty($search)) {
+    // Vous pouvez récupérer les patients de votre base de données ici
+    // Exemple : $patients = getPatients(); // Récupération des patients depuis la base de données
+
+    // Filtrer les patients en fonction de la recherche
+    if (!empty($patients)) {
+        echo '<table>';
+        echo '<thead>
                 <tr>
-                    <td><?php echo htmlspecialchars($patient['id']); ?></td>
-                    <td><?php echo htmlspecialchars($patient['first_name']); ?></td>
-                    <td><?php echo htmlspecialchars($patient['last_name']); ?></td>
-                    <td><?php echo htmlspecialchars($patient['email']); ?></td>
-                    <td><?php echo htmlspecialchars($patient['phone']); ?></td>
-                    <td>
-                        <form action="index.php?page=admin&action=updateRole" method="POST">
-                            <input type="hidden" name="id" value="<?php echo $patient['id']; ?>">
-                            <select name="role" onchange="this.form.submit()">
-                                <option value="patient" <?php echo $patient['role'] === 'patient' ? 'selected' : ''; ?>>Utilisateur</option>
-                                <option value="admin" <?php echo $patient['role'] === 'admin' ? 'selected' : ''; ?>>Administrateur</option>
+                    <th>Prénom</th>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Rôle</th>
+                    <th>Actions</th>
+                </tr>
+              </thead>';
+        echo '<tbody>';
+        
+        foreach ($patients as $patient) {
+            // Vérifier si le patient correspond aux critères de recherche
+            if (
+                stripos($patient['first_name'], $search) !== false ||
+                stripos($patient['last_name'], $search) !== false ||
+                stripos($patient['email'], $search) !== false ||
+                strpos($patient['phone'], $search) !== false
+            ) {
+                echo "<tr>";
+                echo "<td>" . htmlspecialchars($patient['first_name']) . "</td>";
+                echo "<td>" . htmlspecialchars($patient['last_name']) . "</td>";
+                echo "<td>" . htmlspecialchars($patient['email']) . "</td>";
+                echo "<td>" . htmlspecialchars($patient['phone']) . "</td>";
+                echo "<td>
+                        <form action='index.php?page=admin&action=updateRole' method='POST'>
+                            <input type='hidden' name='id' value='" . $patient['id'] . "'>
+                            <select name='role' onchange='this.form.submit()'>
+                                <option value='patient'" . ($patient['role'] === 'patient' ? ' selected' : '') . ">Utilisateur</option>
+                                <option value='admin'" . ($patient['role'] === 'admin' ? ' selected' : '') . ">Administrateur</option>
                             </select>
                         </form>
-                    </td>
-                    <td>
-                        <a href="edit_patient.php?id=<?php echo $patient['id']; ?>">Modifier</a>
-                        <a href="delete_patient.php?id=<?php echo $patient['id']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce patient ?');">Supprimer</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="7">Aucun patient trouvé.</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
+                      </td>";
+                echo "<td>
+                        <a href='edit_patient.php?id=" . $patient['id'] . "'>Modifier</a>
+                        <a href='delete_patient.php?id=" . $patient['id'] . "' onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer ce patient ?\");'>Supprimer</a>
+                      </td>";
+                echo "</tr>";
+            }
+        }
+        
+        if (empty(array_filter($patients, function($patient) use ($search) {
+            return strpos($patient['id'], $search) !== false ||
+                   stripos($patient['first_name'], $search) !== false ||
+                   stripos($patient['last_name'], $search) !== false ||
+                   stripos($patient['email'], $search) !== false ||
+                   strpos($patient['phone'], $search) !== false;
+        }))) {
+            echo "<tr><td colspan='7'>Aucun patient trouvé.</td></tr>";
+        }
+        
+        echo '</tbody></table>';
+    } else {
+        echo "<p>Aucun patient trouvé.</p>";
+    }
+} else {
+    echo "<p>Veuillez effectuer une recherche pour afficher la liste des patients.</p>";
+}
+?>
+
+<h3>Création de Patient</h3>
+<form action="index.php?page=patients&action=create" method="POST">
+    <label for="first_name">Prénom :</label>
+    <input type="text" id="first_name" name="first_name" required>
+        
+    <label for="last_name">Nom :</label>
+    <input type="text" id="last_name" name="last_name" required>
+        
+    <label for="email">Email :</label>
+    <input type="email" id="email" name="email" required>
+        
+    <label for="phone">Téléphone :</label>
+    <input type="text" id="phone" name="phone" required>
+        
+    <label for="password">Mot de passe :</label>
+    <input type="password" id="password" name="password" required>
+        
+    <label for="confirm_password">Confirmer le mot de passe :</label>
+    <input type="password" id="confirm_password" name="confirm_password" required>
+    
+    <!-- Ajout du champ pour sélectionner le rôle -->
+    <label for="role">Rôle :</label>
+    <select id="role" name="role" required>
+        <option value="user">Utilisateur</option>
+        <option value="admin">Administrateur</option>
+        <!-- Vous pouvez ajouter d'autres rôles ici si nécessaire -->
+    </select>
+
+    <?php if (isset($registrationError)): ?>
+        <p style="color: red;"><?= htmlspecialchars($registrationError); ?></p> <!-- Affichage d'erreur d'inscription -->
+    <?php endif; ?>
+        
+    <button type="submit">Créer un patient</button>
+</form>
 
 <!-- Section des Services -->
 <h2>Services</h2>

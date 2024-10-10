@@ -47,7 +47,7 @@ class Admin {
     }
 
     // Crée un service via le modèle Service
-    public function addService($data) {
+    public function createService($data) {
         return $this->serviceModel->create($data);
     }
 
@@ -67,7 +67,7 @@ class Admin {
     }
 
     // Ajoute une actualité via le modèle News
-    public function addNews($data) {
+    public function createNews($data) {
         return $this->newsModel->create($data);
     }
 

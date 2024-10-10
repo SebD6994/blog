@@ -3,6 +3,12 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Exemple de messages de session (à définir lors des actions dans vos scripts)
+if (isset($_SESSION['message'])) {
+    $message = $_SESSION['message'];
+    unset($_SESSION['message']); // Supprimer le message après l'avoir affiché
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -30,6 +36,12 @@ if (session_status() === PHP_SESSION_NONE) {
     </header>
 
     <main>
+        <?php if (isset($message)): ?>
+            <div class="message">
+                <?= htmlspecialchars($message); ?> <!-- Affichage du message -->
+            </div>
+        <?php endif; ?>
+
         <?php if (isset($_SESSION['patient'])): ?>
             <h2>Informations du Patient Connecté</h2>
             <p><strong>Prénom :</strong> <?= htmlspecialchars($_SESSION['patient']['first_name'] ?? 'N/A'); ?></p>
@@ -109,6 +121,9 @@ if (session_status() === PHP_SESSION_NONE) {
         
                 <label for="confirm_password">Confirmer le mot de passe :</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
+
+                <!-- Champ caché pour le rôle -->
+                <input type="hidden" name="role" value="user">
         
                 <?php if (isset($registrationError)): ?>
                     <p style="color: red;"><?= htmlspecialchars($registrationError); ?></p> <!-- Affichage d'erreur d'inscription -->
@@ -116,6 +131,20 @@ if (session_status() === PHP_SESSION_NONE) {
         
                 <button type="submit">S'inscrire</button>
             </form>
+
+            <?php if (isset($_SESSION['successMessage'])): ?>
+                <div class="success-message">
+                    <?= htmlspecialchars($_SESSION['successMessage']); ?>
+                    <?php unset($_SESSION['successMessage']); // Supprimer le message après l'affichage ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['errorMessage'])): ?>
+                <div class="error-message">
+                    <?= htmlspecialchars($_SESSION['errorMessage']); ?>
+                    <?php unset($_SESSION['errorMessage']); // Supprimer le message après l'affichage ?>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
     </main>
 
