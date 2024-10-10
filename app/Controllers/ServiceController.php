@@ -9,27 +9,56 @@ class ServiceController {
         $this->serviceModel = new Service($db);
     }
 
-    // Méthode pour afficher tous les services
     public function index() {
-        // Récupérer tous les services et les envoyer à la vue
+        // Retrieve all services and send them to the view
         $services = $this->serviceModel->getAll();
-        require '../app/Views/Service.php'; // Charger la vue avec les services
+        require '../app/Views/Service.php'; // Load the view with the services
     }
 
-    // Méthode pour créer un nouveau service
     public function create() {
-        // Ajouter un nouveau service si la requête est de type POST
+        // Add a new service if the request is of type POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->serviceModel->create([
                 'name' => $_POST['name'],
                 'description' => $_POST['description']
             ]);
-            // Redirection après la création du service pour éviter la soumission multiple
-            header('Location: index.php?page=services');
+            // Redirect after creating the service to avoid multiple submissions
+            header('Location: index.php?page=admin'); // Redirect back to admin page
             exit();
         }
 
-        // Si ce n'est pas une requête POST, afficher un formulaire de création
-        require '../app/Views/CreateService.php'; // Formulaire pour créer un nouveau service
+        // If not a POST request, show the creation form
+        require '../app/Views/admin.php'; // Load form view
+    }
+
+    public function update($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['name'], $_POST['description'])) {
+            $this->serviceModel->update($id, [
+                'name' => $_POST['name'],
+                'description' => $_POST['description']
+            ]);
+            // Ajoutez un message de succès si nécessaire
+            $_SESSION['message'] = "Service mis à jour avec succès.";
+            header('Location: index.php?page=admin'); // Redirige vers la page admin
+            exit();
+        } else {
+            die("Données manquantes pour la mise à jour du service.");
+        }
+    
+
+        // Load the existing service for editing
+        $service = $this->serviceModel->find($id);
+        require '../app/Views/admin.php'; // Load edit form view
+    }
+
+    public function delete($id) {
+        if ($id) {
+            $this->serviceModel->delete($id); // Call the delete method of the Service model
+            $_SESSION['message'] = "Service supprimé avec succès."; // Success message
+        }
+
+        // Redirect to the admin page
+        header('Location: index.php?page=admin');
+        exit();
     }
 }

@@ -21,8 +21,16 @@ class Home {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Mettre à jour les horaires d'ouverture
     public function updateOpeningHours($data) {
-        $stmt = $this->dbConnection->prepare("UPDATE opening_hours SET start_time = ?, end_time = ? WHERE id = 1");
-        $stmt->execute([$data['start_time'], $data['end_time']]);
-    }    
+        // Boucle à travers chaque jour et met à jour les horaires
+        foreach ($data['hours'] as $dayOfWeek => $hours) {
+            $startTime = isset($hours['start_time']) ? $hours['start_time'] : null;
+            $endTime = isset($hours['end_time']) ? $hours['end_time'] : null;
+
+            // Préparez la requête pour mettre à jour les horaires d'ouverture pour chaque jour
+            $stmt = $this->dbConnection->prepare("UPDATE opening_hours SET start_time = ?, end_time = ? WHERE day_of_week = ?");
+            $stmt->execute([$startTime, $endTime, $dayOfWeek]);
+        }
+    }
 }

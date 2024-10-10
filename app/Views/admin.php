@@ -38,6 +38,9 @@
 <!-- Section des Rendez-vous -->
 <h2>Gestion des Rendez-vous</h2>
 
+<!-- Affichage du calendrier -->
+<div id="calendar"></div>
+
 <!-- Formulaire d'ajout de rendez-vous -->
 <form action="add_appointment.php" method="POST">
     <label for="patient_id">Patient :</label>
@@ -194,22 +197,30 @@
     </tr>
     <?php foreach ($services as $service): ?>
     <tr>
-            <form method="POST" action="?page=admin&action=updateService">
+        <form method="POST" action="index.php?page=admin&action=updateService&id=<?= $service['id']; ?>">
             <td><input type="text" name="name" value="<?= htmlspecialchars($service['name']); ?>" required></td>
-            <td><input type="text" name="description" value="<?= htmlspecialchars($service['description']); ?>"></td>
-                <input type="hidden" name="id" value="<?= $service['id']; ?>">
-        <td>
-            <button type="submit">Mettre à jour</button>
-            <a href="?page=admin&action=deleteService&id=<?= $service['id']; ?>">Supprimer</a>
-        </td>
+            <td><input type="text" name="description" value="<?= htmlspecialchars($service['description']); ?>" required></td>
+            <td>
+                <button type="submit">Mettre à jour</button>
+                <a href="?page=admin&action=deleteService&id=<?= $service['id']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?');">Supprimer</a>
+            </td>
         </form>
     </tr>
     <?php endforeach; ?>
 </table>
 
 
+<!-- Formulaire pour ajouter un nouveau service -->
+<h3>Ajouter un nouveau service</h3>
+<form action="?page=admin&action=createService" method="POST">
+    <input type="text" name="name" placeholder="Nom du service" required>
+    <input type="text" name="description" placeholder="Description du service" required>
+    <button type="submit">Ajouter Service</button>
+</form>
+
 <!-- Section des Actualités -->
 <h2>Actualités</h2>
+
 <table>
     <tr>
         <th>Titre</th>
@@ -218,54 +229,63 @@
     </tr>
     <?php foreach ($news as $new): ?>
     <tr>
-        
-            <form method="POST" action="?page=admin&action=updateNews">
+        <form method="POST" action="?page=admin&action=updateNews">
             <td><input type="text" name="title" value="<?= htmlspecialchars($new['title']); ?>" required></td>
             <td><textarea name="content" required><?= htmlspecialchars($new['content']); ?></textarea></td>
-                <input type="hidden" name="id" value="<?= $new['id']; ?>">
-            
-            <td><button type="submit">Mettre à jour</button>
-            <a href="?page=admin&action=deleteNews&id=<?= $new['id']; ?>">Supprimer</a></td>
-            </form>
+            <input type="hidden" name="id" value="<?= $new['id']; ?>"> <!-- Hidden input for the news ID -->
+            <td>
+                <button type="submit">Mettre à jour</button>
+                <a href="?page=admin&action=deleteNews&id=<?= $new['id']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?');">Supprimer</a>
+            </td>
+        </form>
     </tr>
     <?php endforeach; ?>
 </table>
 
-<!-- Section des Horaires d'ouverture -->
-<h3>Horaires d'ouverture</h3>
-        <ul>
-            <?php 
-                $daysOfWeek = [
-                    1 => 'Lundi',
-                    2 => 'Mardi',
-                    3 => 'Mercredi',
-                    4 => 'Jeudi',
-                    5 => 'Vendredi',
-                    6 => 'Samedi',
-                    0 => 'Dimanche'
-                ];
+<!-- Formulaire pour ajouter une nouvelle actualité -->
+<form action="?page=admin&action=createNews" method="POST"> <!-- Adjusted action to point to the correct addNews method -->
+    <input type="text" name="title" placeholder="Titre" required>
+    <textarea name="content" placeholder="Contenu" required></textarea>
+    <button type="submit">Ajouter Actualité</button>
+</form>
 
-                // Créer un tableau pour stocker les horaires d'ouverture triés
-                $openingHoursSorted = [];
-                foreach ($openingHours as $hour) {
-                    $openingHoursSorted[$hour['day_of_week']] = $hour;
-                }
 
-                // Ordre des jours avec Lundi en premier
-                $orderedDays = [1, 2, 3, 4, 5, 6, 0]; 
+<!-- Formulaire pour modifier les horaires d'ouverture -->
+<h3>Modifier les Horaires d'Ouverture</h3>
+<form action="index.php?page=admin&action=updateOpeningHours" method="POST">
+    <table>
+        <tr>
+            <th>Jour</th>
+            <th>Heure d'Ouverture</th>
+            <th>Heure de Fermeture</th>
+        </tr>
+        <?php 
+        $daysOfWeek = [
+            1 => 'Lundi',
+            2 => 'Mardi',
+            3 => 'Mercredi',
+            4 => 'Jeudi',
+            5 => 'Vendredi',
+            6 => 'Samedi',
+            0 => 'Dimanche'
+        ];
 
-                foreach ($orderedDays as $day): ?>
-                    <li>
-                        <?php echo htmlspecialchars($daysOfWeek[$day]); ?> : 
-                        <?php if (isset($openingHoursSorted[$day]) && $openingHoursSorted[$day]['start_time'] && $openingHoursSorted[$day]['end_time']): ?>
-                            <?php echo htmlspecialchars($openingHoursSorted[$day]['start_time']); ?> - 
-                            <?php echo htmlspecialchars($openingHoursSorted[$day]['end_time']); ?>
-                        <?php else: ?>
-                            Fermé
-                        <?php endif; ?>
-                    </li>
-                <?php endforeach; ?>
-        </ul>
+        // Ordre des jours
+        $orderedDays = [1, 2, 3, 4, 5, 6, 0]; 
+
+        // Affichage des horaires
+        foreach ($orderedDays as $day): 
+            $hour = isset($openingHours[$day]) ? $openingHours[$day] : ['start_time' => '', 'end_time' => ''];
+        ?>
+        <tr>
+            <td><?php echo htmlspecialchars($daysOfWeek[$day]); ?></td>
+            <td><input type="time" name="hours[<?php echo $day; ?>][start_time]" value="<?php echo htmlspecialchars($hour['start_time']); ?>"></td>
+            <td><input type="time" name="hours[<?php echo $day; ?>][end_time]" value="<?php echo htmlspecialchars($hour['end_time']); ?>"></td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+    <button type="submit">Mettre à jour les Horaires</button>
+</form>
 
 <footer>
         <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>

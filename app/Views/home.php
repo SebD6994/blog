@@ -54,15 +54,22 @@
                 foreach ($orderedDays as $day): ?>
                     <li>
                         <?php echo htmlspecialchars($daysOfWeek[$day]); ?> : 
-                        <?php if (isset($openingHoursSorted[$day]) && $openingHoursSorted[$day]['start_time'] && $openingHoursSorted[$day]['end_time']): ?>
-                            <?php echo htmlspecialchars($openingHoursSorted[$day]['start_time']); ?> - 
-                            <?php echo htmlspecialchars($openingHoursSorted[$day]['end_time']); ?>
-                        <?php else: ?>
+                        <?php 
+                        // Vérification des horaires d'ouverture
+                        if (isset($openingHoursSorted[$day]) && 
+                            $openingHoursSorted[$day]['start_time'] !== '00:00:00' && 
+                            $openingHoursSorted[$day]['end_time'] !== '00:00:00'): 
+                            // Formatage des heures pour enlever les secondes
+                            $startTime = date('H:i', strtotime($openingHoursSorted[$day]['start_time']));
+                            $endTime = date('H:i', strtotime($openingHoursSorted[$day]['end_time']));
+                            echo htmlspecialchars($startTime) . ' - ' . htmlspecialchars($endTime);
+                        else: ?>
                             Fermé
                         <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
         </ul>
+
 
         <h3>Nos Services</h3>
         <ul>

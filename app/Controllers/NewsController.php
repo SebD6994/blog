@@ -9,30 +9,62 @@ class NewsController {
         $this->newsModel = new News($db);
     }
 
-    public function index() {
-        // Récupérer toutes les actualités et les envoyer à la vue
-        $newsItems = $this->newsModel->getAll();
-        require '../app/Views/News.php';
-    }
-
     public function create() {
-        // Ajouter une nouvelle actualité si la requête est de type POST
+        // Check if the request is of type POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $createdAt = date('Y-m-d H:i:s');
-            $this->newsModel->create([
+            $data = [
                 'title' => $_POST['title'],
-                'content' => $_POST['content'],
-                'created_at' => $createdAt
-            ]);
+                'content' => $_POST['content']
+            ];
+
+            try {
+                // Call the create method of the News model
+                $this->newsModel->create($data);
+                $_SESSION['message'] = "Actualité ajoutée avec succès."; // Success message
+            } catch (Exception $e) {
+                $_SESSION['message'] = "Erreur lors de l'ajout de l'actualité : " . $e->getMessage(); // Error message
+            }
+
+            // Redirect to the admin page
+            header('Location: index.php?page=admin');
+            exit();
         }
-        $this->index(); // Afficher la liste des actualités après la création
+
+        // If not a POST request, show the form to create news
+        require '../app/Views/CreateNews.php'; // Load form view
     }
 
-    public function handleRequest() {
+    public function update($id) {
+        // Check if the request is of type POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->create();
+            $data = [
+                'title' => $_POST['title'],
+                'content' => $_POST['content']
+            ];
+            $this->newsModel->update($id, $data); // Call the model to update news
+            
+            // Redirect after the update
+            header("Location: index.php?page=admin");
+            exit();
         } else {
-            $this->index();
+            // Fetch existing news item for pre-filling the form
+            $newsItem = $this->newsModel->find($id);
+            require '../app/Views/EditNews.php'; // Load edit form view
         }
+    }
+
+    public function delete($id) {
+        if ($id) {
+            try {
+                $this->newsModel->delete($id); // Call the delete method of the News model
+                $_SESSION['message'] = "Actualité supprimée avec succès."; // Success message
+            } catch (Exception $e) {
+                $_SESSION['message'] = "Erreur lors de la suppression de l'actualité : " . $e->getMessage(); // Error message
+            }
+        }
+
+        // Redirect to the admin page
+        header('Location: index.php?page=admin');
+        exit();
     }
 }

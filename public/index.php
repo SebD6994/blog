@@ -37,11 +37,11 @@ switch ($page) {
             case 'login':
                 $patientController->login();
                 break;
-            case 'create':
-                $patientController->create();
-                break;
             case 'logout':
                 $patientController->logout();
+                break;
+            case 'create':
+                $patientController->create();
                 break;
             case 'update':
                 $patientController->update();
@@ -141,33 +141,8 @@ switch ($page) {
             case 'deleteAppointment':
                 $adminController->deleteAppointment($_GET['id']);
                 break;
-            case 'addService':
-                if ($_POST) {
-                    $adminController->addService($_POST);
-                }
-                break;
-            case 'updateService':
-                if ($_POST) {
-                    $adminController->updateService($_POST['id'], $_POST);
-                }
-                break;
-            case 'deleteService':
-                $adminController->deleteService($_GET['id']);
-                break;
-            case 'addNews':
-                if ($_POST) {
-                    $adminController->addNews($_POST);
-                }
-                break;
-            case 'updateNews':
-                if ($_POST) {
-                    $adminController->updateNews($_POST['id'], $_POST);
-                }
-                break;
-            case 'deleteNews':
-                $adminController->deleteNews($_GET['id']);
-                break;
-            case 'addPatient':
+
+            case 'createPatient':
                 if ($_POST) {
                     $adminController->addPatient($_POST);
                 }
@@ -179,10 +154,35 @@ switch ($page) {
                 break;
             case 'deletePatient':
                 $adminController->deletePatient($_GET['id']);
+                break;  
+
+            case 'createService':
+                $adminController->createService();
                 break;
+            case 'updateService':
+                $adminController->updateService($_GET['id']);
+                break;
+            case 'deleteService':
+                $adminController->deleteService($_GET['id']);
+                break;
+
+            case 'createNews':
+                if ($_POST) {
+                    $adminController->createNews(); // Appelle la méthode createNews
+                }
+                break;
+            case 'updateNews':
+                if ($_POST && isset($_POST['id'])) { // Vérifie que l'ID est présent dans POST
+                    $adminController->updateNews($_POST['id']); // Utilise l'ID de POST pour mettre à jour
+                }
+                break;
+            case 'deleteNews':
+                    $adminController->deleteNews($_GET['id']);
+                break;
+                
             case 'updateOpeningHours':
                 if ($_POST) {
-                    $adminController->updateOpeningHours($_POST);
+                    $adminController->updateOpeningHours();
                 }
                 break;
             case 'index':
