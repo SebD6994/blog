@@ -13,9 +13,20 @@ class Patient {
         $stmt = $this->conn->query($query);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+    // Rechercher des patients
+    public function searchPatients($search) {
+        // Préparer la requête pour rechercher les patients selon le terme
+        $query = "SELECT * FROM patients WHERE first_name LIKE :search OR last_name LIKE :search OR email LIKE :search OR phone LIKE :search";
+        $stmt = $this->conn->prepare($query);
+        $searchTerm = '%' . $search . '%'; // Pour la recherche avec wildcard
+        $stmt->bindParam(':search', $searchTerm);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
-// Créer un nouveau patient
-public function create($data) {
+    // Créer un nouveau patient
+    public function create($data) {
     try {
         // Vérification de l'unicité de l'email
         if ($this->getByEmail($data['email'])) {
@@ -39,7 +50,7 @@ public function create($data) {
         error_log("Erreur lors de l'insertion du patient : " . $e->getMessage());
         return false;
     }
-}
+    }
 
     // Récupérer un patient par son email
     public function getByEmail($email) {

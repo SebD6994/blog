@@ -26,7 +26,7 @@ $serviceController = new ServiceController($db);
 $newsController = new NewsController($db);
 $adminController = new AdminController($db);
 
-// Vérification de la page demandée
+// Vérification de la page et action demandée
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
 $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 
@@ -117,7 +117,7 @@ switch ($page) {
                 }
                 break;
             case 'update':
-                if ($_POST) {
+                if ($_POST && isset($_POST['id'])) {
                     $newsController->update($_POST['id'], $_POST);
                 }
                 break;
@@ -154,13 +154,22 @@ switch ($page) {
                 break;
             case 'deletePatient':
                 $adminController->deletePatient($_GET['id']);
-                break;  
+                break;
+            case 'searchPatients':
+                if ($_GET && isset($_GET['search'])) {
+                    $adminController->searchPatients($_GET['search']);
+                }
+                break;
 
             case 'createService':
-                $adminController->createService();
+                if ($_POST) {
+                    $adminController->createService($_POST);
+                }
                 break;
             case 'updateService':
-                $adminController->updateService($_GET['id']);
+                if ($_POST && isset($_POST['id'])) {
+                    $adminController->updateService($_POST['id'], $_POST);
+                }
                 break;
             case 'deleteService':
                 $adminController->deleteService($_GET['id']);
@@ -168,23 +177,24 @@ switch ($page) {
 
             case 'createNews':
                 if ($_POST) {
-                    $adminController->createNews(); // Appelle la méthode createNews
+                    $adminController->createNews($_POST);
                 }
                 break;
             case 'updateNews':
-                if ($_POST && isset($_POST['id'])) { // Vérifie que l'ID est présent dans POST
-                    $adminController->updateNews($_POST['id']); // Utilise l'ID de POST pour mettre à jour
+                if ($_POST && isset($_POST['id'])) {
+                    $adminController->updateNews($_POST['id'], $_POST);
                 }
                 break;
             case 'deleteNews':
-                    $adminController->deleteNews($_GET['id']);
+                $adminController->deleteNews($_GET['id']);
                 break;
-                
+
             case 'updateOpeningHours':
                 if ($_POST) {
-                    $adminController->updateOpeningHours();
+                    $adminController->updateOpeningHours($_POST);
                 }
                 break;
+                
             case 'index':
             default:
                 $adminController->index();

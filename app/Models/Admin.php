@@ -30,6 +30,16 @@ class Admin {
     public function getPatients() {
         return $this->patientModel->getAll();
     }
+    
+    public function searchPatients($searchTerm) {
+        // Préparer une requête SQL pour rechercher les patients par nom, prénom, email ou téléphone
+        $sql = "SELECT * FROM patients WHERE first_name LIKE :search OR last_name LIKE :search OR email LIKE :search OR phone LIKE :search";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['search' => '%' . $searchTerm . '%']);
+        
+        // Retourner les résultats
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 
     // Crée un patient via le modèle Patient
     public function createPatient($data) {

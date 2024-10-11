@@ -46,56 +46,79 @@ class AdminController {
             die("ID ou statut manquant lors de la mise à jour du rendez-vous.");
         }
     }
-    
-    // Delegate patient actions to PatientController
+
+    // Déléguer les actions des patients au PatientController
     public function createPatient() {
-        $this->patientController->create(true); // Delegate to PatientController
+        $this->patientController->create(true); // Déléguer au PatientController
     }
 
     public function updatePatient() {
-        $this->patientController->update(); // Delegate to PatientController
+        $this->patientController->update(); // Déléguer au PatientController
     }
 
     public function deletePatient() {
         if (isset($_GET['id'])) {
             $patientId = $_GET['id'];
-            $this->patientController->delete($patientId); // Delegate to PatientController
+            $this->patientController->delete($patientId); // Déléguer au PatientController
         }
     }
 
-    // Delegate service actions to ServiceController
+    public function searchPatients() {
+        if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
+            $searchTerm = trim($_GET['search']);
+            
+            // Rechercher les patients
+            $patients = $this->adminModel->searchPatients($searchTerm); // Ajoute cette ligne si la méthode existe dans Admin
+    
+            // Récupérer toutes les autres données nécessaires pour la vue
+            $appointments = $this->adminModel->getAppointments(); // Récupérer les rendez-vous
+            $services = $this->adminModel->getServices(); // Récupérer les services
+            $news = $this->adminModel->getNews(); // Récupérer les actualités
+            $openingHours = $this->homeModel->getOpeningHours(); // Récupérer les horaires d'ouverture
+    
+            // Charger la vue avec les résultats de recherche
+            require '../app/Views/admin.php'; // Inclure la vue admin avec les résultats
+        } else {
+            // Si aucun terme de recherche n'est soumis, retourner à la page admin par défaut
+            header("Location: index.php?page=admin");
+            exit();
+        }
+    }
+    
+
+    // Méthodes pour les actions des services
     public function createService() {
         $serviceController = new ServiceController($this->db);
-        $serviceController->create(); // Delegate to ServiceController
+        $serviceController->create(); // Déléguer au ServiceController
     }
 
     public function updateService($id) {
         $serviceController = new ServiceController($this->db);
-        $serviceController->update($id); // Delegate to ServiceController
+        $serviceController->update($id); // Déléguer au ServiceController
     }
 
     public function deleteService($id) {
         $serviceController = new ServiceController($this->db);
-        $serviceController->delete($id); // Delegate to ServiceController
+        $serviceController->delete($id); // Déléguer au ServiceController
     }
 
-    // Delegate news actions to NewsController
+    // Méthodes pour les actions des actualités
     public function createNews() {
         $newsController = new NewsController($this->db);
-        $newsController->create(); // Delegate to NewsController
+        $newsController->create(); // Déléguer au NewsController
     }
 
     public function updateNews($id) {
         $newsController = new NewsController($this->db);
-        $newsController->update($id); // Delegate to NewsController
+        $newsController->update($id); // Déléguer au NewsController
     }
 
     public function deleteNews($id) {
         $newsController = new NewsController($this->db);
-        $newsController->delete($id); // Delegate to NewsController
+        $newsController->delete($id); // Déléguer au NewsController
     }
 
-    // Method to update opening hours
+    // Méthode pour mettre à jour les horaires d'ouverture
     public function updateOpeningHours() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hours'])) {
             $this->homeModel->updateOpeningHours($_POST);
