@@ -4,89 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Rendez-vous</title>
-    <link rel="stylesheet" href="../assets/style.css">
-    <!-- Ajouter FullCalendar CSS -->
+    <link rel="stylesheet" href="../assets/css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
-    <!-- Inclure votre fichier JavaScript pour le calendrier -->
-    <script src="../assets/js/calendar.js" defer></script> <!-- Fichier JavaScript séparé -->
+    <script src="../assets/js/calendar.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 </head>
 <body>
-    <header>
-        <h1>Liste des Rendez-vous</h1>
-        <nav>
-            <ul>
-                <li><a href="index.php?page=home">Accueil</a></li>
-                <li><a href="index.php?page=patients">Patients</a></li>
-                <li><a href="index.php?page=appointments">Rendez-vous</a></li>
-                <li><a href="index.php?page=services">Services</a></li>
-                <li><a href="index.php?page=news">Actualités</a></li>
-                <?php if (isset($_SESSION['patient'])): ?>
-                    <li><a href="index.php?page=patients&action=logout">Se déconnecter</a></li>
-                <?php endif; ?>
-            </ul>
-        </nav>
-    </header>
+
+    <?php include 'header.php'; ?>
 
     <main>
-
-        <!-- Affichage du calendrier -->
-        <div id="calendar"></div>
-
         <?php if ($patientData): ?>
             <h2>Mes Rendez-vous</h2>
-            <ul>
-                <?php if (!empty($appointments)): ?>
-                    <?php foreach ($appointments as $appointment): ?>
-                        <?php 
-                            // Extraction de la date et de l'heure
-                            $dateTime = new DateTime($appointment['appointment_date']); // Crée un objet DateTime
-                            $date = $dateTime->format('d/m/Y'); // Formate la date
-                            $heure = $dateTime->format('H:i'); // Formate l'heure
-                        ?>
-                        <li>
-                            <strong>Date :</strong> <?= htmlspecialchars($date); ?> - 
-                            <strong>Heure :</strong> <?= htmlspecialchars($heure); ?> - 
-                            <strong>Service :</strong> <?= htmlspecialchars($appointment['service_name'] ?? 'Service non spécifié'); ?>
+            <div class="sections-container">
+                <section class="appointments-section">
+                    <?php if (!empty($appointments)): ?>
+                        <table class="appointments-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Heure</th>
+                                    <th>Service</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($appointments as $appointment): ?>
+                                    <?php 
+                                        $dateTime = new DateTime($appointment['appointment_date']);
+                                        $date = $dateTime->format('d/m/Y');
+                                        $heure = $dateTime->format('H:i');
+                                    ?>
+                                    <tr id="row-<?= $appointment['id']; ?>">
+                                        <td><?= htmlspecialchars($date); ?></td>
+                                        <td><?= htmlspecialchars($heure); ?></td>
+                                        <td><?= htmlspecialchars($appointment['service_name'] ?? 'Service non spécifié'); ?></td>
+                                        <td>
+                                            <button class="button" onclick="showEditForm(<?= $appointment['id']; ?>)">Modifier</button>
+                                            <form action="index.php?page=appointments&action=delete" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+                                                <input type="hidden" name="appointment_id" value="<?= htmlspecialchars($appointment['id']); ?>">
+                                                <button type="submit" class="button delete-button">Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <tr id="edit-row-<?= $appointment['id']; ?>" style="display:none;">
+                                        <td colspan="4">
+                                            <form id="edit-form-<?= $appointment['id']; ?>" action="index.php?page=appointments&action=update" method="post">
+                                                <input type="hidden" name="appointment_id" value="<?= htmlspecialchars($appointment['id']); ?>">
 
-                            <!-- Bouton pour rediriger vers la page appointments -->
-                            <a href="index.php?page=appointments" class="button">Modifier ce rendez-vous</a>
-                        </li>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <li>Aucun rendez-vous trouvé.</li>
-                <?php endif; ?>
-            </ul>
-            
+                                                <input type="date" name="appointment_date" value="<?= htmlspecialchars($dateTime->format('Y-m-d')); ?>" required class="form-input" onchange="updateEditTimeSlots(<?= $appointment['id']; ?>)">
+                                                <input type="time" name="appointment_time" value="<?= htmlspecialchars($dateTime->format('H:i')); ?>" required class="form-input">
+
+                                                <select name="service_id" required class="form-select">
+                                                    <?php foreach ($services as $service): ?>
+                                                        <option value="<?= htmlspecialchars($service['id']); ?>" <?= $service['id'] == $appointment['service_id'] ? 'selected' : ''; ?>>
+                                                            <?= htmlspecialchars($service['name']); ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+
+                                                <button type="submit" class="button">Enregistrer</button>
+                                                <button type="button" class="button" onclick="hideEditForm(<?= $appointment['id']; ?>)">Annuler</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php else: ?>
+                        <p>Aucun rendez-vous trouvé.</p>
+                    <?php endif; ?>
+                </section>
+            </div>
+
             <h2>Ajouter un Rendez-vous</h2>
-            <form action="index.php?page=appointments&action=create" method="post">
-                <input type="hidden" name="patient_id" value="<?php echo htmlspecialchars($patientData['id']); ?>">
-                
-                <label for="appointment_date">Date :</label>
-                <input type="date" name="appointment_date" required>
-
-                <label for="appointment_time">Heure :</label>
-                <input type="time" name="appointment_time" required>
-
-                <label for="service_id">Service :</label>
-                <select name="service_id" required>
-                    <?php foreach ($services as $service): ?>
-                        <option value="<?php echo htmlspecialchars($service['id']); ?>">
-                            <?php echo htmlspecialchars($service['name']); ?>
-                        </option>
-                    <?php endforeach; ?>
+            <form action="index.php?page=appointments&action=create" method="POST" class="form-style">                    
+                <label for="service_id">Service</label>
+                <select name="service_id" id="service_id" required>
+                    <?php if (!empty($services)): ?>
+                        <?php foreach ($services as $service): ?>
+                            <option value="<?php echo htmlspecialchars($service['id']); ?>">
+                                <?php echo htmlspecialchars($service['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <option value="">Aucun service disponible</option>
+                    <?php endif; ?>
                 </select>
 
-                <button type="submit">Ajouter</button>
+                <label for="appointment_date">Date</label>
+                <input type="date" name="appointment_date" id="appointment_date" required onchange="updateTimeSlots()">
+
+                <label for="appointment_time">Heure</label>
+                <select name="appointment_time" id="appointment_time" required>
+                    <!-- Les options seront remplies dynamiquement en fonction de la date sélectionnée -->
+                </select>
+
+                <button type="submit" class="cta-button">Ajouter Rendez-vous</button>
             </form>
 
         <?php else: ?>
-            <p>Connectez-vous pour prendre rendez-vous.</p>
+            <p><a href="index.php?page=patients" class="cta-button">Connectez-vous</a> pour prendre rendez-vous.</p>
         <?php endif; ?>
     </main>
 
     <footer>
         <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
     </footer>
+
+    <footer>
+        <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
+    </footer>
+
+    <script src="../assets/js/appointment.js"></script>
 </body>
 </html>

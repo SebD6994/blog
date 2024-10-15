@@ -4,326 +4,360 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de bord Admin</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Ajouter FullCalendar CSS -->
+    <link rel="stylesheet" href="../assets/css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
-    <!-- Inclure votre fichier JavaScript pour le calendrier -->
-    <script src="../assets/js/calendar.js" defer></script> <!-- Fichier JavaScript séparé -->
+    <script src="../assets/js/calendar.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 </head>
 
-<header>
-        <h1>Bienvenue au Cabinet du Dr. Dupont</h1>
-        <nav>
-            <ul>
-                <li><a href="index.php?page=home">Accueil</a></li>
-                <li><a href="index.php?page=patients">Patients</a></li>
-                <li><a href="index.php?page=appointments">Rendez-vous</a></li>
-                <li><a href="index.php?page=services">Services</a></li>
-                <li><a href="index.php?page=news">Actualités</a></li>
-                <?php if (isset($_SESSION['patient'])): ?>
-                    <li>
-                        <a href="index.php?page=patients&action=logout">Se déconnecter</a>
-                    </li>
-                <?php endif; ?>
-            </ul>
-        </nav>
-    </header>
+<?php include 'header.php'; ?>
 
 <body>
+    <main>
+        <h1>Tableau de bord de l'Admin</h1>
 
-<h1>Tableau de bord de l'Admin</h1>
+        <!-- Section des Rendez-vous -->
+        <h2 class="section-title">Rendez-vous</h2>
+        <section class="sections-container" style="display: none;">
+            <h2>Liste des Rendez-vous pour aujourd'hui</h2>
+
+            <?php 
+            // Récupérer la date d'aujourd'hui
+            $today = date('Y-m-d');
+
+            // Regrouper les rendez-vous pour aujourd'hui
+            $appointmentsToday = array_filter($appointments, function($appointment) use ($today) {
+                $dateTime = new DateTime($appointment['appointment_date']);
+                return $dateTime->format('Y-m-d') === $today;
+            });
+            ?>
+
+            <table class="appointments-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Heure</th>
+                        <th>Service</th>
+                        <th>Patient</th>
+                        <th>Statut</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php 
+                    foreach ($availableSlots as $slot): 
+                        $isBooked = false;
+                        $associatedAppointment = null;
+
+                        // Vérifier si le créneau est réservé
+                        foreach ($appointmentsToday as $appointment): 
+                            $appointmentDateTime = new DateTime($appointment['appointment_date']);
+                            if ($appointmentDateTime->format('H:i') === $slot): 
+                                $isBooked = true; 
+                                $associatedAppointment = $appointment; // Stocker le rendez-vous associé
+                                break; 
+                            endif; 
+                        endforeach; 
+                    ?>
+                        <tr>
+                            <td><?= htmlspecialchars(date('d/m/Y')); ?></td>
+                            <td><?= htmlspecialchars($slot); ?></td>
+                            <?php if ($isBooked): ?>
+                                <td><?= htmlspecialchars($associatedAppointment['service_name'] ?? 'Service non spécifié'); ?></td>
+                                <td>
+                                    <?= !empty($associatedAppointment['patient_name']) ? htmlspecialchars($associatedAppointment['patient_name']) : '-'; ?>
+                                </td>
+                                <td>
+                                    <form action="index.php?page=admin&action=updateAppointment" method="POST" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars($associatedAppointment['id']); ?>">
+                                        <select name="status" required>
+                                            <option value="pending" <?= $associatedAppointment['status'] === 'pending' ? 'selected' : ''; ?>>En attente</option>
+                                            <option value="confirmed" <?= $associatedAppointment['status'] === 'confirmed' ? 'selected' : ''; ?>>Confirmé</option>
+                                            <option value="cancelled" <?= $associatedAppointment['status'] === 'cancelled' ? 'selected' : ''; ?>>Annulé</option>
+                                        </select>
+                                        <button type="submit" class="button">Mettre à jour</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form action="index.php?page=appointments&action=delete" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+                                        <input type="hidden" name="appointment_id" value="<?= htmlspecialchars($associatedAppointment['id']); ?>">
+                                        <button type="submit" class="delete-button">Supprimer</button>
+                                    </form>
+                                </td>
+                            <?php else: ?>
+                                <td>-</td> <!-- Service non réservé -->
+                                <td>-</td> <!-- Patient non associé -->
+                                <td>Disponible</td> <!-- Indication de disponibilité -->
+                                <td>
+                                    <button class="button" onclick="showBookingForm('<?= htmlspecialchars($slot); ?>')">Réserver</button>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            
+            <?php if (empty($appointmentsToday)): ?>
+                <p>Aucun rendez-vous trouvé pour aujourd'hui.</p>
+            <?php endif; ?>
+            
+            <a href="index.php?page=appointments" class="cta-button">Créer un Rendez-vous</a>
+        </section>
 
 
-<!-- Section des Rendez-vous -->
-<h2>Gestion des Rendez-vous</h2>
-
-<!-- Affichage du calendrier -->
-<div id="calendar"></div>
-
-<!-- Formulaire d'ajout de rendez-vous -->
-<form action="add_appointment.php" method="POST">
-    <label for="patient_id">Patient :</label>
-    <select name="patient_id" required>
-        <?php if (!empty($patients)): ?>
-            <?php foreach ($patients as $patient): ?>
-                <option value="<?php echo htmlspecialchars($patient['id']); ?>">
-                    <?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['last_name']); ?>
-                </option>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <option value="">Aucun patient disponible</option>
-        <?php endif; ?>
-    </select>
-
-    <label for="service_id">Service :</label>
-    <select name="service_id" required>
-        <?php if (!empty($services)): ?>
-            <?php foreach ($services as $service): ?>
-                <option value="<?php echo htmlspecialchars($service['id']); ?>">
-                    <?php echo htmlspecialchars($service['name']); ?>
-                </option>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <option value="">Aucun service disponible</option>
-        <?php endif; ?>
-    </select>
-
-    <label for="appointment_date">Date :</label>
-    <input type="date" name="appointment_date" required>
-
-    <label for="appointment_time">Heure :</label>
-    <input type="time" name="appointment_time" required>
-
-    <button type="submit">Ajouter Rendez-vous</button>
-</form>
-
-<h3>Liste des Rendez-vous</h3>
-<table>
-    <thead>
-        <tr>
-            <th>Nom du Patient</th>
-            <th>Service</th>
-            <th>Date de Rendez-vous</th>
-            <th>Statut</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php if (!empty($appointments)): ?>
-            <?php foreach ($appointments as $appointment): ?>
-                <tr>
-                    <td><?php echo htmlspecialchars($appointment['patient_name']); ?></td>
-                    <td><?php echo htmlspecialchars($appointment['service_name']); ?></td>
-                    <td><?php echo htmlspecialchars($appointment['appointment_date']); ?></td>
-                    <td>
-
-                    <form action="index.php?page=admin&action=updateAppointment" method="POST">
-                        <input type="hidden" name="id" value="<?php echo $appointment['id']; ?>">">
-                            <label for="status">Statut :</label>    
-                            <select name="status" required>
-                                <option value="pending" <?php echo $appointment['status'] === 'pending' ? 'selected' : ''; ?>>En attente</option>
-                                <option value="confirmed" <?php echo $appointment['status'] === 'confirmed' ? 'selected' : ''; ?>>Confirmé</option>
-                                <option value="cancelled" <?php echo $appointment['status'] === 'cancelled' ? 'selected' : ''; ?>>Annulé</option>
-                            </select>
-                            <button type="submit">Mettre à jour</button>
-                        </form>
-                    </td>
-                    <td>
-                        <a href="edit_appointment.php?id=<?php echo $appointment['id']; ?>">Modifier</a>
-                        <a href="delete_appointment.php?id=<?php echo $appointment['id']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous ?');">Supprimer</a>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr>
-                <td colspan="7">Aucun rendez-vous trouvé.</td>
-            </tr>
-        <?php endif; ?>
-    </tbody>
-</table>
 
 <!-- Section des Patients -->
-<h2>Gestion des Patients</h2>
+        <section>
+            <h2 class="section-title">Patients</h2>
+            <div class="sections-container" style="display: none;">
+                <h3>Recherche de Patients</h3>
+                <form method="GET" action="index.php" class="form-style">
+                    <input type="hidden" name="page" value="admin">
+                    <input type="hidden" name="action" value="searchPatients">
+                    <input type="text" name="search" placeholder="Rechercher par prénom, nom, email ou téléphone" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                    <button type="submit">Rechercher</button>
+                </form>
 
-<h3>Recherche de Patients</h3>
+                <?php
+                // Afficher la table des patients uniquement si une recherche a été effectuée
+                if (isset($_GET['action']) && $_GET['action'] === 'searchPatients') {
+                    if (isset($patients) && !empty($patients)) {
+                        echo '<h3>Résultats de la recherche :</h3>';
+                        echo '<table>';
+                        echo '<thead>
+                                <tr>
+                                    <th>Prénom</th>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Téléphone</th>
+                                    <th>Rôle</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>';
+                        echo '<tbody>';
+                        
+                        foreach ($patients as $patient) {
+                            echo "<tr>";
+                            echo "<td>" . htmlspecialchars($patient['first_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($patient['last_name']) . "</td>";
+                            echo "<td>" . htmlspecialchars($patient['email']) . "</td>";
+                            echo "<td>" . htmlspecialchars($patient['phone']) . "</td>";
+                            echo "<td>
+                                    <form action='index.php?page=admin&action=updateRole' method='POST'>
+                                        <input type='hidden' name='id' value='" . $patient['id'] . "'>
+                                        <select name='role' onchange='this.form.submit()'>
+                                            <option value='patient'" . ($patient['role'] === 'patient' ? ' selected' : '') . ">Utilisateur</option>
+                                            <option value='admin'" . ($patient['role'] === 'admin' ? ' selected' : '') . ">Administrateur</option>
+                                        </select>
+                                    </form>
+                                </td>";
+                            echo "<td>
+                                    <a href='edit_patient.php?id=" . $patient['id'] . "'>Modifier</a>
+                                    <a href='delete_patient.php?id=" . $patient['id'] . "' onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer ce patient ?\");'>Supprimer</a>
+                                </td>";
+                            echo "</tr>";
+                        }
+                        
+                        echo '</tbody></table>';
+                    } else {
+                        echo "<p>Aucun patient trouvé pour votre recherche.</p>";
+                    }
+                }
+                ?>
 
-<!-- Formulaire de recherche -->
-<form method="GET" action="index.php">
-    <input type="hidden" name="page" value="admin">
-    <input type="hidden" name="action" value="searchPatients">
-    <input type="text" name="search" placeholder="Rechercher par prénom, nom, email ou téléphone" value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-    <button type="submit">Rechercher</button>
-</form>
+                <h3>Création de Patient</h3>
+                <form action="index.php?page=patients&action=create" method="POST" class="form-style">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name">Prénom :</label>
+                            <input type="text" id="first_name" name="first_name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Nom :</label>
+                            <input type="text" id="last_name" name="last_name" required>
+                        </div>
+                    </div>
 
-<?php
-// Afficher la table des patients uniquement si une recherche a été effectuée
-if (isset($_GET['action']) && $_GET['action'] === 'searchPatients') {
-    if (isset($patients) && !empty($patients)) {
-        echo '<h3>Résultats de la recherche :</h3>';
-        echo '<table>';
-        echo '<thead>
-                <tr>
-                    <th>Prénom</th>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Téléphone</th>
-                    <th>Rôle</th>
-                    <th>Actions</th>
-                </tr>
-              </thead>';
-        echo '<tbody>';
-        
-        foreach ($patients as $patient) {
-            echo "<tr>";
-            echo "<td>" . htmlspecialchars($patient['first_name']) . "</td>";
-            echo "<td>" . htmlspecialchars($patient['last_name']) . "</td>";
-            echo "<td>" . htmlspecialchars($patient['email']) . "</td>";
-            echo "<td>" . htmlspecialchars($patient['phone']) . "</td>";
-            echo "<td>
-                    <form action='index.php?page=admin&action=updateRole' method='POST'>
-                        <input type='hidden' name='id' value='" . $patient['id'] . "'>
-                        <select name='role' onchange='this.form.submit()'>
-                            <option value='patient'" . ($patient['role'] === 'patient' ? ' selected' : '') . ">Utilisateur</option>
-                            <option value='admin'" . ($patient['role'] === 'admin' ? ' selected' : '') . ">Administrateur</option>
-                        </select>
-                    </form>
-                  </td>";
-            echo "<td>
-                    <a href='edit_patient.php?id=" . $patient['id'] . "'>Modifier</a>
-                    <a href='delete_patient.php?id=" . $patient['id'] . "' onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer ce patient ?\");'>Supprimer</a>
-                  </td>";
-            echo "</tr>";
-        }
-        
-        echo '</tbody></table>';
-    } else {
-        // Afficher un message si aucun résultat n'est trouvé
-        echo "<p>Aucun patient trouvé pour votre recherche.</p>";
-    }
-}
-?>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Email :</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
 
+                        <div class="form-group">
+                            <label for="phone">Téléphone :</label>
+                            <input type="text" id="phone" name="phone" required>
+                        </div>
+                    </div>
 
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Mot de passe :</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
 
+                        <div class="form-group">
+                            <label for="confirm_password">Confirmer le mot de passe :</label>
+                            <input type="password" id="confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
 
-<h3>Création de Patient</h3>
-<form action="index.php?page=patients&action=create" method="POST">
-    <label for="first_name">Prénom :</label>
-    <input type="text" id="first_name" name="first_name" required>
-        
-    <label for="last_name">Nom :</label>
-    <input type="text" id="last_name" name="last_name" required>
-        
-    <label for="email">Email :</label>
-    <input type="email" id="email" name="email" required>
-        
-    <label for="phone">Téléphone :</label>
-    <input type="text" id="phone" name="phone" required>
-        
-    <label for="password">Mot de passe :</label>
-    <input type="password" id="password" name="password" required>
-        
-    <label for="confirm_password">Confirmer le mot de passe :</label>
-    <input type="password" id="confirm_password" name="confirm_password" required>
-    
-    <!-- Ajout du champ pour sélectionner le rôle -->
-    <label for="role">Rôle :</label>
-    <select id="role" name="role" required>
-        <option value="user">Utilisateur</option>
-        <option value="admin">Administrateur</option>
-        <!-- Vous pouvez ajouter d'autres rôles ici si nécessaire -->
-    </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="role">Rôle :</label>
+                            <select id="role" name="role" required>
+                                <option value="user">Utilisateur</option>
+                                <option value="admin">Administrateur</option>
+                            </select>
+                        </div>
+                    </div>
 
-    <?php if (isset($registrationError)): ?>
-        <p style="color: red;"><?= htmlspecialchars($registrationError); ?></p> <!-- Affichage d'erreur d'inscription -->
-    <?php endif; ?>
-        
-    <button type="submit">Créer un patient</button>
-</form>
+                    <?php if (isset($registrationError)): ?>
+                        <p style="color: red;"><?= htmlspecialchars($registrationError); ?></p>
+                    <?php endif; ?>
+
+                    <button type="submit" class="cta-button">Créer un patient</button>
+                </form>
+            </div>
+        </section>
+
 
 <!-- Section des Services -->
-<h2>Services</h2>
-<table>
-    <tr>
-        <th>Nom</th>
-        <th>Description</th>
-        <th>Actions</th>
-    </tr>
-    <?php foreach ($services as $service): ?>
-    <tr>
-        <form method="POST" action="index.php?page=admin&action=updateService&id=<?= $service['id']; ?>">
-            <td><input type="text" name="name" value="<?= htmlspecialchars($service['name']); ?>" required></td>
-            <td><input type="text" name="description" value="<?= htmlspecialchars($service['description']); ?>" required></td>
-            <td>
-                <button type="submit">Mettre à jour</button>
-                <a href="?page=admin&action=deleteService&id=<?= $service['id']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce service ?');">Supprimer</a>
-            </td>
-        </form>
-    </tr>
-    <?php endforeach; ?>
-</table>
+<section>
+    <h2 class="section-title">Services</h2>
+    <div class="sections-container" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom du Service</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+    <?php if (!empty($services)): ?>
+        <?php foreach ($services as $service): ?>
+            <tr id="row-<?= $service['id']; ?>">
+                <td><h3><?php echo htmlspecialchars($service['name']); ?></h3></td>
+                <td><?php echo htmlspecialchars($service['description']); ?></td>
+                <td>
+                    <button class="button update-button" data-service-id="<?= $service['id']; ?>">Modifier</button>
+                    <form action="index.php?page=services&action=delete" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+                        <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
+                        <button type="submit" class="delete-button">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            <!-- Ligne pour le formulaire de modification, cachée par défaut -->
+            <tr id="edit-form-<?= $service['id']; ?>" style="display:none;">
+                <td colspan="3">
+                    <form action="index.php?page=services&action=update" method="post">
+                        <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
+                        
+                        <label for="edit_service_name_<?= $service['id']; ?>">Nom du Service :</label>
+                        <input type="text" id="edit_service_name_<?= $service['id']; ?>" name="name" value="<?php echo htmlspecialchars($service['name']); ?>" required>
 
-
-<!-- Formulaire pour ajouter un nouveau service -->
-<h3>Ajouter un nouveau service</h3>
-<form action="?page=admin&action=createService" method="POST">
-    <input type="text" name="name" placeholder="Nom du service" required>
-    <input type="text" name="description" placeholder="Description du service" required>
-    <button type="submit">Ajouter Service</button>
-</form>
-
-<!-- Section des Actualités -->
-<h2>Actualités</h2>
-
-<table>
-    <tr>
-        <th>Titre</th>
-        <th>Contenu</th>
-        <th>Actions</th>
-    </tr>
-    <?php foreach ($news as $new): ?>
-    <tr>
-        <form method="POST" action="?page=admin&action=updateNews">
-            <td><input type="text" name="title" value="<?= htmlspecialchars($new['title']); ?>" required></td>
-            <td><textarea name="content" required><?= htmlspecialchars($new['content']); ?></textarea></td>
-            <input type="hidden" name="id" value="<?= $new['id']; ?>"> <!-- Hidden input for the news ID -->
-            <td>
-                <button type="submit">Mettre à jour</button>
-                <a href="?page=admin&action=deleteNews&id=<?= $new['id']; ?>" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?');">Supprimer</a>
-            </td>
-        </form>
-    </tr>
-    <?php endforeach; ?>
-</table>
-
-<!-- Formulaire pour ajouter une nouvelle actualité -->
-<form action="?page=admin&action=createNews" method="POST"> <!-- Adjusted action to point to the correct addNews method -->
-    <input type="text" name="title" placeholder="Titre" required>
-    <textarea name="content" placeholder="Contenu" required></textarea>
-    <button type="submit">Ajouter Actualité</button>
-</form>
-
-
-<!-- Formulaire pour modifier les horaires d'ouverture -->
-<h3>Modifier les Horaires d'Ouverture</h3>
-<form action="index.php?page=admin&action=updateOpeningHours" method="POST">
-    <table>
-        <tr>
-            <th>Jour</th>
-            <th>Heure d'Ouverture</th>
-            <th>Heure de Fermeture</th>
-        </tr>
-        <?php 
-        $daysOfWeek = [
-            1 => 'Lundi',
-            2 => 'Mardi',
-            3 => 'Mercredi',
-            4 => 'Jeudi',
-            5 => 'Vendredi',
-            6 => 'Samedi',
-            0 => 'Dimanche'
-        ];
-
-        // Ordre des jours
-        $orderedDays = [1, 2, 3, 4, 5, 6, 0]; 
-
-        // Affichage des horaires
-        foreach ($orderedDays as $day): 
-            $hour = isset($openingHours[$day]) ? $openingHours[$day] : ['start_time' => '', 'end_time' => ''];
-        ?>
-        <tr>
-            <td><?php echo htmlspecialchars($daysOfWeek[$day]); ?></td>
-            <td><input type="time" name="hours[<?php echo $day; ?>][start_time]" value="<?php echo htmlspecialchars($hour['start_time']); ?>"></td>
-            <td><input type="time" name="hours[<?php echo $day; ?>][end_time]" value="<?php echo htmlspecialchars($hour['end_time']); ?>"></td>
-        </tr>
+                        <label for="edit_service_description_<?= $service['id']; ?>">Description :</label>
+                        <textarea id="edit_service_description_<?= $service['id']; ?>" name="description" required><?php echo htmlspecialchars($service['description']); ?></textarea>
+                        
+                        <button type="submit" class="cta-button">Enregistrer les Modifications</button>
+                        <button type="button" class="button" onclick="hideEditForm(<?= $service['id']; ?>)">Annuler</button>
+                    </form>
+                </td>
+            </tr>
         <?php endforeach; ?>
-    </table>
-    <button type="submit">Mettre à jour les Horaires</button>
-</form>
+    <?php else: ?>
+        <tr>
+            <td colspan="3">Aucun service trouvé.</td>
+        </tr>
+    <?php endif; ?>
+</tbody>
+        </table>
 
-<footer>
-        <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
-    </footer>
+        <h3>Ajouter un Service</h3>
+        <form action="index.php?page=services&action=create" method="POST" class="form-style">
+            <label for="service_name">Nom du Service :</label>
+            <input type="text" id="service_name" name="name" required>
+
+            <label for="service_description">Description :</label>
+            <textarea id="service_description" name="description" required></textarea>
+            <br>
+            <button type="submit" class="cta-button">Ajouter le Service</button>
+        </form>
+    </div>
+</section>
+
+
+
+
+<!-- Section des News -->
+ <section>
+        <div class="section">
+            <h2 class="section-title">Actualités</h2>
+            <div class="sections-container" style="display: none;">
+                <table>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Contenu</th>
+                        <th>Actions</th>
+                    </tr>
+                    <?php foreach ($news as $new): ?>
+                    <tr>
+                        <form method="POST" action="?page=admin&action=updateNews">
+                            <td><input type="text" name="title" value="<?= htmlspecialchars($new['title']); ?>" required></td>
+                            <td><textarea name="content" required><?= htmlspecialchars($new['content']); ?></textarea></td>
+                            <input type="hidden" name="id" value="<?= $new['id']; ?>">
+                            <td>
+                                <button type="submit" class="button">Mettre à jour</button>
+                                <form action="?page=admin&action=deleteNews&id=<?= $new['id']; ?>" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?');">
+                                    <button type="submit" class="delete-button">Supprimer</button>
+                                </form>
+                            </td>
+                        </form>
+                    </tr>
+                    <?php endforeach; ?>
+                </table>
+                <form action="?page=admin&action=createNews" method="POST">
+                    <input type="text" name="title" placeholder="Titre" required>
+                    <textarea name="content" placeholder="Contenu" required></textarea>
+                    <button type="submit" class="cta-button">Ajouter Actualité</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Horaires d'Ouverture</h2>
+            <div class="sections-container" style="display: none;">
+                <form action="index.php?page=admin&action=updateOpeningHours" method="POST">
+                    <table>
+                        <tr>
+                            <th class="column-day">Jour</th>
+                            <th class="column-open">Heure d'Ouverture</th>
+                            <th class="column-close">Heure de Fermeture</th>
+                        </tr>
+                        <?php 
+                        $daysOfWeek = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 0 => 'Dimanche'];
+                        $orderedDays = [1, 2, 3, 4, 5, 6, 0];
+                        foreach ($orderedDays as $day): 
+                            $hour = isset($openingHours[$day]) ? $openingHours[$day] : ['start_time' => '', 'end_time' => ''];
+                        ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($daysOfWeek[$day]); ?></td>
+                            <td><input type="time" name="hours[<?php echo $day; ?>][start_time]" value="<?php echo htmlspecialchars($hour['start_time']); ?>"></td>
+                            <td><input type="time" name="hours[<?php echo $day; ?>][end_time]" value="<?php echo htmlspecialchars($hour['end_time']); ?>"></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                    <button type="submit" class="cta-button">Mettre à jour les Horaires</button>
+                </form>
+            </div>
+        </div>
+</section>
+    </main>
+    
+    <?php include 'footer.php'; ?>
+
+    <script src="../assets/js/admin.js"></script>
 </body>
 </html>

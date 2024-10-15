@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             right: 'dayGridWeek,timeGridDay'
         },
-        contentHeight: '400px',
+        contentHeight: '350px',
         firstDay: 1,
         locale: 'fr',
         

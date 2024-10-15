@@ -147,6 +147,11 @@ class PatientController {
             exit();
         }
 
+        if (isset($_POST['change_password'])) {
+            $this->changePassword();
+            return;
+        }
+
         $id = $_SESSION['patient']['id']; // ID du patient à partir de la session
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -182,6 +187,52 @@ class PatientController {
                 $errorMessage = $e->getMessage();
                 error_log("Erreur lors de la mise à jour: " . $errorMessage);
                 $this->index($errorMessage); // Afficher la vue avec le message d'erreur
+            }
+        }
+    }
+
+    // Changer le mot de passe du patient
+    public function changePassword() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Vérifier si l'utilisateur est connecté
+            if (!isset($_SESSION['patient']['id'])) {
+                header("Location: index.php?page=patients");
+                exit();
+            }
+
+            $patientId = $_SESSION['patient']['id'];
+            $oldPassword = $_POST['old_password'];
+            $newPassword = $_POST['new_password'];
+            $confirmPassword = $_POST['confirm_password'];
+
+            // Récupérer les données du patient
+            $patient = $this->patientModel->getById($patientId);
+
+            // Vérifier si l'ancien mot de passe est correct
+            if (!$patient || !password_verify($oldPassword, $patient['password'])) {
+                $errorMessage = "L'ancien mot de passe est incorrect.";
+                $this->index($errorMessage);
+                return;
+            }
+
+            // Vérifier si le nouveau mot de passe et la confirmation correspondent
+            if ($newPassword !== $confirmPassword) {
+                $errorMessage = "Les nouveaux mots de passe ne correspondent pas.";
+                $this->index($errorMessage);
+                return;
+            }
+
+            // Mettre à jour le mot de passe dans la base de données
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $success = $this->patientModel->updatePassword($patientId, $hashedPassword);
+
+            if ($success) {
+                $_SESSION['message'] = "Mot de passe mis à jour avec succès.";
+                header("Location: index.php?page=patients");
+                exit();
+            } else {
+                $errorMessage = "Erreur lors de la mise à jour du mot de passe.";
+                $this->index($errorMessage);
             }
         }
     }

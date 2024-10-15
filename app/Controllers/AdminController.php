@@ -3,6 +3,7 @@
 require_once '../app/Models/Admin.php';
 require_once '../app/Models/Home.php';
 require_once '../app/Models/Service.php';
+require_once '../app/Models/Appointment.php';
 require_once '../app/Controllers/ServiceController.php';
 require_once '../app/Controllers/NewsController.php';
 require_once '../app/Controllers/PatientController.php';
@@ -11,6 +12,7 @@ class AdminController {
     private $db;
     private $adminModel;
     private $homeModel;
+    private $appointmentModel;
     private $patientController;
 
     public function __construct($db) {
@@ -18,6 +20,7 @@ class AdminController {
         $this->adminModel = new Admin($db);
         $this->homeModel = new Home($db);
         $this->patientController = new PatientController($db);
+        $this->appointmentModel = new Appointment($db);
     }
 
     public function index() {
@@ -28,12 +31,15 @@ class AdminController {
         $news = $this->adminModel->getNews();
         $openingHours = $this->homeModel->getOpeningHours();
 
+        $today = date('Y-m-d');
+        $availableSlots = $this->appointmentModel->getAvailableTimeSlots($today);
+
         // Afficher la vue admin_dashboard
         require '../app/Views/admin.php';
     }
 
     // Méthodes pour gérer les actions de l'admin (ajout, suppression, mise à jour)
-    public function updateAppointment($id, $status, $description) {
+    public function updateStatus($id, $status) {
         if ($id && $status) {
             $stmt = $this->db->prepare("UPDATE appointments SET status = :status WHERE id = :id");
             $stmt->bindParam(':status', $status);
@@ -47,6 +53,29 @@ class AdminController {
         }
     }
 
+    public function updateAppointment() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Vérifiez si les données sont présentes dans $_POST
+            if (isset($_POST['id']) && isset($_POST['status'])) {
+                $appointmentId = $_POST['id']; // ID du rendez-vous
+                $status = $_POST['status']; // Statut du rendez-vous
+    
+                // Déléguer l'appel à la méthode update du AppointmentController
+                $appointmentController = new AppointmentController($this->db);
+                $appointmentController->update(); // Appelle la méthode update dans AppointmentController
+    
+                // Redirigez vers la page admin ou appointments
+                header('Location: index.php?page=admin'); 
+                exit();
+            } else {
+                die("ID ou statut manquant lors de la mise à jour du rendez-vous.");
+            }
+        } else {
+            die("Aucune donnée soumise pour la mise à jour du rendez-vous.");
+        }
+    }    
+
+    
     // Déléguer les actions des patients au PatientController
     public function createPatient() {
         $this->patientController->create(true); // Déléguer au PatientController

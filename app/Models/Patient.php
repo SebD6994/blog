@@ -91,6 +91,11 @@ class Patient {
                 return false; // L'email est déjà utilisé par un autre patient
             }
 
+            if (isset($_POST['change_password'])) {
+                $this->changePassword();
+                return;
+            }
+
             $query = "UPDATE patients SET first_name = :first_name, last_name = :last_name, email = :email, phone = :phone WHERE id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':first_name', $data['first_name']);
@@ -118,6 +123,24 @@ class Patient {
         }
 
         return false; // Échec de l'authentification
+    }
+
+    // Mettre à jour le mot de passe du patient
+    public function updatePassword($id, $newPassword) {
+        try {
+            $query = "UPDATE patients SET password = :password WHERE id = :id";
+            $stmt = $this->conn->prepare($query);
+            
+            // Hacher le nouveau mot de passe avant de l'insérer
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $stmt->bindParam(':password', $hashedPassword);
+            $stmt->bindParam(':id', $id);
+
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            error_log("Erreur lors de la mise à jour du mot de passe : " . $e->getMessage());
+            return false;
+        }
     }
 
     // Vérifier si le patient est un admin

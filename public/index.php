@@ -19,12 +19,14 @@ if (!$db) {
 }
 
 // Initialisation des contrôleurs
-$homeController = new HomeController($db);
-$patientController = new PatientController($db);
-$appointmentController = new AppointmentController($db);
-$serviceController = new ServiceController($db);
-$newsController = new NewsController($db);
-$adminController = new AdminController($db);
+$controllers = [
+    'home' => new HomeController($db),
+    'patients' => new PatientController($db),
+    'appointments' => new AppointmentController($db),
+    'services' => new ServiceController($db),
+    'news' => new NewsController($db),
+    'admin' => new AdminController($db)
+];
 
 // Vérification de la page et action demandée
 $page = isset($_GET['page']) ? $_GET['page'] : 'home';
@@ -35,23 +37,26 @@ switch ($page) {
     case 'patients':
         switch ($action) {
             case 'login':
-                $patientController->login();
+                $controllers['patients']->login();
                 break;
             case 'logout':
-                $patientController->logout();
+                $controllers['patients']->logout();
                 break;
             case 'create':
-                $patientController->create();
+                $controllers['patients']->create();
                 break;
             case 'update':
-                $patientController->update();
+                $controllers['patients']->update();
+                break;
+            case 'changePassword':
+                $controllers['patients']->changePassword();
                 break;
             case 'delete':
-                $patientController->delete($_GET['id']);
+                $controllers['patients']->delete($_GET['id']);
                 break;
             case 'index':
             default:
-                $patientController->index();
+                $controllers['patients']->index();
                 break;
         }
         break;
@@ -59,24 +64,41 @@ switch ($page) {
     case 'appointments':
         switch ($action) {
             case 'view':
-                $appointmentController->view($_GET['id']);
+                $controllers['appointments']->view($_GET['id']);
                 break;
             case 'create':
                 if ($_POST) {
-                    $appointmentController->create($_POST);
+                    $controllers['appointments']->create($_POST);
                 }
                 break;
             case 'update':
                 if ($_POST) {
-                    $appointmentController->update($_POST['id'], $_POST);
+                    $controllers['appointments']->update($_POST['appointment_id'], $_POST);
                 }
                 break;
             case 'delete':
-                $appointmentController->delete($_GET['id']);
+                if (isset($_POST['appointment_id'])) {
+                    $controllers['appointments']->delete($_POST['appointment_id']);
+                }
+                break;
+            case 'slots':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    // Handle slot creation
+                    $controllers['appointments']->createSlot($_POST);
+                } else {
+                    // Handle viewing slots
+                    $controllers['appointments']->viewSlots();
+                }
+                break;
+            case 'getTimeSlots':
+                if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+                    // Handle fetching available time slots
+                    $controllers['appointments']->getTimeSlots();
+                }
                 break;
             case 'index':
             default:
-                $appointmentController->index();
+                $controllers['appointments']->index();
                 break;
         }
         break;
@@ -84,24 +106,24 @@ switch ($page) {
     case 'services':
         switch ($action) {
             case 'view':
-                $serviceController->view($_GET['id']);
+                $controllers['services']->view($_GET['id']);
                 break;
             case 'create':
                 if ($_POST) {
-                    $serviceController->create($_POST);
+                    $controllers['services']->create($_POST);
                 }
                 break;
             case 'update':
                 if ($_POST) {
-                    $serviceController->update($_POST['id'], $_POST);
+                    $controllers['services']->update($_POST['id'], $_POST);
                 }
                 break;
             case 'delete':
-                $serviceController->delete($_GET['id']);
+                $controllers['services']->delete($_GET['id']);
                 break;
             case 'index':
             default:
-                $serviceController->index();
+                $controllers['services']->index();
                 break;
         }
         break;
@@ -109,24 +131,24 @@ switch ($page) {
     case 'news':
         switch ($action) {
             case 'view':
-                $newsController->view($_GET['id']);
+                $controllers['news']->view($_GET['id']);
                 break;
             case 'create':
                 if ($_POST) {
-                    $newsController->create($_POST);
+                    $controllers['news']->create($_POST);
                 }
                 break;
             case 'update':
                 if ($_POST && isset($_POST['id'])) {
-                    $newsController->update($_POST['id'], $_POST);
+                    $controllers['news']->update($_POST['id'], $_POST);
                 }
                 break;
             case 'delete':
-                $newsController->delete($_GET['id']);
+                $controllers['news']->delete($_GET['id']);
                 break;
             case 'index':
             default:
-                $newsController->index();
+                $controllers['news']->index();
                 break;
         }
         break;
@@ -135,75 +157,75 @@ switch ($page) {
         switch ($action) {
             case 'updateAppointment':
                 if ($_POST) {
-                    $adminController->updateAppointment($_POST['id'], $_POST['status']);
+                    $controllers['admin']->updateStatus($_POST['id'], $_POST['status']);
                 }
                 break;
             case 'deleteAppointment':
-                $adminController->deleteAppointment($_GET['id']);
+                $controllers['admin']->deleteAppointment($_GET['id']);
                 break;
 
             case 'createPatient':
                 if ($_POST) {
-                    $adminController->addPatient($_POST);
+                    $controllers['admin']->addPatient($_POST);
                 }
                 break;
             case 'updatePatient':
                 if ($_POST) {
-                    $adminController->updatePatient($_POST['id'], $_POST);
+                    $controllers['admin']->updatePatient($_POST['id'], $_POST);
                 }
                 break;
             case 'deletePatient':
-                $adminController->deletePatient($_GET['id']);
+                $controllers['admin']->deletePatient($_GET['id']);
                 break;
             case 'searchPatients':
                 if ($_GET && isset($_GET['search'])) {
-                    $adminController->searchPatients($_GET['search']);
+                    $controllers['admin']->searchPatients($_GET['search']);
                 }
                 break;
 
             case 'createService':
                 if ($_POST) {
-                    $adminController->createService($_POST);
+                    $controllers['admin']->createService($_POST);
                 }
                 break;
             case 'updateService':
                 if ($_POST && isset($_POST['id'])) {
-                    $adminController->updateService($_POST['id'], $_POST);
+                    $controllers['admin']->updateService($_POST['id'], $_POST);
                 }
                 break;
             case 'deleteService':
-                $adminController->deleteService($_GET['id']);
+                $controllers['admin']->deleteService($_GET['id']);
                 break;
 
             case 'createNews':
                 if ($_POST) {
-                    $adminController->createNews($_POST);
+                    $controllers['admin']->createNews($_POST);
                 }
                 break;
             case 'updateNews':
                 if ($_POST && isset($_POST['id'])) {
-                    $adminController->updateNews($_POST['id'], $_POST);
+                    $controllers['admin']->updateNews($_POST['id'], $_POST);
                 }
                 break;
             case 'deleteNews':
-                $adminController->deleteNews($_GET['id']);
+                $controllers['admin']->deleteNews($_GET['id']);
                 break;
 
             case 'updateOpeningHours':
                 if ($_POST) {
-                    $adminController->updateOpeningHours($_POST);
+                    $controllers['admin']->updateOpeningHours($_POST);
                 }
                 break;
                 
             case 'index':
             default:
-                $adminController->index();
+                $controllers['admin']->index();
                 break;
         }
         break;
 
     case 'home':
     default:
-        $homeController->index();
+        $controllers['home']->index();
         break;
 }
