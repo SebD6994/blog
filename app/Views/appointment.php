@@ -14,6 +14,12 @@
     <?php include 'header.php'; ?>
 
     <main>
+
+    <?php if (isset($errorMessage)): ?>
+        <div class="alert alert-danger"><?= htmlspecialchars($errorMessage) ?></div>
+    <?php elseif (isset($successMessage)): ?>
+        <div class="alert alert-success"><?= htmlspecialchars($successMessage) ?></div>
+    <?php endif; ?>
         <?php if ($patientData): ?>
             <h2>Mes Rendez-vous</h2>
             <div class="sections-container">
@@ -78,6 +84,17 @@
             </div>
 
             <h2>Ajouter un Rendez-vous</h2>
+
+            <!-- Message d'erreur -->
+            <?php if (isset($_SESSION['error_message'])): ?>
+                <div class="error">
+                    <?php 
+                        echo $_SESSION['error_message']; 
+                        unset($_SESSION['error_message']); // Supprimer le message après l'affichage
+                    ?>
+                </div>
+            <?php endif; ?>
+
             <form action="index.php?page=appointments&action=create" method="POST" class="form-style">                    
                 <label for="service_id">Service</label>
                 <select name="service_id" id="service_id" required>
@@ -93,10 +110,15 @@
                 </select>
 
                 <label for="appointment_date">Date</label>
-                <input type="date" name="appointment_date" id="appointment_date" required onchange="updateTimeSlots()">
+                <?php 
+                    // Obtenir la date d'aujourd'hui au format 'Y-m-d'
+                    $today = date('Y-m-d');
+                ?>
+                <input type="date" name="appointment_date" id="appointment_date" required onchange="updateTimeSlots()" min="<?= $today; ?>">
 
                 <label for="appointment_time">Heure</label>
                 <select name="appointment_time" id="appointment_time" required>
+                    <option value="" disabled selected>Sélectionner une heure</option>
                     <!-- Les options seront remplies dynamiquement en fonction de la date sélectionnée -->
                 </select>
 
@@ -107,10 +129,6 @@
             <p><a href="index.php?page=patients" class="cta-button">Connectez-vous</a> pour prendre rendez-vous.</p>
         <?php endif; ?>
     </main>
-
-    <footer>
-        <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
-    </footer>
 
     <footer>
         <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>

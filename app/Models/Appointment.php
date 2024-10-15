@@ -26,24 +26,33 @@ class Appointment {
         ";
 
         $stmt = $this->conn->query($query);
-        if ($stmt) {
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } else {
-            return []; // Gestion des erreurs
-        }
+        return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []; // Gestion des erreurs
     }
 
     // Créer un nouveau rendez-vous
     public function create($data) {
+        $appointmentDateTime = new DateTime($data['appointment_date'] . ' ' . $data['appointment_time']);
+        $now = new DateTime();
+    
+        // Vérifier si la date du rendez-vous est dans le futur
+        if ($appointmentDateTime <= $now) {
+            throw new Exception("La date et l'heure du rendez-vous doivent être dans le futur.");
+        }
+
         $query = "
             INSERT INTO appointments (patient_id, appointment_date, service_id) 
             VALUES (:patient_id, :appointment_date, :service_id)
         ";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':patient_id', $data['patient_id']);
-        $stmt->bindParam(':appointment_date', $data['appointment_date']);
+        $stmt->bindParam(':appointment_date', $appointmentDateTime->format('Y-m-d H:i:s'));
         $stmt->bindParam(':service_id', $data['service_id']);
-        return $stmt->execute();
+        
+        // Exécution de la requête
+        if (!$stmt->execute()) {
+            throw new Exception("Erreur lors de la création du rendez-vous.");
+        }
+        return true; // Confirmation de la création
     }
 
     // Mettre à jour un rendez-vous

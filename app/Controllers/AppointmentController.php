@@ -51,8 +51,16 @@ class AppointmentController {
     
             // Rassembler les données du formulaire
             $appointmentDateTime = $_POST['appointment_date'] . ' ' . $_POST['appointment_time'];
+            
+            // Vérifier si la date et l'heure du rendez-vous sont dans le futur
+            $appointmentDate = new DateTime($appointmentDateTime);
+            $now = new DateTime();
+            
+            if ($appointmentDate <= $now) {
+                echo "La date et l'heure du rendez-vous doivent être dans le futur.";
+                return; // Sortie pour empêcher la création
+            }
     
-
             // Créer le rendez-vous dans la base de données
             $this->appointmentModel->create([
                 'appointment_date' => $appointmentDateTime,
@@ -76,6 +84,7 @@ class AppointmentController {
         // Charger la vue des rendez-vous et passer les données
         require '../app/Views/Appointment.php'; // Passer les données à la vue
     }
+    
 
     public function update() {
         // Vérifier si le patient est connecté
