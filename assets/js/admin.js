@@ -19,35 +19,55 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    window.showEditForm = function(appointmentId) {
+    // Fonction pour afficher le formulaire de création
+    function toggleCreateForm() {
+        const createForm = document.getElementById('create-service-form'); // Formulaire de création
+        const toggleButton = document.getElementById('toggle-create-form'); // Bouton pour afficher/masquer le formulaire
+        
+        if (createForm.style.display === 'none' || createForm.style.display === '') {
+            createForm.style.display = 'block'; // Afficher le formulaire
+            toggleButton.textContent = 'Annuler'; // Changer le texte du bouton
+        } else {
+            createForm.style.display = 'none'; // Masquer le formulaire
+            toggleButton.textContent = 'Ajouter un Service'; // Rétablir le texte du bouton
+        }
+    }
+
+    // Écoutez le clic sur le bouton d'ajout de service
+    const toggleButton = document.getElementById('toggle-create-form');
+    if (toggleButton) {
+        toggleButton.addEventListener('click', toggleCreateForm);
+    }
+
+    window.showEditForm = function(serviceId) {
         // Cacher tous les formulaires de modification ouverts
-        var forms = document.querySelectorAll('tr[id^="edit-row-"]');
+        var forms = document.querySelectorAll('tr[id^="edit-form-"]');
         forms.forEach(function(row) {
             row.style.display = 'none';
         });
 
-        // Afficher le formulaire de modification pour l'ID de rendez-vous sélectionné
-        var editRow = document.getElementById('edit-row-' + appointmentId);
+        // Afficher le formulaire de modification pour l'ID de service sélectionné
+        var editRow = document.getElementById('edit-form-' + serviceId);
         if (editRow) {
             editRow.style.display = 'table-row';
-            console.log(`Showing edit form for appointment ID: ${appointmentId}`);
+            console.log(`Showing edit form for service ID: ${serviceId}`);
         } else {
-            console.error(`Edit form not found for appointment ID: ${appointmentId}`);
+            console.error(`Edit form not found for service ID: ${serviceId}`);
         }
     }
 
-    window.hideEditForm = function(appointmentId) {
-        // Masquer le formulaire de modification pour l'ID de rendez-vous sélectionné
-        var editRow = document.getElementById('edit-row-' + appointmentId);
+    window.hideEditForm = function(serviceId) {
+        // Masquer le formulaire de modification pour l'ID de service sélectionné
+        var editRow = document.getElementById('edit-form-' + serviceId);
         if (editRow) {
             editRow.style.display = 'none';
-            console.log(`Hiding edit form for appointment ID: ${appointmentId}`);
+            console.log(`Hiding edit form for service ID: ${serviceId}`);
         } else {
-            console.error(`Edit form not found for appointment ID: ${appointmentId}`);
+            console.error(`Edit form not found for service ID: ${serviceId}`);
         }
     }
 
     window.confirmDelete = function() {
-        return confirm("Êtes-vous sûr de vouloir supprimer ce rendez-vous ? Cette action est irréversible.");
+        return confirm("Êtes-vous sûr de vouloir supprimer ce service ? Cette action est irréversible.");
     }
 });

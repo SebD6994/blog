@@ -88,28 +88,48 @@ class ServiceController {
         require '../app/Views/admin.php'; // Charger la vue admin
     }
 
-    public function delete($id) {
-        // Récupérer le service avant de le supprimer pour avoir accès à son image
-        $service = $this->serviceModel->find($id);
-
-        if ($service) {
-            // Supprimer l'image associée si elle existe
-            if (!empty($service['image']) && file_exists($service['image'])) {
-                unlink($service['image']); // Supprimer le fichier image du serveur
+    public function delete() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST['id'])) {
+                $id = $_POST['id']; // Get the service ID from the POST data
+                
+                try {
+                    // Attempt to delete the service using the model
+                    $this->serviceModel->delete($id);
+    
+                    // Set a success message
+                    $_SESSION['message'] = "Service supprimé avec succès.";
+                } catch (InvalidArgumentException $e) {
+                    // Handle the case where the service does not exist
+                    $_SESSION['error'] = $e->getMessage();
+                } catch (RuntimeException $e) {
+                    // Handle any runtime exceptions that occur
+                    $_SESSION['error'] = $e->getMessage();
+                } catch (PDOException $e) {
+                    // Handle any database-related exceptions
+                    $_SESSION['error'] = "Database error: " . $e->getMessage();
+                } catch (Exception $e) {
+                    // Handle any other exceptions that may occur
+                    $_SESSION['error'] = "Erreur: " . $e->getMessage();
+                }
+    
+                // Redirect back to the admin page after handling the delete operation
+                header('Location: index.php?page=admin');
+                exit();
+            } else {
+                // Handle the case where no ID is provided
+                $_SESSION['error'] = "ID du service requis.";
+                header('Location: index.php?page=admin');
+                exit();
             }
-
-            // Supprimer le service de la base de données
-            $this->serviceModel->delete($id);
-
-            $_SESSION['message'] = "Service supprimé avec succès.";
         } else {
-            $_SESSION['error'] = "Service introuvable.";
+            // If not a POST request, show an error
+            $_SESSION['error'] = "La suppression doit être effectuée par une requête POST.";
+            header('Location: index.php?page=admin');
+            exit();
         }
-
-        // Redirection vers la page d'administration
-        header('Location: index.php?page=admin');
-        exit();
     }
+    
 
     // Fonction privée pour gérer l'upload et la validation de l'image
     private function handleImageUpload($imageFile) {

@@ -269,6 +269,53 @@ th {
     color: var(--white);
 }
 
+/* === Styles pour la section des services dans l'admin === */
+.edit-form {
+    margin-top: 20px; /* Espace au-dessus du formulaire */
+    padding: 20px; /* Padding interne pour le formulaire */
+    border: 1px solid #ccc; /* Bordure pour le formulaire */
+    border-radius: 8px; /* Coins arrondis */
+    background-color: #f9f9f9; /* Fond légèrement grisé */
+}
+
+.edit-form input[type="text"],
+.edit-form textarea,
+.edit-form input[type="file"] {
+    width: 100%; /* Largeur complète pour les champs */
+    max-width: 100%; /* Empêche le débordement à droite */
+    padding: 10px; /* Padding interne pour les champs */
+    margin-bottom: 15px; /* Espace entre les champs */
+    border: 1px solid #ccc; /* Bordure des champs */
+    border-radius: 4px; /* Coins arrondis */
+    font-size: 16px; /* Taille de police pour le texte */
+    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur totale */
+}
+
+.edit-form textarea {
+    height: 150px; /* Hauteur personnalisée pour le champ de description */
+    resize: vertical; /* Permet de redimensionner verticalement le champ */
+}
+
+.edit-form img {
+    margin-top: 10px; /* Espace au-dessus de l'image actuelle */
+    max-width: 30%; /* Largeur maximale de l'image (80% du conteneur) */
+    height: auto; /* Conserve le ratio d'aspect de l'image */
+    display: block; /* Supprime l'espace indésirable autour de l'image */
+    margin-left: auto; /* Centre l'image horizontalement */
+    margin-right: auto; /* Centre l'image horizontalement */
+}
+
+.edit-form .button-container {
+    display: flex; /* Utilise Flexbox pour le centrage */
+    justify-content: center; /* Centre les éléments horizontalement */
+    margin-top: 20px; /* Espace au-dessus du conteneur de boutons */
+}
+
+.edit-form button {
+    margin: 0 5px; /* Espace horizontal entre les boutons */
+}
+
+
 /* === Styles pour la section des services === */
 
 .service-item {
@@ -294,11 +341,11 @@ th {
 }
 
 /* Styles pour l'élément impair (à droite) */
-.odd {
+.service-odd {
     flex-direction: row-reverse; /* Inverse l'ordre des éléments pour les services impairs */
 }
 
-.odd .service-image {
+.service-odd .service-image {
     margin-left: 20px; /* Ajoute un espace à gauche pour les images à droite */
     margin-right: 0; /* Enlève l'espace à droite pour les images à droite */
 }

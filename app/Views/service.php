@@ -17,12 +17,12 @@ if (session_status() === PHP_SESSION_NONE) {
     <?php include 'header.php'; ?>
 
     <main>
-    <h2>Services Proposés par le Dr. Dupont</h2>
+        <h2>Services Proposés par le Dr. Dupont</h2>
 
         <p>Le Dr. Dupont offre une large gamme de services dentaires pour répondre à vos besoins.</p>
         <ul>
             <?php foreach ($services as $index => $service): ?>
-                <li class="service-item <?php echo $index % 2 === 0 ? 'even' : 'odd'; ?>">
+                <li class="service-item <?php echo $index % 2 === 0 ? 'service-even' : 'service-odd'; ?>">
                     <!-- Conteneur pour l'image -->
                     <?php if (!empty($service['image'])): ?>
                         <div class="service-image">

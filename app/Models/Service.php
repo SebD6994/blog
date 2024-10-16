@@ -37,7 +37,21 @@ class Service {
     }
 
     public function delete($id) {
+        $service = $this->find($id);
+    
+        if (!$service) {
+            throw new InvalidArgumentException("Service introuvable."); 
+        }
+    
+        if (!empty($service['image']) && file_exists($service['image'])) {
+            if (!unlink($service['image'])) {
+                throw new RuntimeException("Erreur lors de la suppression de l'image.");
+            }
+        }
+    
         $stmt = $this->db->prepare("DELETE FROM services WHERE id = ?");
         $stmt->execute([$id]);
-    }
+    }    
+    
+    
 }

@@ -224,64 +224,61 @@
 
 
 <!-- Section des Services -->
-<section>
-    <h2 class="section-title">Services</h2>
-    <div class="sections-container" style="display: none;">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nom du Service</th>
-                    <th>Description</th>
-                    <th>Image</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if (!empty($services)): ?>
-                    <?php foreach ($services as $service): ?>
-                        <tr id="row-<?= $service['id']; ?>">
-                            <td><h3><?php echo htmlspecialchars($service['name']); ?></h3></td>
-                            <td><?php echo htmlspecialchars($service['description']); ?></td>
-                            <td>
-                                <!-- Afficher l'image si elle existe -->
-                                <?php if (!empty($service['image'])): ?>
-                                    <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service" width="100">
-                                <?php else: ?>
-                                    <p>Aucune image</p>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <button class="button update-button" data-service-id="<?= $service['id']; ?>">Modifier</button>
-                                <form action="index.php?page=services&action=delete" method="post" style="display:inline;" onsubmit="return confirmDelete();">
-                                    <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
-                                    <button type="submit" class="delete-button">Supprimer</button>
-                                </form>
-                            </td>
+        <section class="admin-page">
+            <h2 class="section-title">Services</h2>
+            <div class="sections-container" style="display: none;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nom du Service</th>
+                            <th>Description</th>
+                            <th>Image</th>
+                            <th>Actions</th>
                         </tr>
-                        <!-- Ligne pour le formulaire de modification, cachée par défaut -->
-                        <tr id="edit-form-<?= $service['id']; ?>" style="display:none;">
+                    </thead>
+                    <tbody>
+                        <?php if (!empty($services)): ?>
+                            <?php foreach ($services as $service): ?>
+                                <tr id="row-<?= $service['id']; ?>">
+                                    <td><h3><?php echo htmlspecialchars($service['name']); ?></h3></td>
+                                    <td><?php echo htmlspecialchars($service['description']); ?></td>
+                                    <td>
+                                        <!-- Afficher l'image si elle existe -->
+                                        <?php if (!empty($service['image'])): ?>
+                                            <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service" width="100">
+                                        <?php else: ?>
+                                            <p>Aucune image</p>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td>
+                                        <button class="button update-button" data-service-id="<?= $service['id']; ?>" onclick="showEditForm(<?= $service['id']; ?>)">Modifier</button>
+                                        <form action="index.php?page=services&action=delete" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+                                        <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
+                                        <button type="submit" class="delete-button">Supprimer</button>
+                                    </form>
+                                    </td>
+                                </tr>
+
+                                <!-- Ligne pour le formulaire de modification, cachée par défaut -->
+                        <tr id="edit-form-<?= $service['id']; ?>" class="edit-form" style="display:none;">
                             <td colspan="4">
                                 <form action="index.php?page=services&action=update" method="post" enctype="multipart/form-data">
-                                    <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
-                                    
-                                    <label for="edit_service_name_<?= $service['id']; ?>">Nom du Service :</label>
-                                    <input type="text" id="edit_service_name_<?= $service['id']; ?>" name="name" value="<?php echo htmlspecialchars($service['name']); ?>" required>
-
-                                    <label for="edit_service_description_<?= $service['id']; ?>">Description :</label>
-                                    <textarea id="edit_service_description_<?= $service['id']; ?>" name="description" required><?php echo htmlspecialchars($service['description']); ?></textarea>
-
-                                    <label for="edit_service_image_<?= $service['id']; ?>">Image d'illustration :</label>
+                                    <input type="hidden" name="id" value="<?php echo $service['id']; ?>">            
+                                    <input type="text" id="edit_service_name_<?= $service['id']; ?>" name="name" value="<?php echo htmlspecialchars($service['name']); ?>" required>               
+                                    <textarea id="edit_service_description_<?= $service['id']; ?>" name="description" required><?php echo htmlspecialchars($service['description']); ?></textarea>               
                                     <input type="file" id="edit_service_image_<?= $service['id']; ?>" name="image">
 
                                     <!-- Afficher l'image actuelle et permettre de la conserver -->
                                     <?php if (!empty($service['image'])): ?>
-                                        <p>Image actuelle :</p>
-                                        <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service" width="100">
+                                        <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service">
                                         <input type="hidden" name="existing_image" value="<?= htmlspecialchars($service['image']); ?>">
                                     <?php endif; ?>
 
-                                    <button type="submit" class="cta-button">Enregistrer les Modifications</button>
-                                    <button type="button" class="button" onclick="hideEditForm(<?= $service['id']; ?>)">Annuler</button>
+                                    <!-- Conteneur pour centrer les boutons -->
+                                    <div class="button-container">
+                                        <button type="submit" class="cta-button">Enregistrer les Modifications</button>
+                                        <button type="button" class="button" onclick="hideEditForm(<?= $service['id']; ?>)">Annuler</button>
+                                    </div>
                                 </form>
                             </td>
                         </tr>
@@ -294,8 +291,9 @@
             </tbody>
         </table>
 
-        <h3>Ajouter un Service</h3>
-        <form action="index.php?page=services&action=create" method="POST" enctype="multipart/form-data" class="form-style">
+        <button id="toggle-create-form" class="cta-button">Ajouter un Service</button>
+
+        <form action="index.php?page=services&action=create" method="POST" enctype="multipart/form-data" class="edit-form" id="create-service-form" style="display: none;">
             <label for="service_name">Nom du Service :</label>
             <input type="text" id="service_name" name="name" required>
 
@@ -306,8 +304,11 @@
             <input type="file" id="service_image" name="image">
 
             <br>
-            <button type="submit" class="cta-button">Ajouter le Service</button>
+            <div class="button-container">
+                <button type="submit" class="cta-button">Ajouter le Service</button>
+            </div>
         </form>
+
     </div>
 </section>
 
