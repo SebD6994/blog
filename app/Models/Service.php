@@ -8,13 +8,12 @@ class Service {
     }
 
     public function create($data) {
-        // Validate that 'name' and 'description' are not empty
         if (empty($data['name']) || empty($data['description'])) {
             throw new InvalidArgumentException('Name and description cannot be empty.');
         }
 
-        $stmt = $this->db->prepare("INSERT INTO services (name, description) VALUES (?, ?)");
-        $stmt->execute([$data['name'], $data['description']]);
+        $stmt = $this->db->prepare("INSERT INTO services (name, description, image) VALUES (?, ?, ?)");
+        $stmt->execute([$data['name'], $data['description'], $data['image']]);
     }
 
     public function getAll() {
@@ -29,13 +28,12 @@ class Service {
     }
 
     public function update($id, $data) {
-        // Validate that 'name' and 'description' are not empty
         if (empty($data['name']) || empty($data['description'])) {
             throw new InvalidArgumentException('Name and description cannot be empty.');
         }
 
-        $stmt = $this->db->prepare("UPDATE services SET name = ?, description = ? WHERE id = ?");
-        $stmt->execute([$data['name'], $data['description'], $id]);
+        $stmt = $this->db->prepare("UPDATE services SET name = ?, description = ?, image = ? WHERE id = ?");
+        $stmt->execute([$data['name'], $data['description'], $data['image'], $id]);
     }
 
     public function delete($id) {

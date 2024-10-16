@@ -269,6 +269,45 @@ th {
     color: var(--white);
 }
 
+/* === Styles pour la section des services === */
+
+.service-item {
+    display: flex; /* Utilisation de Flexbox pour la mise en page */
+    align-items: center; /* Centre verticalement les éléments dans le conteneur */
+    margin-bottom: 20px; /* Espace entre les services */
+}
+
+.service-image {
+    flex: 0 0 33.33%; /* L'image prend un tiers de la largeur du conteneur */
+    margin-right: 20px; /* Espace entre l'image et le contenu à gauche */
+}
+
+.service-image img {
+    width: 100%; /* L'image prend toute la largeur de son conteneur */
+    height: auto; /* Garde le ratio d'aspect de l'image */
+    display: block; /* Supprime les espaces indésirables autour de l'image */
+}
+
+.service-details {
+    flex: 1; /* Permet au conteneur des détails de prendre l'espace restant */
+    margin-left: 20px; /* Ajoute un espace à gauche pour le texte à droite de l'image */
+}
+
+/* Styles pour l'élément impair (à droite) */
+.odd {
+    flex-direction: row-reverse; /* Inverse l'ordre des éléments pour les services impairs */
+}
+
+.odd .service-image {
+    margin-left: 20px; /* Ajoute un espace à gauche pour les images à droite */
+    margin-right: 0; /* Enlève l'espace à droite pour les images à droite */
+}
+
+h3 {
+    margin: 0; /* Supprime les marges par défaut du titre */
+}
+
+
 /* === Footer === */
 footer {
     background-color: var(--primary-color);
@@ -281,6 +320,8 @@ footer {
 footer p {
     margin: 0;
 }
+
+
 
 /* === Responsivité === */
 @media (max-width: 768px) {
