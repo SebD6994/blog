@@ -22,7 +22,12 @@ if (session_status() === PHP_SESSION_NONE) {
             <?php foreach ($newsItems as $news): ?>
                 <li>
                     <h2><?php echo htmlspecialchars($news['title']); ?></h2> 
-                    <?php echo htmlspecialchars($news['content']); ?>
+                    <?php if (!empty($news['image'])): ?>
+                        <img src="<?php echo htmlspecialchars($news['image']); ?>" alt="<?php echo htmlspecialchars($news['title']); ?>" style="max-width: 100%; height: auto;">
+                    <?php else: ?>
+                        <p>Pas d'image disponible</p>
+                    <?php endif; ?>
+                    <p><?php echo nl2br(htmlspecialchars($news['content'])); ?></p>
                 </li>
             <?php endforeach; ?>
         </ul>

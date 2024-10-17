@@ -316,7 +316,7 @@ th {
 }
 
 
-/* === Section Services et News (partage les mêmes styles) === */
+/* === Section Services et News dans l'admin (partage les mêmes styles) === */
 .admin-page table {
     width: 100%;
     border-collapse: collapse;
@@ -388,6 +388,44 @@ th {
     background-color: var(--primary-color); /* Couleur d'arrière-plan pour les en-têtes */
     color: var(--white); /* Couleur du texte pour les en-têtes */
 }
+
+
+/* Style de la page services */
+.service-item {
+    display: flex; /* Utilisation de Flexbox pour la mise en page */
+    align-items: center; /* Centre verticalement les éléments dans le conteneur */
+    margin-bottom: 20px; /* Espace entre les services */
+}
+
+.service-image {
+    flex: 0 0 33.33%; /* L'image prend un tiers de la largeur du conteneur */
+}
+
+.service-image img {
+    width: 100%; /* L'image prend toute la largeur de son conteneur */
+    height: auto; /* Garde le ratio d'aspect de l'image */
+    display: block; /* Supprime les espaces indésirables autour de l'image */
+}
+
+.service-details {
+    flex: 1; /* Permet au conteneur des détails de prendre l'espace restant */
+    padding-left: 20px; /* Espace entre l'image et le texte à gauche */
+}
+
+/* Styles pour l'élément impair (image à droite) */
+.service-odd {
+    flex-direction: row-reverse; /* Inverse l'ordre des éléments pour les services impairs */
+}
+
+.service-odd .service-details {
+    padding-left: 0; /* Supprime le padding à gauche */
+    padding-right: 20px; /* Ajoute un espace entre le texte et l'image à droite */
+}
+
+h3 {
+    margin: 0; /* Supprime les marges par défaut du titre */
+}
+
 
 /* === Footer === */
 footer {

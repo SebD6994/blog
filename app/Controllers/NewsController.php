@@ -12,7 +12,7 @@ class NewsController {
     public function index() {
         // Récupérer toutes les actualités et les envoyer à la vue
         $newsItems = $this->newsModel->getAll();
-        require '../app/Views/News.php';
+        require '../app/Views/news.php';
     }
 
     public function create() {
@@ -44,8 +44,15 @@ class NewsController {
                 'title' => $_POST['title'],
                 'content' => $_POST['content']
             ];
-            $this->newsModel->update($id, $data); // Call the model to update news
-            
+
+            // Call the model to update the news item
+            try {
+                $this->newsModel->update($id, $data); // Call the model to update news
+                $_SESSION['message'] = "Actualité mise à jour avec succès."; // Success message
+            } catch (Exception $e) {
+                $_SESSION['message'] = "Erreur lors de la mise à jour de l'actualité : " . $e->getMessage(); // Error message
+            }
+
             // Redirect after the update
             header("Location: index.php?page=admin");
             exit();

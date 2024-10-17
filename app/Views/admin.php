@@ -308,109 +308,121 @@
 
 
 <!-- Section des News -->
-    <section class="admin-page">
-        <h2 class="section-title">Actualités</h2>
-        <div class="sections-container" style="display: none;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Titre</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($news)): ?>
-                        <?php foreach ($news as $new): ?>
-                            <tr id="row-<?= $new['id']; ?>">
-                                <td><h3><?php echo htmlspecialchars($new['title']); ?></h3></td>
-                                <td>
+<section class="admin-page">
+    <h2 class="section-title">Actualités</h2>
+    <div class="sections-container" style="display: none;">
+        <table>
+            <thead>
+                <tr>
+                    <th>Titre</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($news)): ?>
+                    <?php foreach ($news as $new): ?>
+                        <tr id="row-<?= $new['id']; ?>">
+                            <td><h3><?php echo htmlspecialchars($new['title']); ?></h3></td>
+                            <td>
                                 <button type="button" class="button" onclick="showEditForm('news', <?= $new['id']; ?>)">Modifier</button>
-                                    <form action="?page=admin&action=deleteNews&id=<?= $new['id']; ?>" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
-                                        <input type="hidden" name="id" value="<?= $new['id']; ?>">
-                                        <button type="submit" class="delete-button">Supprimer</button>
-                                    </form>
-                                </td>
-                            </tr>
-
-                            <!-- Formulaire de mise à jour (caché par défaut) -->
-                            <tr id="update-form-news-<?= $new['id']; ?>" class="edit-form" style="display: none;">
-                                <td colspan="3">
-                                    <form method="POST" action="?page=admin&action=updateNews" enctype="multipart/form-data">
-                                        <input type="hidden" name="id" value="<?= $new['id']; ?>">
-                                        <input type="text" id="edit_news_title_<?= $new['id']; ?>" name="title" value="<?= htmlspecialchars($new['title']); ?>" required style="width: 100%;">
-                                        <textarea id="edit_news_content_<?= $new['id']; ?>" name="content" required style="width: 100%;"><?php echo htmlspecialchars($new['content']); ?></textarea>
-
-                                        <!-- Si une image est associée à la news -->
-                                        <?php if (!empty($new['image'])): ?>
-                                            <img src="<?= htmlspecialchars($new['image']); ?>" alt="Image de la news">
-                                            <input type="hidden" name="existing_image" value="<?= htmlspecialchars($new['image']); ?>">
-                                        <?php endif; ?>
-
-                                        <div class="button-container">
-                                            <button type="submit" class="cta-button">Mettre à jour</button>
-                                            <button type="button" class="button" onclick="hideEditForm('news', <?= $new['id']; ?>)">Annuler</button>
-                                        </div>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="3">Aucune actualité trouvée.</td>
+                                <form action="?page=admin&action=deleteNews&id=<?= $new['id']; ?>" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                                    <input type="hidden" name="id" value="<?= $new['id']; ?>">
+                                    <button type="submit" class="delete-button">Supprimer</button>
+                                </form>
+                            </td>
                         </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
 
-            <button id="toggle-create-news-form" class="cta-button">Ajouter une Actualité</button>
+                        <!-- Formulaire de mise à jour (caché par défaut) -->
+                        <tr id="update-form-news-<?= $new['id']; ?>" class="edit-form" style="display: none;">
+                            <td colspan="2">
+                                <form method="POST" action="?page=admin&action=updateNews" enctype="multipart/form-data">
+                                    <input type="hidden" name="id" value="<?= $new['id']; ?>">
+                                    <input type="text" id="edit_news_title_<?= $new['id']; ?>" name="title" value="<?= htmlspecialchars($new['title']); ?>" required style="width: 100%;">
 
-            <form action="?page=admin&action=createNews" method="POST" class="edit-form" id="create-news-form" style="display: none;">
-                <label for="news_title">Titre :</label>
-                <input type="text" id="news_title" name="title" required style="width: 100%;">
+                                    <textarea id="edit_news_content_<?= $new['id']; ?>" name="content" required style="width: 100%;"><?php echo htmlspecialchars($new['content']); ?></textarea>
 
-                <label for="news_content">Contenu :</label>
-                <textarea id="news_content" name="content" required style="width: 100%;"></textarea>
+                                    <?php if (!empty($new['image'])): ?>
+                                        <img src="<?= htmlspecialchars($new['image']); ?>" alt="Image de la news">
+                                        <input type="hidden" name="existing_image" value="<?= htmlspecialchars($new['image']); ?>">
+                                    <?php endif; ?>
 
-                <div class="button-container">
-                    <button type="submit" class="cta-button">Ajouter Actualité</button>
-                </div>
-            </form>
-        </div>
-    </section>
-
-<!-- Section des Horaires -->
-    <div class="section">
-        <h2 class="section-title">Horaires d'Ouverture</h2>
-        <div class="sections-container" style="display: none;">
-            <form action="index.php?page=admin&action=updateOpeningHours" method="POST">
-                <table class="opening-hours-table">
-                    <tr>
-                        <th class="column-day">Jour</th>
-                        <th class="column-open">Heure d'Ouverture</th>
-                        <th class="column-close">Heure de Fermeture</th>
-                    </tr>
-                    <?php 
-                    $daysOfWeek = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 0 => 'Dimanche'];
-                    $orderedDays = [1, 2, 3, 4, 5, 6, 0];
-                    foreach ($orderedDays as $day): 
-                        $hour = isset($openingHours[$day]) ? $openingHours[$day] : ['start_time' => '', 'end_time' => ''];
-                    ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($daysOfWeek[$day]); ?></td>
-                        <td><input type="time" name="hours[<?php echo $day; ?>][start_time]" value="<?php echo htmlspecialchars($hour['start_time']); ?>"></td>
-                        <td><input type="time" name="hours[<?php echo $day; ?>][end_time]" value="<?php echo htmlspecialchars($hour['end_time']); ?>"></td>
-                    </tr>
+                                    <div class="button-container">
+                                        <button type="submit" class="cta-button">Mettre à jour</button>
+                                        <button type="button" class="button" onclick="hideEditForm('news', <?= $new['id']; ?>)">Annuler</button>
+                                        <button type="button" onclick="previewArticle('<?= htmlspecialchars($new['title']); ?>', tinymce.get('edit_news_content_<?= $new['id']; ?>').getContent())">Prévisualiser l'Article</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
-                </table>
-                <button type="submit" class="cta-button">Mettre à jour les Horaires</button>
-            </form>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="2">Aucune actualité trouvée.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+
+        <button id="toggle-create-news-form" class="cta-button">Ajouter une Actualité</button>
+        <!-- Formulaire de création (en dehors de la boucle foreach) -->
+        <form action="?page=admin&action=createNews" method="POST" class="edit-form" id="create-news-form" style="display: none;">
+            <label for="news_title">Titre :</label>
+            <input type="text" id="news_title" name="title" required style="width: 100%;">
+
+            <label for="news_content">Contenu :</label>
+            <textarea id="news_content" name="content" required style="width: 100%;"></textarea>
+
+            <div class="button-container">
+                <button type="submit" class="cta-button">Ajouter Actualité</button>
+                <button type="button" onclick="previewArticle(document.getElementById('news_title').value, tinymce.get('news_content').getContent())">Prévisualiser l'Article</button>
+            </div>
+        </form>
+
+        <!-- Modal de prévisualisation (à l'extérieur de la boucle) -->
+        <div id="previewModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; border: 1px solid #ccc; padding: 20px; z-index: 1000;">
+            <h2>Prévisualisation de l'Article</h2>
+            <div id="previewContent"></div>
+            <button onclick="closePreview()">Fermer</button>
         </div>
     </div>
+</section>
+
+
+
+<!-- Section des Horaires -->
+        <div class="section">
+            <h2 class="section-title">Horaires d'Ouverture</h2>
+            <div class="sections-container" style="display: none;">
+                <form action="index.php?page=admin&action=updateOpeningHours" method="POST">
+                    <table class="opening-hours-table">
+                        <tr>
+                            <th class="column-day">Jour</th>
+                            <th class="column-open">Heure d'Ouverture</th>
+                            <th class="column-close">Heure de Fermeture</th>
+                        </tr>
+                        <?php 
+                        $daysOfWeek = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 0 => 'Dimanche'];
+                        $orderedDays = [1, 2, 3, 4, 5, 6, 0];
+                        foreach ($orderedDays as $day): 
+                            $hour = isset($openingHours[$day]) ? $openingHours[$day] : ['start_time' => '', 'end_time' => ''];
+                        ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($daysOfWeek[$day]); ?></td>
+                            <td><input type="time" name="hours[<?php echo $day; ?>][start_time]" value="<?php echo htmlspecialchars($hour['start_time']); ?>"></td>
+                            <td><input type="time" name="hours[<?php echo $day; ?>][end_time]" value="<?php echo htmlspecialchars($hour['end_time']); ?>"></td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </table>
+                    <button type="submit" class="cta-button">Mettre à jour les Horaires</button>
+                </form>
+            </div>
+        </div>
 
     </main>
     
     <?php include 'footer.php'; ?>
 
     <script src="../assets/js/admin.js"></script>
+    <script src="https://cdn.tiny.cloud/1/8pmzn31l5fg9pakc6iubiw3hvsowgx2qq1116dbvyo8sfn8b/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 </body>
 </html>

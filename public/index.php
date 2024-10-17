@@ -83,16 +83,13 @@ switch ($page) {
                 break;
             case 'slots':
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    // Handle slot creation
                     $controllers['appointments']->createSlot($_POST);
                 } else {
-                    // Handle viewing slots
                     $controllers['appointments']->viewSlots();
                 }
                 break;
             case 'getTimeSlots':
                 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-                    // Handle fetching available time slots
                     $controllers['appointments']->getTimeSlots();
                 }
                 break;
@@ -134,13 +131,17 @@ switch ($page) {
                 $controllers['news']->view($_GET['id']);
                 break;
             case 'create':
-                if ($_POST) {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $controllers['news']->create($_POST);
+                } else {
+                    $controllers['news']->createForm(); // Affiche le formulaire de création
                 }
                 break;
             case 'update':
-                if ($_POST && isset($_POST['id'])) {
+                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                     $controllers['news']->update($_POST['id'], $_POST);
+                } else {
+                    $controllers['news']->editForm($_GET['id']); // Affiche le formulaire d'édition
                 }
                 break;
             case 'delete':
@@ -216,7 +217,7 @@ switch ($page) {
                     $controllers['admin']->updateOpeningHours($_POST);
                 }
                 break;
-                
+
             case 'index':
             default:
                 $controllers['admin']->index();

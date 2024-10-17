@@ -36,9 +36,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Fonction pour afficher le formulaire de création de service
     function toggleCreateServiceForm() {
-        const createServiceForm = document.getElementById('create-service-form'); // Formulaire de création
+        const createServiceForm = document.getElementById('create-service-form'); // Formulaire d'ajout de service
         const toggleButton = document.getElementById('toggle-create-service-form'); // Bouton pour afficher/masquer le formulaire
-        
+
+        // Bascule l'affichage du formulaire
         if (createServiceForm.style.display === 'none' || createServiceForm.style.display === '') {
             createServiceForm.style.display = 'block'; // Afficher le formulaire
             toggleButton.textContent = 'Annuler'; // Changer le texte du bouton
@@ -48,29 +49,34 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Fonction pour afficher le formulaire de création d'actualité
-    function toggleCreateNewsForm() {
-        const createNewsForm = document.getElementById('create-news-form'); // Formulaire d'ajout d'actualité
-        const toggleButton = document.getElementById('toggle-create-news-form'); // Bouton pour afficher/masquer le formulaire
-        
-        if (createNewsForm.style.display === 'none' || createNewsForm.style.display === '') {
-            createNewsForm.style.display = 'block'; // Afficher le formulaire
-            toggleButton.textContent = 'Annuler'; // Changer le texte du bouton
-        } else {
-            createNewsForm.style.display = 'none'; // Masquer le formulaire
-            toggleButton.textContent = 'Ajouter une Actualité'; // Rétablir le texte du bouton
-        }
-    }
-
-    // Écoutez le clic sur les boutons d'ajout
+    // Ajouter un écouteur d'événements au bouton "Ajouter un Service"
     const toggleServiceButton = document.getElementById('toggle-create-service-form');
     if (toggleServiceButton) {
         toggleServiceButton.addEventListener('click', toggleCreateServiceForm);
     }
+});
 
-    const toggleNewsButton = document.getElementById('toggle-create-news-form');
-    if (toggleNewsButton) {
-        toggleNewsButton.addEventListener('click', toggleCreateNewsForm);
+    // Fonction pour afficher le formulaire de création d'actualité
+    function toggleCreateNewsForm() {
+        const createNewsForm = document.getElementById('create-news-form'); // Formulaire d'ajout d'actualité
+        const toggleButton = document.getElementById('toggle-create-news-form'); // Bouton pour afficher/masquer le formulaire
+
+        // Bascule l'affichage du formulaire
+        if (createNewsForm.style.display === 'none' || createNewsForm.style.display === '') {
+            createNewsForm.style.display = 'block'; // Afficher le formulaire
+            toggleButton.textContent = 'Annuler'; // Changer le texte du bouton
+
+            // Initialiser TinyMCE sur le textarea du formulaire de création si ce n'est pas déjà fait
+            if (!tinymce.get('news_content')) {
+                initializeTinyMCE('#news_content');
+            }
+        } else {
+            createNewsForm.style.display = 'none'; // Masquer le formulaire
+            toggleButton.textContent = 'Ajouter une Actualité'; // Rétablir le texte du bouton
+
+            // Détruire l'instance TinyMCE lorsque le formulaire est masqué
+            tinymce.get('news_content')?.remove(); // Retirer l'éditeur
+        }
     }
 
     // Fonction pour afficher le formulaire de modification (service ou news)
@@ -92,6 +98,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (formRow) {
             formRow.style.display = 'table-row'; // Afficher le formulaire
             console.log(`Showing ${type} form for ID: ${id}`);
+
+            // Initialiser TinyMCE sur le textarea du formulaire de modification si ce n'est pas déjà fait
+            if (!tinymce.get('edit_news_content_' + id)) {
+                initializeTinyMCE('#edit_news_content_' + id);
+            }
         } else {
             console.error(`Form not found for ${type} ID: ${id}`);
         }
@@ -109,13 +120,109 @@ document.addEventListener('DOMContentLoaded', function() {
         if (formRow) {
             formRow.style.display = 'none';
             console.log(`Hiding ${type} form for ID: ${id}`);
+            
+            // Détruire l'instance TinyMCE lorsque le formulaire est caché
+            tinymce.get('edit_news_content_' + id)?.remove(); // Retirer l'éditeur
+        } else {
+            console.error(`Form not found for ${type} ID: ${id}`);
+        }
+    };    
+
+    // Fonction pour initialiser TinyMCE
+    function initializeTinyMCE(selector) {
+        tinymce.init({
+            selector: selector, // Utilisation du sélecteur passé en argument
+            plugins: ['link', 'image', 'lists', 'table', 'textcolor', 'emoticons'], // Plugins courants
+            toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright | bullist numlist | link image | forecolor backcolor | emoticons', // Toolbar avec options courantes
+            menubar: false, // Pas de menu
+            toolbar_sticky: true, // Toolbar fixe en haut
+            image_advtab: true, // Ouvrir les options avancées pour les images
+            automatic_uploads: true, // Activer le téléchargement automatique
+            images_upload_url: '../assets/images/news/', // Endpoint pour l'upload d'images
+            images_upload_handler: function (blobInfo, success, failure) {
+                // Utiliser FileReader pour lire le fichier local
+                const xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '../assets/images/news/'); // Endpoint pour gérer l'upload
+    
+                xhr.onload = function() {
+                    if (xhr.status === 403) {
+                        failure('HTTP Error: ' + xhr.status);
+                        return;
+                    }
+    
+                    const json = JSON.parse(xhr.responseText);
+    
+                    if (!json || typeof json.location != 'string') {
+                        failure('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+    
+                    success(json.location); // Renvoie l'URL de l'image insérée
+                };
+    
+                const formData = new FormData();
+                formData.append('file', blobInfo.blob(), blobInfo.filename()); // Ajouter le fichier à FormData
+    
+                xhr.send(formData); // Envoyer le formulaire
+            },
+            file_picker_callback: function(callback, value, meta) {
+                if (meta.filetype === 'image') {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/*'); // Accepter uniquement les fichiers image
+    
+                    input.onchange = function() {
+                        const file = this.files[0];
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            // Lorsque le fichier est chargé, appeler le callback pour insérer l'image
+                            callback(e.target.result, {
+                                alt: file.name
+                            });
+                        };
+                        reader.readAsDataURL(file); // Lire le fichier comme URL de données
+                    };
+    
+                    input.click(); // Ouvrir le sélecteur de fichiers
+                }
+            },
+            branding: false, // Ne pas afficher le logo TinyMCE
+            content_css: '//www.tiny.cloud/css/content.min.css', // CSS de contenu
+            init_instance_callback: function(editor) {
+                // Code à exécuter lorsque l'éditeur est initialisé
+                console.log('TinyMCE initialized for', editor.id);
+            }
+        });
+    }
+
+    // Fonction pour cacher le formulaire de modification (service ou news)
+    window.hideEditForm = function(type, id) {
+        var formRow;
+        if (type === 'service') {
+            formRow = document.getElementById('edit-form-service-' + id);
+        } else if (type === 'news') {
+            formRow = document.getElementById('update-form-news-' + id);
+        }
+
+        if (formRow) {
+            formRow.style.display = 'none';
+            console.log(`Hiding ${type} form for ID: ${id}`);
+            
+            // Détruire l'instance TinyMCE lorsque le formulaire est caché
+            tinymce.get('edit_news_content_' + id)?.remove(); // Retirer l'éditeur
         } else {
             console.error(`Form not found for ${type} ID: ${id}`);
         }
     };
 
+    // Écoutez le clic sur le bouton d'ajout
+    const toggleNewsButton = document.getElementById('toggle-create-news-form');
+    if (toggleNewsButton) {
+        toggleNewsButton.addEventListener('click', toggleCreateNewsForm);
+    }
+
     // Confirmation de suppression
     window.confirmDelete = function() {
         return confirm("Êtes-vous sûr de vouloir supprimer ce service ? Cette action est irréversible.");
     };
-});
