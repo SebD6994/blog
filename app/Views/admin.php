@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de bord Admin</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
-    <script src="../assets/js/calendar.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 </head>
 
 <?php include 'header.php'; ?>
@@ -251,134 +248,165 @@
                                         <?php endif; ?>
                                     </td>
                                     <td>
-                                        <button class="button update-button" data-service-id="<?= $service['id']; ?>" onclick="showEditForm(<?= $service['id']; ?>)">Modifier</button>
+                                    <button type="button" class="button" onclick="showEditForm('service', <?= $service['id']; ?>)">Modifier</button>
                                         <form action="index.php?page=services&action=delete" method="post" style="display:inline;" onsubmit="return confirmDelete();">
-                                        <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
-                                        <button type="submit" class="delete-button">Supprimer</button>
-                                    </form>
+                                            <input type="hidden" name="id" value="<?php echo $service['id']; ?>">
+                                            <button type="submit" class="delete-button">Supprimer</button>
+                                        </form>
                                     </td>
                                 </tr>
 
-                                <!-- Ligne pour le formulaire de modification, cachée par défaut -->
-                        <tr id="edit-form-<?= $service['id']; ?>" class="edit-form" style="display:none;">
-                            <td colspan="4">
-                                <form action="index.php?page=services&action=update" method="post" enctype="multipart/form-data">
-                                    <input type="hidden" name="id" value="<?php echo $service['id']; ?>">            
-                                    <input type="text" id="edit_service_name_<?= $service['id']; ?>" name="name" value="<?php echo htmlspecialchars($service['name']); ?>" required>               
-                                    <textarea id="edit_service_description_<?= $service['id']; ?>" name="description" required><?php echo htmlspecialchars($service['description']); ?></textarea>               
-                                    <input type="file" id="edit_service_image_<?= $service['id']; ?>" name="image">
+                                <!-- Formulaire de modification (caché par défaut) -->
+                            <tr id="edit-form-service-<?= $service['id']; ?>" class="edit-form" style="display:none;">
+                                <td colspan="4">
+                                    <form action="index.php?page=services&action=update" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="id" value="<?= $service['id']; ?>">
+                                        <input type="text" id="edit_service_name_<?= $service['id']; ?>" name="name" value="<?= htmlspecialchars($service['name']); ?>" required>
+                                        <textarea id="edit_service_description_<?= $service['id']; ?>" name="description" required><?php echo htmlspecialchars($service['description']); ?></textarea>
+                                        <input type="file" id="edit_service_image_<?= $service['id']; ?>" name="image">
 
-                                    <!-- Afficher l'image actuelle et permettre de la conserver -->
-                                    <?php if (!empty($service['image'])): ?>
-                                        <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service">
-                                        <input type="hidden" name="existing_image" value="<?= htmlspecialchars($service['image']); ?>">
-                                    <?php endif; ?>
+                                        <?php if (!empty($service['image'])): ?>
+                                            <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service">
+                                            <input type="hidden" name="existing_image" value="<?= htmlspecialchars($service['image']); ?>">
+                                        <?php endif; ?>
 
-                                    <!-- Conteneur pour centrer les boutons -->
-                                    <div class="button-container">
-                                        <button type="submit" class="cta-button">Enregistrer les Modifications</button>
-                                        <button type="button" class="button" onclick="hideEditForm(<?= $service['id']; ?>)">Annuler</button>
-                                    </div>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="4">Aucun service trouvé.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                                        <div class="button-container">
+                                            <button type="submit" class="cta-button">Enregistrer les Modifications</button>
+                                            <button type="button" class="button" onclick="hideEditForm('service', <?= $service['id']; ?>)">Annuler</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="4">Aucun service trouvé.</td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
 
-        <button id="toggle-create-form" class="cta-button">Ajouter un Service</button>
+                <button id="toggle-create-service-form" class="cta-button">Ajouter un Service</button>
 
-        <form action="index.php?page=services&action=create" method="POST" enctype="multipart/form-data" class="edit-form" id="create-service-form" style="display: none;">
-            <label for="service_name">Nom du Service :</label>
-            <input type="text" id="service_name" name="name" required>
+                <form action="index.php?page=services&action=create" method="POST" enctype="multipart/form-data" class="edit-form" id="create-service-form" style="display: none;">
+                    <label for="service_name">Nom du Service :</label>
+                    <input type="text" id="service_name" name="name" required>
 
-            <label for="service_description">Description :</label>
-            <textarea id="service_description" name="description" required></textarea>
+                    <label for="service_description">Description :</label>
+                    <textarea id="service_description" name="description" required></textarea>
 
-            <label for="service_image">Image d'illustration :</label>
-            <input type="file" id="service_image" name="image">
+                    <label for="service_image">Image d'illustration :</label>
+                    <input type="file" id="service_image" name="image">
 
-            <br>
-            <div class="button-container">
-                <button type="submit" class="cta-button">Ajouter le Service</button>
+                    <br>
+                    <div class="button-container">
+                        <button type="submit" class="cta-button">Ajouter le Service</button>
+                    </div>
+                </form>
             </div>
-        </form>
-
-    </div>
-</section>
-
-
-
+        </section>
 
 
 <!-- Section des News -->
- <section>
-        <div class="section">
-            <h2 class="section-title">Actualités</h2>
-            <div class="sections-container" style="display: none;">
-                <table>
+    <section class="admin-page">
+        <h2 class="section-title">Actualités</h2>
+        <div class="sections-container" style="display: none;">
+            <table>
+                <thead>
                     <tr>
                         <th>Titre</th>
-                        <th>Contenu</th>
                         <th>Actions</th>
                     </tr>
-                    <?php foreach ($news as $new): ?>
+                </thead>
+                <tbody>
+                    <?php if (!empty($news)): ?>
+                        <?php foreach ($news as $new): ?>
+                            <tr id="row-<?= $new['id']; ?>">
+                                <td><h3><?php echo htmlspecialchars($new['title']); ?></h3></td>
+                                <td>
+                                <button type="button" class="button" onclick="showEditForm('news', <?= $new['id']; ?>)">Modifier</button>
+                                    <form action="?page=admin&action=deleteNews&id=<?= $new['id']; ?>" method="POST" style="display:inline;" onsubmit="return confirmDelete();">
+                                        <input type="hidden" name="id" value="<?= $new['id']; ?>">
+                                        <button type="submit" class="delete-button">Supprimer</button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <!-- Formulaire de mise à jour (caché par défaut) -->
+                            <tr id="update-form-news-<?= $new['id']; ?>" class="edit-form" style="display: none;">
+                                <td colspan="3">
+                                    <form method="POST" action="?page=admin&action=updateNews" enctype="multipart/form-data">
+                                        <input type="hidden" name="id" value="<?= $new['id']; ?>">
+                                        <input type="text" id="edit_news_title_<?= $new['id']; ?>" name="title" value="<?= htmlspecialchars($new['title']); ?>" required style="width: 100%;">
+                                        <textarea id="edit_news_content_<?= $new['id']; ?>" name="content" required style="width: 100%;"><?php echo htmlspecialchars($new['content']); ?></textarea>
+
+                                        <!-- Si une image est associée à la news -->
+                                        <?php if (!empty($new['image'])): ?>
+                                            <img src="<?= htmlspecialchars($new['image']); ?>" alt="Image de la news">
+                                            <input type="hidden" name="existing_image" value="<?= htmlspecialchars($new['image']); ?>">
+                                        <?php endif; ?>
+
+                                        <div class="button-container">
+                                            <button type="submit" class="cta-button">Mettre à jour</button>
+                                            <button type="button" class="button" onclick="hideEditForm('news', <?= $new['id']; ?>)">Annuler</button>
+                                        </div>
+                                    </form>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="3">Aucune actualité trouvée.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
+
+            <button id="toggle-create-news-form" class="cta-button">Ajouter une Actualité</button>
+
+            <form action="?page=admin&action=createNews" method="POST" class="edit-form" id="create-news-form" style="display: none;">
+                <label for="news_title">Titre :</label>
+                <input type="text" id="news_title" name="title" required style="width: 100%;">
+
+                <label for="news_content">Contenu :</label>
+                <textarea id="news_content" name="content" required style="width: 100%;"></textarea>
+
+                <div class="button-container">
+                    <button type="submit" class="cta-button">Ajouter Actualité</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+<!-- Section des Horaires -->
+    <div class="section">
+        <h2 class="section-title">Horaires d'Ouverture</h2>
+        <div class="sections-container" style="display: none;">
+            <form action="index.php?page=admin&action=updateOpeningHours" method="POST">
+                <table class="opening-hours-table">
                     <tr>
-                        <form method="POST" action="?page=admin&action=updateNews">
-                            <td><input type="text" name="title" value="<?= htmlspecialchars($new['title']); ?>" required></td>
-                            <td><textarea name="content" required><?= htmlspecialchars($new['content']); ?></textarea></td>
-                            <input type="hidden" name="id" value="<?= $new['id']; ?>">
-                            <td>
-                                <button type="submit" class="button">Mettre à jour</button>
-                                <form action="?page=admin&action=deleteNews&id=<?= $new['id']; ?>" method="post" style="display:inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette actualité ?');">
-                                    <button type="submit" class="delete-button">Supprimer</button>
-                                </form>
-                            </td>
-                        </form>
+                        <th class="column-day">Jour</th>
+                        <th class="column-open">Heure d'Ouverture</th>
+                        <th class="column-close">Heure de Fermeture</th>
+                    </tr>
+                    <?php 
+                    $daysOfWeek = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 0 => 'Dimanche'];
+                    $orderedDays = [1, 2, 3, 4, 5, 6, 0];
+                    foreach ($orderedDays as $day): 
+                        $hour = isset($openingHours[$day]) ? $openingHours[$day] : ['start_time' => '', 'end_time' => ''];
+                    ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($daysOfWeek[$day]); ?></td>
+                        <td><input type="time" name="hours[<?php echo $day; ?>][start_time]" value="<?php echo htmlspecialchars($hour['start_time']); ?>"></td>
+                        <td><input type="time" name="hours[<?php echo $day; ?>][end_time]" value="<?php echo htmlspecialchars($hour['end_time']); ?>"></td>
                     </tr>
                     <?php endforeach; ?>
                 </table>
-                <form action="?page=admin&action=createNews" method="POST">
-                    <input type="text" name="title" placeholder="Titre" required>
-                    <textarea name="content" placeholder="Contenu" required></textarea>
-                    <button type="submit" class="cta-button">Ajouter Actualité</button>
-                </form>
-            </div>
+                <button type="submit" class="cta-button">Mettre à jour les Horaires</button>
+            </form>
         </div>
+    </div>
 
-        <div class="section">
-            <h2 class="section-title">Horaires d'Ouverture</h2>
-            <div class="sections-container" style="display: none;">
-                <form action="index.php?page=admin&action=updateOpeningHours" method="POST">
-                    <table>
-                        <tr>
-                            <th class="column-day">Jour</th>
-                            <th class="column-open">Heure d'Ouverture</th>
-                            <th class="column-close">Heure de Fermeture</th>
-                        </tr>
-                        <?php 
-                        $daysOfWeek = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 0 => 'Dimanche'];
-                        $orderedDays = [1, 2, 3, 4, 5, 6, 0];
-                        foreach ($orderedDays as $day): 
-                            $hour = isset($openingHours[$day]) ? $openingHours[$day] : ['start_time' => '', 'end_time' => ''];
-                        ?>
-                        <tr>
-                            <td><?php echo htmlspecialchars($daysOfWeek[$day]); ?></td>
-                            <td><input type="time" name="hours[<?php echo $day; ?>][start_time]" value="<?php echo htmlspecialchars($hour['start_time']); ?>"></td>
-                            <td><input type="time" name="hours[<?php echo $day; ?>][end_time]" value="<?php echo htmlspecialchars($hour['end_time']); ?>"></td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </table>
-                    <button type="submit" class="cta-button">Mettre à jour les Horaires</button>
-                </form>
-            </div>
-        </div>
-</section>
     </main>
     
     <?php include 'footer.php'; ?>

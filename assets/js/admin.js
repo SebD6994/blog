@@ -1,11 +1,26 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Fonction pour gérer le toggle de la section
     function toggleSection(sectionTitle) {
-        const content = sectionTitle.nextElementSibling; // L'élément de contenu suivant
-        if (content.style.display === 'block') {
-            content.style.display = 'none'; // Masquer la section
+        const sectionsContainer = sectionTitle.nextElementSibling; // L'élément de contenu suivant
+
+        // Fermer toutes les autres sections
+        const allSections = document.querySelectorAll('.sections-container');
+        allSections.forEach(section => {
+            if (section !== sectionsContainer) {
+                section.style.display = 'none'; // Masquer les autres sections
+            }
+        });
+
+        // Ouvrir ou fermer la section cliquée
+        if (sectionsContainer.style.display === 'block') {
+            sectionsContainer.style.display = 'none'; // Masquer la section
         } else {
-            content.style.display = 'block'; // Afficher la section
+            sectionsContainer.style.display = 'block'; // Afficher la section
+
+            // Faire défiler jusqu'à la section ouverte
+            sectionsContainer.scrollIntoView({
+                behavior: 'smooth', // Animation fluide
+                block: 'start' // Aligner le début de la section en haut
+            });
         }
     }
 
@@ -19,55 +34,88 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Fonction pour afficher le formulaire de création
-    function toggleCreateForm() {
-        const createForm = document.getElementById('create-service-form'); // Formulaire de création
-        const toggleButton = document.getElementById('toggle-create-form'); // Bouton pour afficher/masquer le formulaire
+    // Fonction pour afficher le formulaire de création de service
+    function toggleCreateServiceForm() {
+        const createServiceForm = document.getElementById('create-service-form'); // Formulaire de création
+        const toggleButton = document.getElementById('toggle-create-service-form'); // Bouton pour afficher/masquer le formulaire
         
-        if (createForm.style.display === 'none' || createForm.style.display === '') {
-            createForm.style.display = 'block'; // Afficher le formulaire
+        if (createServiceForm.style.display === 'none' || createServiceForm.style.display === '') {
+            createServiceForm.style.display = 'block'; // Afficher le formulaire
             toggleButton.textContent = 'Annuler'; // Changer le texte du bouton
         } else {
-            createForm.style.display = 'none'; // Masquer le formulaire
+            createServiceForm.style.display = 'none'; // Masquer le formulaire
             toggleButton.textContent = 'Ajouter un Service'; // Rétablir le texte du bouton
         }
     }
 
-    // Écoutez le clic sur le bouton d'ajout de service
-    const toggleButton = document.getElementById('toggle-create-form');
-    if (toggleButton) {
-        toggleButton.addEventListener('click', toggleCreateForm);
+    // Fonction pour afficher le formulaire de création d'actualité
+    function toggleCreateNewsForm() {
+        const createNewsForm = document.getElementById('create-news-form'); // Formulaire d'ajout d'actualité
+        const toggleButton = document.getElementById('toggle-create-news-form'); // Bouton pour afficher/masquer le formulaire
+        
+        if (createNewsForm.style.display === 'none' || createNewsForm.style.display === '') {
+            createNewsForm.style.display = 'block'; // Afficher le formulaire
+            toggleButton.textContent = 'Annuler'; // Changer le texte du bouton
+        } else {
+            createNewsForm.style.display = 'none'; // Masquer le formulaire
+            toggleButton.textContent = 'Ajouter une Actualité'; // Rétablir le texte du bouton
+        }
     }
 
-    window.showEditForm = function(serviceId) {
+    // Écoutez le clic sur les boutons d'ajout
+    const toggleServiceButton = document.getElementById('toggle-create-service-form');
+    if (toggleServiceButton) {
+        toggleServiceButton.addEventListener('click', toggleCreateServiceForm);
+    }
+
+    const toggleNewsButton = document.getElementById('toggle-create-news-form');
+    if (toggleNewsButton) {
+        toggleNewsButton.addEventListener('click', toggleCreateNewsForm);
+    }
+
+    // Fonction pour afficher le formulaire de modification (service ou news)
+    window.showEditForm = function(type, id) {
         // Cacher tous les formulaires de modification ouverts
-        var forms = document.querySelectorAll('tr[id^="edit-form-"]');
+        var forms = document.querySelectorAll('tr[id^="edit-form-"], tr[id^="update-form-"]');
         forms.forEach(function(row) {
-            row.style.display = 'none';
+            row.style.display = 'none'; // Masquer tous les formulaires
         });
 
-        // Afficher le formulaire de modification pour l'ID de service sélectionné
-        var editRow = document.getElementById('edit-form-' + serviceId);
-        if (editRow) {
-            editRow.style.display = 'table-row';
-            console.log(`Showing edit form for service ID: ${serviceId}`);
-        } else {
-            console.error(`Edit form not found for service ID: ${serviceId}`);
+        // Afficher le bon formulaire en fonction du type (service ou news)
+        var formRow;
+        if (type === 'service') {
+            formRow = document.getElementById('edit-form-service-' + id);
+        } else if (type === 'news') {
+            formRow = document.getElementById('update-form-news-' + id);
         }
-    }
 
-    window.hideEditForm = function(serviceId) {
-        // Masquer le formulaire de modification pour l'ID de service sélectionné
-        var editRow = document.getElementById('edit-form-' + serviceId);
-        if (editRow) {
-            editRow.style.display = 'none';
-            console.log(`Hiding edit form for service ID: ${serviceId}`);
+        if (formRow) {
+            formRow.style.display = 'table-row'; // Afficher le formulaire
+            console.log(`Showing ${type} form for ID: ${id}`);
         } else {
-            console.error(`Edit form not found for service ID: ${serviceId}`);
+            console.error(`Form not found for ${type} ID: ${id}`);
         }
-    }
+    };
 
+    // Fonction pour cacher le formulaire de modification (service ou news)
+    window.hideEditForm = function(type, id) {
+        var formRow;
+        if (type === 'service') {
+            formRow = document.getElementById('edit-form-service-' + id);
+        } else if (type === 'news') {
+            formRow = document.getElementById('update-form-news-' + id);
+        }
+
+        if (formRow) {
+            formRow.style.display = 'none';
+            console.log(`Hiding ${type} form for ID: ${id}`);
+        } else {
+            console.error(`Form not found for ${type} ID: ${id}`);
+        }
+    };
+
+    // Confirmation de suppression
     window.confirmDelete = function() {
         return confirm("Êtes-vous sûr de vouloir supprimer ce service ? Cette action est irréversible.");
-    }
+    };
 });

@@ -316,44 +316,78 @@ th {
 }
 
 
-/* === Styles pour la section des services === */
-
-.service-item {
-    display: flex; /* Utilisation de Flexbox pour la mise en page */
-    align-items: center; /* Centre verticalement les éléments dans le conteneur */
-    margin-bottom: 20px; /* Espace entre les services */
+/* === Section Services et News (partage les mêmes styles) === */
+.admin-page table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
 }
 
-.service-image {
-    flex: 0 0 33.33%; /* L'image prend un tiers de la largeur du conteneur */
-    margin-right: 20px; /* Espace entre l'image et le contenu à gauche */
+.admin-page th, 
+.admin-page td {
+    padding: 15px;
+    text-align: left;
+    border: 1px solid #ddd;
 }
 
-.service-image img {
-    width: 100%; /* L'image prend toute la largeur de son conteneur */
-    height: auto; /* Garde le ratio d'aspect de l'image */
-    display: block; /* Supprime les espaces indésirables autour de l'image */
+.admin-page th {
+    background-color: var(--primary-color);
+    color: var(--white);
 }
 
-.service-details {
-    flex: 1; /* Permet au conteneur des détails de prendre l'espace restant */
-    margin-left: 20px; /* Ajoute un espace à gauche pour le texte à droite de l'image */
+/* Gère le formulaire de création et de mise à jour de manière similaire */
+.admin-page .edit-form {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
 }
 
-/* Styles pour l'élément impair (à droite) */
-.service-odd {
-    flex-direction: row-reverse; /* Inverse l'ordre des éléments pour les services impairs */
+.admin-page .edit-form input[type="text"],
+.admin-page .edit-form textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
 }
 
-.service-odd .service-image {
-    margin-left: 20px; /* Ajoute un espace à gauche pour les images à droite */
-    margin-right: 0; /* Enlève l'espace à droite pour les images à droite */
+/* Style des boutons */
+.admin-page .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
-h3 {
-    margin: 0; /* Supprime les marges par défaut du titre */
+.admin-page .button, 
+.admin-page .delete-button, 
+.admin-page .cta-button {
+    margin: 0 5px;
 }
 
+/* Style de la section horaires */
+.opening-hours-table {
+    width: auto; /* Laisse le tableau s'adapter au contenu */
+    table-layout: auto; /* Permet aux colonnes de s'adapter à leur contenu */
+    border-collapse: collapse; /* Pour une bordure uniforme */
+    margin: 0 auto;
+}
+
+.opening-hours-table th,
+.opening-hours-table td {
+    padding: 10px; /* Pour un bon espacement */
+    white-space: nowrap; /* Empêche le contenu de se casser à la ligne */
+    text-align: center;
+}
+
+.opening-hours-table th {
+    background-color: var(--primary-color); /* Couleur d'arrière-plan pour les en-têtes */
+    color: var(--white); /* Couleur du texte pour les en-têtes */
+}
 
 /* === Footer === */
 footer {

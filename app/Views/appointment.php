@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Rendez-vous</title>
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet" />
-    <script src="../assets/js/calendar.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 </head>
 <body>
 
@@ -130,9 +127,7 @@
         <?php endif; ?>
     </main>
 
-    <footer>
-        <p>&copy; 2024 Cabinet du Dr. Dupont. Tous droits réservés.</p>
-    </footer>
+    <?php include 'footer.php'; ?>
 
     <script src="../assets/js/appointment.js"></script>
 </body>
