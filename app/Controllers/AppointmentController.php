@@ -14,145 +14,147 @@ class AppointmentController {
         $this->patientModel = new Patient($db);
         $this->serviceModel = new Service($db);
 
-        // Assurez-vous que la session est démarrée
+        // Ensure session is started
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
     }
 
     public function index() {
-        // Vérifier si le patient est connecté
+        // Check if the patient is logged in
         $patientId = $this->isLoggedIn() ? $_SESSION['patient']['id'] : null;
         $patientData = null;
         $appointments = [];
 
         if ($patientId !== null) {
-            // Récupérer les données du patient si connecté
+            // Retrieve patient data if logged in
             $patientData = $this->patientModel->getById($patientId);
-            // Récupérer les rendez-vous pour le patient connecté
+            // Get appointments for the logged-in patient
             $appointments = $this->appointmentModel->getAppointmentsByPatientId($patientId);
         }
 
-        // Récupérer tous les services disponibles
+        // Retrieve all available services
         $services = $this->serviceModel->getAll();
 
-        // Charger la vue des rendez-vous
-        require '../app/Views/Appointment.php'; // Passer les données à la vue
+        // Load the appointment view
+        require '../app/Views/Appointment.php';
     }
 
-    // Méthode pour créer un rendez-vous
     public function create() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Vérifier si le patient est connecté
+            // Check if the patient is logged in
             if (!$this->isLoggedIn()) {
                 echo "Vous devez être connecté pour créer un rendez-vous.";
                 return;
             }
-    
-            // Rassembler les données du formulaire
+
+            // Gather form data
             $appointmentDateTime = $_POST['appointment_date'] . ' ' . $_POST['appointment_time'];
-            
-            // Vérifier si la date et l'heure du rendez-vous sont dans le futur
+
+            // Validate the appointment date and time
             $appointmentDate = new DateTime($appointmentDateTime);
             $now = new DateTime();
-            
+
             if ($appointmentDate <= $now) {
                 echo "La date et l'heure du rendez-vous doivent être dans le futur.";
-                return; // Sortie pour empêcher la création
+                return; // Exit to prevent creation
             }
-    
-            // Créer le rendez-vous dans la base de données
-            $this->appointmentModel->create([
-                'appointment_date' => $appointmentDateTime,
-                'service_id' => $_POST['service_id'],
-                'patient_id' => $_SESSION['patient']['id'] // Utiliser la structure de session
-            ]);
-    
-            // Rediriger après la création du rendez-vous
+
+            // Create the appointment in the database
+            try {
+                $this->appointmentModel->create([
+                    'appointment_date' => $appointmentDateTime,
+                    'service_id' => $_POST['service_id'],
+                    'patient_id' => $_SESSION['patient']['id']
+                ]);
+            } catch (Exception $e) {
+                echo $e->getMessage();
+                return; // Exit on error
+            }
+
+            // Redirect after appointment creation
             header('Location: index.php?page=patients&action=view');
             exit();
         }
-    
-        // Si ce n'est pas une requête POST, montrer le formulaire pour ajouter un rendez-vous
-        // Charger les services disponibles
+
+        // If not a POST request, show the form for adding an appointment
+        // Load available services
         $services = $this->serviceModel->getAll();
-    
-        // Générer des créneaux horaires pour aujourd'hui
-        $today = date('Y-m-d'); // Obtenir la date d'aujourd'hui
-        $timeSlots = $this->appointmentModel->getAvailableTimeSlots($today); // Obtenir les créneaux horaires disponibles
-    
-        // Charger la vue des rendez-vous et passer les données
-        require '../app/Views/Appointment.php'; // Passer les données à la vue
+
+        // Generate available time slots for today
+        $today = date('Y-m-d'); 
+        $timeSlotsData = $this->appointmentModel->getAvailableTimeSlots($today);
+        $availableSlots = $timeSlotsData['available'];
+        $bookedSlots = $timeSlotsData['booked'];
+
+        // Load the appointment view with the data
+        require '../app/Views/Appointment.php';
     }
-    
 
     public function update() {
-        // Vérifier si le patient est connecté
+        // Check if the patient is logged in
         if (!$this->isLoggedIn()) {
             echo "Vous devez être connecté pour modifier un rendez-vous.";
             return;
         }
-    
-        // Vérifier si le formulaire a été soumis par la méthode POST
+
+        // Check if the form was submitted via POST
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Récupérer les données soumises par le formulaire
+            // Retrieve submitted data
             $appointmentId = $_POST['appointment_id'];
             $appointmentDateTime = $_POST['appointment_date'] . ' ' . $_POST['appointment_time'];
             $serviceId = $_POST['service_id'];
-            $status = $_POST['status']; // Récupération du statut
-    
-            // Récupérer le rendez-vous par son ID
+
+            // Retrieve the appointment by its ID
             $appointment = $this->appointmentModel->getById($appointmentId);
-    
-            // Vérifier si le rendez-vous appartient bien au patient connecté
+
+            // Check if the appointment belongs to the logged-in patient
             $patientId = $_SESSION['patient']['id'];
-    
+
             if ($appointment && $appointment['patient_id'] == $patientId) {
-                // Vérifier si le nouveau créneau horaire est disponible
+                // Check if the new time slot is available
                 $dateOnly = $_POST['appointment_date'];
-                $timeSlots = $this->appointmentModel->getAvailableTimeSlots($dateOnly);
-                if (!in_array($_POST['appointment_time'], $timeSlots)) {
+                $timeSlotsData = $this->appointmentModel->getAvailableTimeSlots($dateOnly);
+                if (!in_array($_POST['appointment_time'], $timeSlotsData['available'])) {
                     echo "Ce créneau horaire n'est pas disponible.";
                     return;
                 }
 
-                // Mise à jour du rendez-vous avec les nouvelles données
+                // Update the appointment with the new data
                 $this->appointmentModel->update($appointmentId, [
                     'appointment_date' => $appointmentDateTime,
-                    'service_id' => $serviceId,
-                    'status' => $status // Mise à jour du statut
+                    'service_id' => $serviceId
                 ]);
-    
-                // Rediriger vers la liste des rendez-vous après la mise à jour
+
+                // Redirect to the appointments list after update
                 header('Location: index.php?page=appointments');
                 exit();
             } else {
                 echo "Vous n'êtes pas autorisé à modifier ce rendez-vous.";
             }
         }
-    }    
-    
-    // Méthode pour supprimer un rendez-vous
+    }
+
     public function delete() {
-        // Vérifier si le patient est connecté
+        // Check if the patient is logged in
         if (!$this->isLoggedIn()) {
             echo "Vous devez être connecté pour supprimer un rendez-vous.";
             return;
         }
 
-        // Vérifier si l'ID du rendez-vous est présent dans la requête
+        // Check if the appointment ID is present in the request
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['appointment_id'])) {
             $appointmentId = $_POST['appointment_id'];
-            
-            // Vérifier si le rendez-vous appartient au patient connecté
+
+            // Check if the appointment belongs to the logged-in patient
             $patientId = $_SESSION['patient']['id'];
             $appointment = $this->appointmentModel->getById($appointmentId);
-            
+
             if ($appointment && $appointment['patient_id'] == $patientId) {
-                // Supprimer le rendez-vous
+                // Delete the appointment
                 $this->appointmentModel->delete($appointmentId);
-                
-                // Redirection après la suppression
+
+                // Redirect after deletion
                 header('Location: index.php?page=appointments');
                 exit();
             } else {
@@ -162,39 +164,40 @@ class AppointmentController {
     }
 
     public function view() {
-        // Vérifier si le patient est connecté
+        // Check if the patient is logged in
         if (!$this->isLoggedIn()) {
             echo "Vous devez être connecté pour voir votre profil.";
             return;
         }
 
-        // Récupérer les données du patient et les rendez-vous
+        // Retrieve patient data and appointments
         $patientId = $_SESSION['patient']['id'];
-        $patientData = $this->patientModel->getPatientAccountData($patientId);
+        $patientData = $this->patientModel->getById($patientId);
+        $appointments = $this->appointmentModel->getAppointmentsByPatientId($patientId);
         
-        // Charger la vue du profil du patient
-        require '../app/Views/patient.php'; // Passer les données à la vue
+        // Load the patient profile view
+        require '../app/Views/patient.php';
     }
 
-    // Méthode pour obtenir les créneaux horaires disponibles pour une date donnée
     public function getTimeSlots() {
-        // Vérifier si la date est fournie dans la requête
+        // Check if the date is provided in the request
         if (isset($_GET['date'])) {
             $date = $_GET['date'];
-            $timeSlots = $this->appointmentModel->getAvailableTimeSlots($date);
+            $timeSlotsData = $this->appointmentModel->getAvailableTimeSlots($date); // Get time slots
 
-            // Retourner les créneaux horaires au format JSON
+            // Return time slots in JSON format
             header('Content-Type: application/json');
-            echo json_encode(['timeSlots' => $timeSlots]);
+            echo json_encode(['timeSlots' => $timeSlotsData]);
         } else {
-            // Si aucune date n'est fournie, retourner un tableau vide
+            // If no date is provided, return an empty array
             header('Content-Type: application/json');
             echo json_encode(['timeSlots' => []]);
         }
     }
 
-    // Vérifier si le patient est connecté
+    // Check if the patient is logged in
     public function isLoggedIn() {
-        return isset($_SESSION['patient']['id']);  // Vérifier la structure de session
+        return isset($_SESSION['patient']['id']);
     }
 }
+?>

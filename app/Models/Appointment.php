@@ -120,31 +120,35 @@ class Appointment {
         $startTime = new DateTime("$today 09:00");
         $endTime = new DateTime("$today 16:40");
         $interval = new DateInterval('PT20M'); // Créneaux de 20 minutes
-        $timeSlots = [];
-    
+        $timeSlots = [
+            'booked' => [],
+            'available' => []
+        ];
+        
         // Récupérer les rendez-vous déjà pris pour cette date
         $query = "SELECT appointment_date FROM appointments WHERE DATE(appointment_date) = :date";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':date', $today);
         $stmt->execute();
         $bookedAppointments = $stmt->fetchAll(PDO::FETCH_COLUMN); // Récupérer uniquement les dates de rendez-vous
-    
+        
         // Créer une liste de créneaux horaires disponibles
         while ($startTime <= $endTime) {
             $slot = $startTime->format('H:i');
-    
             // Combiner la date et le slot pour la vérification
             $combinedSlot = "$today $slot:00"; // Ajoutez les secondes pour correspondre à l'heure
-    
+            
             // Vérifier si le créneau est réservé
-            if (!in_array($combinedSlot, $bookedAppointments)) {
-                $timeSlots[] = $slot; // Ajouter le créneau disponible
+            if (in_array($combinedSlot, $bookedAppointments)) {
+                $timeSlots['booked'][] = $slot; // Ajouter le créneau réservé
+            } else {
+                $timeSlots['available'][] = $slot; // Ajouter le créneau disponible
             }
-    
+            
             $startTime->add($interval); // Ajouter 20 minutes
         }
-    
-        return $timeSlots; // Retourner les créneaux disponibles
-    }    
+        
+        return $timeSlots; // Retourner les créneaux avec une structure contenant les réservés et les disponibles
+    }
 }
 ?>

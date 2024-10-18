@@ -8,437 +8,490 @@
 }
 
 /* === Styles généraux === */
-body {
-    font-family: 'Arial', sans-serif;
-    color: var(--text-color);
-    line-height: 1.6;
-    background-color: var(--main-bg-color);
-    margin: 0;
-    padding: 0;
-}
+    body {
+        font-family: 'Arial', sans-serif;
+        color: var(--text-color);
+        line-height: 1.6;
+        background-color: var(--main-bg-color);
+        margin: 0;
+        padding: 0;
+        height: 100%;
+    }
 
-h1 {
-    font-size: 1.8em;
-    color: var(--primary-color);
-    margin-bottom: 20px;
-}
+    h1 {
+        font-size: 1.8em;
+        color: var(--primary-color);
+        margin-bottom: 20px;
+    }
 
-h2, h3 {
-    color: var(--primary-color);
-    font-weight: bold;
-    margin-bottom: 10px;
-}
+    h2, h3 {
+        color: var(--primary-color);
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
 
-p, ul, li {
-    font-size: 1em;
-    margin-bottom: 20px;
-}
+    p, ul, li {
+        font-size: 1em;
+        margin-bottom: 20px;
+    }
 
-ul {
-    padding-left: 20px;
-}
+    ul {
+        padding-left: 20px;
+    }
 
-ul li {
-    margin-bottom: 10px;
-}
+    ul li {
+        margin-bottom: 10px;
+    }
 
-nav ul li a {
-    font-size: 0.9em;
-}
+    nav ul li a {
+        font-size: 0.9em;
+    }
 
 /* === Header === */
-header {
-    background-color: #2c9ba3;
-    padding: 20px 0;
-    max-height: 20px;
-}
+        header {
+            background-color: #2c9ba3;
+            padding: 20px 0;
+            max-height: 20px;
+        }
 
-.header-container {
-    max-width: 1200px;
-    max-height: 20px;
-    margin: 0 auto;
-    padding: 0 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-}
+        .header-container {
+            max-width: 1200px;
+            max-height: 20px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
 
-header h2 {
-    color: #ffffff;
-    margin: 0;
-}
+        header h2 {
+            color: #ffffff;
+            margin: 0;
+        }
 
-nav ul {
-    list-style: none;
-    display: flex;
-}
+        nav ul {
+            list-style: none;
+            display: flex;
+        }
 
-nav ul li {
-    margin-left: 20px;
-    margin-top: auto;
-    margin-bottom: auto;
-}
+        nav ul li {
+            margin-left: 20px;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
 
-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.1em;
-    transition: color 0.3s ease;
-}
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
 
-nav ul li a:hover {
-    color: #43444459;
-}
+        nav ul li a:hover {
+            color: #43444459;
+        }
 
 /* === Main content styles === */
-main {
-    padding: 40px 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    background-color: var(--white);
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
+    main {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: var(--white);
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
 
 /* === Sections === */
-.section-title {
-    background-color: var(--secondary-bg-color);
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-    max-width: 40%;
-    margin: 5px auto;
-    transition: background-color 0.3s, color 0.3s;
-    cursor: pointer;
-}
+    .section-title {
+        background-color: var(--secondary-bg-color);
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+        max-width: 40%;
+        margin: 5px auto;
+        transition: background-color 0.3s, color 0.3s;
+        cursor: pointer;
+    }
 
-.section-content {
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #f9f9f9;
-}
+    .section-content {
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
 
-.appointments-section {
-    width: 80%; /* Ajustez la largeur selon vos besoins */
-    max-width: 600px; /* Définir une largeur maximale pour éviter que cela ne devienne trop large */
-    margin: 0 auto; /* Centre la section horizontalement */
-    text-align: center; /* Centre le texte à l'intérieur de la section */
-}
+    .appointments-section {
+        width: 80%; /* Ajustez la largeur selon vos besoins */
+        max-width: 600px; /* Définir une largeur maximale pour éviter que cela ne devienne trop large */
+        margin: 0 auto; /* Centre la section horizontalement */
+        text-align: center; /* Centre le texte à l'intérieur de la section */
+    }
 
-.appointments-table th,
-.appointments-table td {
-    text-align: center; /* Centre le texte dans les cellules du tableau */
-    padding: 10px; /* Ajoute un peu d'espace autour du texte */
-    border: 1px solid #ddd; /* Optionnel : ajoute une bordure pour une meilleure visibilité */
-}
+    .appointments-table th,
+    .appointments-table td {
+        text-align: center; /* Centre le texte dans les cellules du tableau */
+        padding: 10px; /* Ajoute un peu d'espace autour du texte */
+        border: 1px solid #ddd; /* Optionnel : ajoute une bordure pour une meilleure visibilité */
+    }
 
-.sections-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 30px;
-    max-width: 70%;
-    margin: 0 auto;
-}
+    .sections-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        max-width: 70%;
+        margin: 0 auto;
+    }
 
-.horaires, .services {
-    flex: 1;
-    background-color: var(--secondary-bg-color);
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
+    .horaires, .services {
+        flex: 1;
+        background-color: var(--secondary-bg-color);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
 
 /* === Contenu des listes === */
-main ul {
-    list-style-type: none;
-}
+    main ul {
+        list-style-type: none;
+    }
 
-main ul li {
-    background: var(--secondary-bg-color);
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 1.1em;
-}
+    main ul li {
+        background: var(--secondary-bg-color);
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.1em;
+    }
 
 /* === Boutons === */
-.cta-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: var(--primary-color);
-    border: none;
-    color: var(--white);
-    font-size: 1.2em;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    cursor: pointer;
-}
+    .cta-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        border: none;
+        color: var(--white);
+        font-size: 1.2em;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+        margin: 0 auto;
+    }
 
-.button {
-    display: inline-block;
-    background-color: var(--primary-color);
-    color: var(--white);
-    border: none;
-    padding: 8px 12px; /* Rembourrage du bouton */
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100px;
-}
+    .button {
+        display: inline-block;
+        background-color: var(--primary-color);
+        color: var(--white);
+        border: none;
+        padding: 8px 12px; /* Rembourrage du bouton */
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100px;
+    }
 
-.button:hover {
-    background-color: #1e7f86; /* Couleur au survol */
-}
+    .button:hover {
+        background-color: #1e7f86; /* Couleur au survol */
+    }
 
-.delete-button {
-    background-color: #dc3545; /* Couleur de fond rouge pour indiquer la suppression */
-    color: white; /* Couleur du texte en blanc */
-    border: none; /* Pas de bordure par défaut */
-    padding: 8px 12px; /* Rembourrage du bouton */
-    border-radius: 4px; /* Coins arrondis */
-    cursor: pointer; /* Curseur qui change au survol */
-    transition: background-color 0.3s; /* Transition pour une meilleure interaction */
-    width: 100px;
-}
+    .delete-button {
+        background-color: #dc3545; /* Couleur de fond rouge pour indiquer la suppression */
+        color: white; /* Couleur du texte en blanc */
+        border: none; /* Pas de bordure par défaut */
+        padding: 8px 12px; /* Rembourrage du bouton */
+        border-radius: 4px; /* Coins arrondis */
+        cursor: pointer; /* Curseur qui change au survol */
+        transition: background-color 0.3s; /* Transition pour une meilleure interaction */
+        width: 100px;
+    }
 
-.delete-button:hover {
-    background-color: #c82333; /* Couleur au survol plus foncé */
-}
+    .delete-button:hover {
+        background-color: #c82333; /* Couleur au survol plus foncé */
+    }
 
-.cta-button:hover {
-    background-color: #1e7f86;
-}
+    .cta-button:hover {
+        background-color: #1e7f86;
+    }
 
 /* === Formulaires === */
 
-.appointment-form {
-    margin: 0 auto; /* Centre le formulaire horizontalement */
-}
-.form-style {
-    background-color: var(--secondary-bg-color); /* Ou toute autre couleur */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin: 20px auto; /* Ajoute un espacement autour */
-    max-width: 400px; /* Assure une largeur maximale constante */
-    text-align: center; /* Aligne le texte à gauche */
-}
+    .appointment-form {
+        margin: 0 auto; /* Centre le formulaire horizontalement */
+    }
+    .form-style {
+        background-color: var(--secondary-bg-color); /* Ou toute autre couleur */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin: 20px auto; /* Ajoute un espacement autour */
+        max-width: 400px; /* Assure une largeur maximale constante */
+        text-align: center; /* Aligne le texte à gauche */
+    }
 
-.form-style label {
-    display: block;
-    margin-bottom: 5px;
-    text-align: center;
-}
+    .form-style label {
+        display: block;
+        margin-bottom: 5px;
+        text-align: center;
+    }
 
-.form-style input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    text-align: center;
-    font-size: 1em;
-}
+    .form-style input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        text-align: center;
+        font-size: 1em;
+    }
+
+/* === Styles pour la page admin === */
+    /* === Styles pour la section des rendez-vous === */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
+
+    /* === Styles pour la section des services dans l'admin === */
+        .edit-form {
+            margin-top: 20px; /* Espace au-dessus du formulaire */
+            padding: 20px; /* Padding interne pour le formulaire */
+            border: 1px solid #ccc; /* Bordure pour le formulaire */
+            border-radius: 8px; /* Coins arrondis */
+            background-color: #f9f9f9; /* Fond légèrement grisé */
+        }
+
+        .edit-form input[type="text"],
+        .edit-form textarea,
+        .edit-form input[type="file"] {
+            width: 100%; /* Largeur complète pour les champs */
+            max-width: 100%; /* Empêche le débordement à droite */
+            padding: 10px; /* Padding interne pour les champs */
+            margin-bottom: 15px; /* Espace entre les champs */
+            border: 1px solid #ccc; /* Bordure des champs */
+            border-radius: 4px; /* Coins arrondis */
+            font-size: 16px; /* Taille de police pour le texte */
+            box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur totale */
+        }
+
+        .edit-form textarea {
+            height: 150px; /* Hauteur personnalisée pour le champ de description */
+            resize: vertical; /* Permet de redimensionner verticalement le champ */
+        }
+
+        .edit-form img {
+            margin-top: 10px; /* Espace au-dessus de l'image actuelle */
+            max-width: 30%; /* Largeur maximale de l'image (80% du conteneur) */
+            height: auto; /* Conserve le ratio d'aspect de l'image */
+            display: block; /* Supprime l'espace indésirable autour de l'image */
+            margin-left: auto; /* Centre l'image horizontalement */
+            margin-right: auto; /* Centre l'image horizontalement */
+        }
+
+        .edit-form .button-container {
+            display: flex; /* Utilise Flexbox pour le centrage */
+            justify-content: center; /* Centre les éléments horizontalement */
+            margin-top: 20px; /* Espace au-dessus du conteneur de boutons */
+        }
+
+        .edit-form button {
+            margin: 0 5px; /* Espace horizontal entre les boutons */
+        }
 
 
+    /* === Section Services et News dans l'admin (partage les mêmes styles) === */
+        .admin-page table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
 
-/* === Styles pour la section des rendez-vous === */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 40px;
-}
+        .admin-page th, 
+        .admin-page td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
 
-th, td {
-    padding: 15px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
+        .admin-page th {
+            background-color: var(--primary-color);
+            color: var(--white);
+        }
 
-th {
-    background-color: var(--primary-color);
-    color: var(--white);
-}
+    /* Gère le formulaire de création et de mise à jour de manière similaire */
+        .admin-page .edit-form {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
 
-/* === Styles pour la section des services dans l'admin === */
-.edit-form {
-    margin-top: 20px; /* Espace au-dessus du formulaire */
-    padding: 20px; /* Padding interne pour le formulaire */
-    border: 1px solid #ccc; /* Bordure pour le formulaire */
-    border-radius: 8px; /* Coins arrondis */
-    background-color: #f9f9f9; /* Fond légèrement grisé */
-}
+        .admin-page .edit-form input[type="text"],
+        .admin-page .edit-form textarea {
+            width: 100%;
+            max-width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
 
-.edit-form input[type="text"],
-.edit-form textarea,
-.edit-form input[type="file"] {
-    width: 100%; /* Largeur complète pour les champs */
-    max-width: 100%; /* Empêche le débordement à droite */
-    padding: 10px; /* Padding interne pour les champs */
-    margin-bottom: 15px; /* Espace entre les champs */
-    border: 1px solid #ccc; /* Bordure des champs */
-    border-radius: 4px; /* Coins arrondis */
-    font-size: 16px; /* Taille de police pour le texte */
-    box-sizing: border-box; /* Inclut le padding et la bordure dans la largeur totale */
-}
+    /* Style des boutons */
+        .admin-page .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
 
-.edit-form textarea {
-    height: 150px; /* Hauteur personnalisée pour le champ de description */
-    resize: vertical; /* Permet de redimensionner verticalement le champ */
-}
+        .admin-page .button, 
+        .admin-page .delete-button, 
+        .admin-page .cta-button {
+            margin: 0 5px;
+        }
 
-.edit-form img {
-    margin-top: 10px; /* Espace au-dessus de l'image actuelle */
-    max-width: 30%; /* Largeur maximale de l'image (80% du conteneur) */
-    height: auto; /* Conserve le ratio d'aspect de l'image */
-    display: block; /* Supprime l'espace indésirable autour de l'image */
-    margin-left: auto; /* Centre l'image horizontalement */
-    margin-right: auto; /* Centre l'image horizontalement */
-}
+    /* Style de la section horaires */
+        .opening-hours-table {
+            width: auto; /* Laisse le tableau s'adapter au contenu */
+            table-layout: auto; /* Permet aux colonnes de s'adapter à leur contenu */
+            border-collapse: collapse; /* Pour une bordure uniforme */
+            margin: 0 auto;
+        }
 
-.edit-form .button-container {
-    display: flex; /* Utilise Flexbox pour le centrage */
-    justify-content: center; /* Centre les éléments horizontalement */
-    margin-top: 20px; /* Espace au-dessus du conteneur de boutons */
-}
+        .opening-hours-table th,
+        .opening-hours-table td {
+            padding: 10px; /* Pour un bon espacement */
+            white-space: nowrap; /* Empêche le contenu de se casser à la ligne */
+            text-align: center;
+        }
 
-.edit-form button {
-    margin: 0 5px; /* Espace horizontal entre les boutons */
-}
-
-
-/* === Section Services et News dans l'admin (partage les mêmes styles) === */
-.admin-page table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 40px;
-}
-
-.admin-page th, 
-.admin-page td {
-    padding: 15px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
-
-.admin-page th {
-    background-color: var(--primary-color);
-    color: var(--white);
-}
-
-/* Gère le formulaire de création et de mise à jour de manière similaire */
-.admin-page .edit-form {
-    margin-top: 20px;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-}
-
-.admin-page .edit-form input[type="text"],
-.admin-page .edit-form textarea {
-    width: 100%;
-    max-width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box;
-}
-
-/* Style des boutons */
-.admin-page .button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.admin-page .button, 
-.admin-page .delete-button, 
-.admin-page .cta-button {
-    margin: 0 5px;
-}
-
-/* Style de la section horaires */
-.opening-hours-table {
-    width: auto; /* Laisse le tableau s'adapter au contenu */
-    table-layout: auto; /* Permet aux colonnes de s'adapter à leur contenu */
-    border-collapse: collapse; /* Pour une bordure uniforme */
-    margin: 0 auto;
-}
-
-.opening-hours-table th,
-.opening-hours-table td {
-    padding: 10px; /* Pour un bon espacement */
-    white-space: nowrap; /* Empêche le contenu de se casser à la ligne */
-    text-align: center;
-}
-
-.opening-hours-table th {
-    background-color: var(--primary-color); /* Couleur d'arrière-plan pour les en-têtes */
-    color: var(--white); /* Couleur du texte pour les en-têtes */
-}
+        .opening-hours-table th {
+            background-color: var(--primary-color); /* Couleur d'arrière-plan pour les en-têtes */
+            color: var(--white); /* Couleur du texte pour les en-têtes */
+        }
 
 
 /* Style de la page services */
-.service-item {
-    display: flex; /* Utilisation de Flexbox pour la mise en page */
-    align-items: center; /* Centre verticalement les éléments dans le conteneur */
-    margin-bottom: 20px; /* Espace entre les services */
-}
+        .service-item {
+            display: flex; /* Utilisation de Flexbox pour la mise en page */
+            align-items: center; /* Centre verticalement les éléments dans le conteneur */
+            margin-bottom: 20px; /* Espace entre les services */
+        }
 
-.service-image {
-    flex: 0 0 33.33%; /* L'image prend un tiers de la largeur du conteneur */
-}
+        .service-image {
+            flex: 0 0 33.33%; /* L'image prend un tiers de la largeur du conteneur */
+        }
 
-.service-image img {
-    width: 100%; /* L'image prend toute la largeur de son conteneur */
-    height: auto; /* Garde le ratio d'aspect de l'image */
-    display: block; /* Supprime les espaces indésirables autour de l'image */
-}
+        .service-image img {
+            width: 100%; /* L'image prend toute la largeur de son conteneur */
+            height: auto; /* Garde le ratio d'aspect de l'image */
+            display: block; /* Supprime les espaces indésirables autour de l'image */
+        }
 
-.service-details {
-    flex: 1; /* Permet au conteneur des détails de prendre l'espace restant */
-    padding-left: 20px; /* Espace entre l'image et le texte à gauche */
-}
 
-/* Styles pour l'élément impair (image à droite) */
-.service-odd {
-    flex-direction: row-reverse; /* Inverse l'ordre des éléments pour les services impairs */
-}
+        .service-details {
+            flex: 1; /* Permet au conteneur des détails de prendre l'espace restant */
+            padding-left: 20px; /* Espace entre l'image et le texte à gauche */
+        }
 
-.service-odd .service-details {
-    padding-left: 0; /* Supprime le padding à gauche */
-    padding-right: 20px; /* Ajoute un espace entre le texte et l'image à droite */
-}
+        /* Styles pour l'élément impair (image à droite) */
+        .service-odd {
+            flex-direction: row-reverse; /* Inverse l'ordre des éléments pour les services impairs */
+        }
 
-h3 {
-    margin: 0; /* Supprime les marges par défaut du titre */
-}
+        .service-odd .service-details {
+            padding-left: 0; /* Supprime le padding à gauche */
+            padding-right: 20px; /* Ajoute un espace entre le texte et l'image à droite */
+        }
+
+        h3 {
+            margin: 0; /* Supprime les marges par défaut du titre */
+        }
+
+
+/* Style de la page news */
+        .news-item {
+            display: flex; /* Utilise Flexbox pour disposer les éléments */
+            align-items: stretch; /* Assure que chaque item prenne la même hauteur */
+            margin-top: 40px;
+        }
+
+        /* News impaires : image à droite */
+        .news-item.odd {
+            flex-direction: row-reverse; /* Inverse l'ordre pour les articles impairs */
+        }
+
+        .image-container {
+            flex: 0 0 50%; /* Prend 50% de l'espace pour l'image */
+            position: relative; /* Pour le positionnement de l'image */
+        }
+
+        .image-container:before {
+            content: "";
+            display: block;
+            padding-top: 56.25%; /* Ratio d'aspect 16:9 (hauteur: largeur) */
+        }
+
+        .image-container img {
+            position: absolute; /* Positionne l'image à l'intérieur du conteneur */
+            top: 0; /* Positionne l'image en haut */
+            left: 0; /* Positionne l'image à gauche */
+            width: 100%; /* L'image prend toute la largeur de son conteneur */
+            height: 100%; /* L'image prend toute la hauteur de son conteneur */
+            object-fit: cover; /* Remplit l'espace sans déformer l'image */
+        }
+
+        .news-content {
+            flex: 1; /* Prend le reste de l'espace disponible */
+            display: flex;
+            flex-direction: column; /* Permet de disposer le contenu en colonne */
+            justify-content: center; /* Centre verticalement le contenu textuel */
+            text-align: center; /* Centre le texte horizontalement */
+            padding: 20px; /* Ajoute un peu d'espace autour du texte */
+        }
+
+        .full-article {
+            width: 70%; /* Définit la largeur à 70% */
+            margin: 0 auto; /* Centre le contenu horizontalement */
+            padding: 20px; /* Ajoute un peu de padding autour du contenu */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère pour le style */
+            background-color: #fff; /* Optionnel : ajoute un fond blanc pour le contraste */
+            border-radius: 5px; /* Optionnel : arrondit légèrement les coins */
+        }
 
 
 /* === Footer === */
-footer {
-    background-color: var(--primary-color);
-    color: var(--white);
-    padding: 20px;
-    text-align: center;
-    font-size: 0.9em;
-}
+        footer {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
 
-footer p {
-    margin: 0;
-}
+        footer p {
+            margin: 0;
+        }
 
 
 

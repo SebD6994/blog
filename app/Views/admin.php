@@ -13,93 +13,121 @@
     <main>
         <h1>Tableau de bord de l'Admin</h1>
 
-        <!-- Section des Rendez-vous -->
-        <h2 class="section-title">Rendez-vous</h2>
-        <section class="sections-container" style="display: none;">
-            <h2>Liste des Rendez-vous pour aujourd'hui</h2>
 
+        <?php 
+        // Afficher les messages de session
+        if (isset($_SESSION['message'])): ?>
+            <div class="message">
+                <?php echo htmlspecialchars($_SESSION['message']); ?>
+                <?php unset($_SESSION['message']); // Supprimer le message après l'affichage ?>
+            </div>
+        <?php endif; ?>
+
+
+<!-- Section des Rendez-vous -->
+<h2 class="section-title">Rendez-vous</h2>
+<section class="sections-container" style="display: block;"> <!-- Make visible for demonstration -->
+    <h2>Liste des Rendez-vous pour aujourd'hui</h2>
+
+    <?php 
+    // Récupérer la date d'aujourd'hui
+    $today = date('Y-m-d');
+
+    // Récupérer tous les rendez-vous pour aujourd'hui
+    $appointmentsToday = array_filter($appointments, function($appointment) use ($today) {
+        $dateTime = new DateTime($appointment['appointment_date']);
+        return $dateTime->format('Y-m-d') === $today;
+    });
+
+    // Créer un tableau avec tous les créneaux (disponibles et réservés)
+    $allTimeSlots = [];
+
+    // Ajouter les créneaux disponibles
+    foreach ($timeSlots['available'] as $slot) {
+        $allTimeSlots[] = [
+            'time' => $slot,
+            'isBooked' => false,
+            'associatedAppointment' => null,
+        ];
+    }
+
+    // Ajouter les créneaux réservés
+    foreach ($timeSlots['booked'] as $slot) {
+        foreach ($appointmentsToday as $appointment) {
+            $appointmentDateTime = new DateTime($appointment['appointment_date']);
+            if ($appointmentDateTime->format('H:i') === $slot) {
+                $allTimeSlots[] = [
+                    'time' => $slot,
+                    'isBooked' => true,
+                    'associatedAppointment' => $appointment,
+                ];
+                break; // Sortir de la boucle une fois que le rendez-vous est trouvé
+            }
+        }
+    }
+
+    // Trier les créneaux horaires par heure
+    usort($allTimeSlots, function($a, $b) {
+        return strtotime($a['time']) - strtotime($b['time']);
+    });
+    ?>
+
+    <table class="appointments-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Service</th>
+                <th>Patient</th>
+                <th>Statut</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
             <?php 
-            // Récupérer la date d'aujourd'hui
-            $today = date('Y-m-d');
-
-            // Regrouper les rendez-vous pour aujourd'hui
-            $appointmentsToday = array_filter($appointments, function($appointment) use ($today) {
-                $dateTime = new DateTime($appointment['appointment_date']);
-                return $dateTime->format('Y-m-d') === $today;
-            });
-            ?>
-
-            <table class="appointments-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Heure</th>
-                        <th>Service</th>
-                        <th>Patient</th>
-                        <th>Statut</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php 
-                    foreach ($availableSlots as $slot): 
-                        $isBooked = false;
-                        $associatedAppointment = null;
-
-                        // Vérifier si le créneau est réservé
-                        foreach ($appointmentsToday as $appointment): 
-                            $appointmentDateTime = new DateTime($appointment['appointment_date']);
-                            if ($appointmentDateTime->format('H:i') === $slot): 
-                                $isBooked = true; 
-                                $associatedAppointment = $appointment; // Stocker le rendez-vous associé
-                                break; 
-                            endif; 
-                        endforeach; 
-                    ?>
-                        <tr>
-                            <td><?= htmlspecialchars(date('d/m/Y')); ?></td>
-                            <td><?= htmlspecialchars($slot); ?></td>
-                            <?php if ($isBooked): ?>
-                                <td><?= htmlspecialchars($associatedAppointment['service_name'] ?? 'Service non spécifié'); ?></td>
-                                <td>
-                                    <?= !empty($associatedAppointment['patient_name']) ? htmlspecialchars($associatedAppointment['patient_name']) : '-'; ?>
-                                </td>
-                                <td>
-                                    <form action="index.php?page=admin&action=updateAppointment" method="POST" style="display:inline;">
-                                        <input type="hidden" name="id" value="<?= htmlspecialchars($associatedAppointment['id']); ?>">
-                                        <select name="status" required>
-                                            <option value="pending" <?= $associatedAppointment['status'] === 'pending' ? 'selected' : ''; ?>>En attente</option>
-                                            <option value="confirmed" <?= $associatedAppointment['status'] === 'confirmed' ? 'selected' : ''; ?>>Confirmé</option>
-                                            <option value="cancelled" <?= $associatedAppointment['status'] === 'cancelled' ? 'selected' : ''; ?>>Annulé</option>
-                                        </select>
-                                        <button type="submit" class="button">Mettre à jour</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <form action="index.php?page=appointments&action=delete" method="post" style="display:inline;" onsubmit="return confirmDelete();">
-                                        <input type="hidden" name="appointment_id" value="<?= htmlspecialchars($associatedAppointment['id']); ?>">
-                                        <button type="submit" class="delete-button">Supprimer</button>
-                                    </form>
-                                </td>
-                            <?php else: ?>
-                                <td>-</td> <!-- Service non réservé -->
-                                <td>-</td> <!-- Patient non associé -->
-                                <td>Disponible</td> <!-- Indication de disponibilité -->
-                                <td>
-                                    <button class="button" onclick="showBookingForm('<?= htmlspecialchars($slot); ?>')">Réserver</button>
-                                </td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            
-            <?php if (empty($appointmentsToday)): ?>
-                <p>Aucun rendez-vous trouvé pour aujourd'hui.</p>
-            <?php endif; ?>
-            
-            <a href="index.php?page=appointments" class="cta-button">Créer un Rendez-vous</a>
-        </section>
+            foreach ($allTimeSlots as $slot): ?>
+                <tr>
+                    <td><?= htmlspecialchars(date('d/m/Y')); ?></td> <!-- Date d'aujourd'hui -->
+                    <td><?= htmlspecialchars($slot['time']); ?></td> <!-- Heure du créneau -->
+                    <?php if ($slot['isBooked']): ?>
+                        <td><?= htmlspecialchars($slot['associatedAppointment']['service_name'] ?? 'Service non spécifié'); ?></td> <!-- Service -->
+                        <td><?= !empty($slot['associatedAppointment']['patient_name']) ? htmlspecialchars($slot['associatedAppointment']['patient_name']) : '-'; ?></td> <!-- Patient -->
+                        <td>
+                            <form action="index.php?page=admin&action=updateAppointmentStatus" method="POST" style="display:inline;">
+                                <input type="hidden" name="id" value="<?= htmlspecialchars($slot['associatedAppointment']['id']); ?>">
+                                <select name="status" required>
+                                    <option value="pending" <?= $slot['associatedAppointment']['status'] === 'pending' ? 'selected' : ''; ?>>En attente</option>
+                                    <option value="confirmed" <?= $slot['associatedAppointment']['status'] === 'confirmed' ? 'selected' : ''; ?>>Confirmé</option>
+                                    <option value="cancelled" <?= $slot['associatedAppointment']['status'] === 'cancelled' ? 'selected' : ''; ?>>Annulé</option>
+                                </select>
+                                <button type="submit" class="button">Mettre à jour</button>
+                            </form>
+                        </td> <!-- Statut avec formulaire -->
+                        <td>
+                            <form action="index.php?page=admin&action=deleteAppointment" method="post" style="display:inline;" onsubmit="return confirmDelete();">
+                                <input type="hidden" name="appointment_id" value="<?= htmlspecialchars($slot['associatedAppointment']['id']); ?>">
+                                <button type="submit" class="delete-button">Supprimer</button>
+                            </form>
+                        </td>
+                    <?php else: ?>
+                        <td>-</td> <!-- Service non réservé -->
+                        <td>-</td> <!-- Patient non associé -->
+                        <td>Disponible</td> <!-- Indication de disponibilité -->
+                        <td>
+                            <button class="button" onclick="showBookingForm('<?= htmlspecialchars($slot['time']); ?>')">Réserver</button>
+                        </td>
+                    <?php endif; ?>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    
+    <?php if (empty($appointmentsToday)): ?>
+        <p>Aucun rendez-vous trouvé pour aujourd'hui.</p>
+    <?php endif; ?>
+    
+    <a href="index.php?page=appointments" class="cta-button">Créer un Rendez-vous</a>
+</section>
 
 
 
@@ -341,19 +369,26 @@
 
                                     <textarea id="edit_news_content_<?= $new['id']; ?>" name="content" required style="width: 100%;"><?php echo htmlspecialchars($new['content']); ?></textarea>
 
-                                    <?php if (!empty($new['image'])): ?>
-                                        <img src="<?= htmlspecialchars($new['image']); ?>" alt="Image de la news">
-                                        <input type="hidden" name="existing_image" value="<?= htmlspecialchars($new['image']); ?>">
-                                    <?php endif; ?>
+                                    <!-- Display existing image -->
+                                    <div>
+                                        <?php if (!empty($new['image_path'])): // Check the correct field name ?>
+                                            <img src="<?= htmlspecialchars($new['image_path']); ?>" alt="Image de la news">
+                                            <input type="hidden" name="existing_image" value="<?= htmlspecialchars($new['image_path']); ?>">
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <!-- Input for new image upload -->
+                                    <label for="edit_service_image_<?= $new['id']; ?>">Nouvelle image (optionnel) :</label>
+                                    <input type="file" id="edit_service_image_<?= $new['id']; ?>" name="image" accept="image/*">
 
                                     <div class="button-container">
                                         <button type="submit" class="cta-button">Mettre à jour</button>
                                         <button type="button" class="button" onclick="hideEditForm('news', <?= $new['id']; ?>)">Annuler</button>
-                                        <button type="button" onclick="previewArticle('<?= htmlspecialchars($new['title']); ?>', tinymce.get('edit_news_content_<?= $new['id']; ?>').getContent())">Prévisualiser l'Article</button>
                                     </div>
                                 </form>
                             </td>
                         </tr>
+
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
@@ -362,28 +397,22 @@
                 <?php endif; ?>
             </tbody>
         </table>
-
         <button id="toggle-create-news-form" class="cta-button">Ajouter une Actualité</button>
-        <!-- Formulaire de création (en dehors de la boucle foreach) -->
-        <form action="?page=admin&action=createNews" method="POST" class="edit-form" id="create-news-form" style="display: none;">
-            <label for="news_title">Titre :</label>
-            <input type="text" id="news_title" name="title" required style="width: 100%;">
+            <!-- Formulaire de création (en dehors de la boucle foreach) -->
+            <form action="?page=admin&action=createNews" method="POST" class="edit-form" id="create-news-form" style="display: none;" enctype="multipart/form-data">
+                <label for="news_title">Titre</label>
+                <input type="text" id="news_title" name="title" required style="width: 100%;">
 
-            <label for="news_content">Contenu :</label>
-            <textarea id="news_content" name="content" required style="width: 100%;"></textarea>
+                <label for="news_content">Contenu</label>
+                <textarea id="news_content" name="content" required style="width: 100%;"></textarea>
 
-            <div class="button-container">
-                <button type="submit" class="cta-button">Ajouter Actualité</button>
-                <button type="button" onclick="previewArticle(document.getElementById('news_title').value, tinymce.get('news_content').getContent())">Prévisualiser l'Article</button>
-            </div>
-        </form>
+                <label for="service_image">Image</label>
+                <input type="file" id="service_image" name="image" accept="image/*"> <!-- Ajout d'une contrainte d'acceptation d'images -->
 
-        <!-- Modal de prévisualisation (à l'extérieur de la boucle) -->
-        <div id="previewModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; border: 1px solid #ccc; padding: 20px; z-index: 1000;">
-            <h2>Prévisualisation de l'Article</h2>
-            <div id="previewContent"></div>
-            <button onclick="closePreview()">Fermer</button>
-        </div>
+                <div class="button-container">
+                    <button type="submit" class="cta-button">Publier</button>
+                </div>
+            </form>
     </div>
 </section>
 

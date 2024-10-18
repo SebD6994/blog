@@ -7,15 +7,6 @@ class Service {
         $this->db = $db;
     }
 
-    public function create($data) {
-        if (empty($data['name']) || empty($data['description'])) {
-            throw new InvalidArgumentException('Name and description cannot be empty.');
-        }
-
-        $stmt = $this->db->prepare("INSERT INTO services (name, description, image) VALUES (?, ?, ?)");
-        $stmt->execute([$data['name'], $data['description'], $data['image']]);
-    }
-
     public function getAll() {
         $stmt = $this->db->query("SELECT * FROM services");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -25,6 +16,15 @@ class Service {
         $stmt = $this->db->prepare("SELECT * FROM services WHERE id = ?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function create($data) {
+        if (empty($data['name']) || empty($data['description'])) {
+            throw new InvalidArgumentException('Name and description cannot be empty.');
+        }
+
+        $stmt = $this->db->prepare("INSERT INTO services (name, description, image) VALUES (?, ?, ?)");
+        $stmt->execute([$data['name'], $data['description'], $data['image']]);
     }
 
     public function update($id, $data) {
@@ -52,6 +52,4 @@ class Service {
         $stmt = $this->db->prepare("DELETE FROM services WHERE id = ?");
         $stmt->execute([$id]);
     }    
-    
-    
 }

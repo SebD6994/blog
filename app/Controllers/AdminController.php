@@ -7,6 +7,7 @@ require_once '../app/Models/Appointment.php';
 require_once '../app/Controllers/ServiceController.php';
 require_once '../app/Controllers/NewsController.php';
 require_once '../app/Controllers/PatientController.php';
+require_once '../app/Controllers/AppointmentController.php';
 
 class AdminController {
     private $db;
@@ -14,7 +15,7 @@ class AdminController {
     private $homeModel;
     private $appointmentModel;
     private $patientController;
-    private $newsController; // Ajout d'une propriété pour le NewsController
+    private $newsController;
 
     public function __construct($db) {
         $this->db = $db;
@@ -22,7 +23,7 @@ class AdminController {
         $this->homeModel = new Home($db);
         $this->patientController = new PatientController($db);
         $this->appointmentModel = new Appointment($db);
-        $this->newsController = new NewsController($db); // Instanciation du NewsController
+        $this->newsController = new NewsController($db);
     }
 
     public function index() {
@@ -34,44 +35,55 @@ class AdminController {
         $openingHours = $this->homeModel->getOpeningHours();
 
         $today = date('Y-m-d');
+        
+        // Récupérer les créneaux horaires disponibles
         $availableSlots = $this->appointmentModel->getAvailableTimeSlots($today);
 
-        // Afficher la vue admin_dashboard
+        // Vérification et structure des créneaux horaires
+        $timeSlots = [
+            'available' => $availableSlots['available'] ?? [], // Créneaux horaires disponibles
+            'booked' => $availableSlots['booked'] ?? [] // Créneaux horaires réservés
+        ];
+
+        // Afficher la vue admin_dashboard avec les données
         require '../app/Views/admin.php';
     }
 
-    // Méthodes pour gérer les actions de l'admin (ajout, suppression, mise à jour)
-    public function updateStatus($id, $status) {
-        if ($id && $status) {
-            $stmt = $this->db->prepare("UPDATE appointments SET status = :status WHERE id = :id");
-            $stmt->bindParam(':status', $status);
-            $stmt->bindParam(':id', $id);
-            $stmt->execute();
-
-            header("Location: index.php?page=admin");
-            exit();
-        } else {
-            die("ID ou statut manquant lors de la mise à jour du rendez-vous.");
-        }
-    }
-
-    public function updateAppointment() {
+    // Délégation à AppointmentController pour mettre à jour le statut d'un rendez-vous
+    public function updateAppointmentStatus() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['id']) && isset($_POST['status'])) {
                 $appointmentId = $_POST['id'];
                 $status = $_POST['status'];
 
-                // Déléguer l'appel à la méthode update du AppointmentController
+                // Déléguer l'appel à la méthode updateStatus du AppointmentController
                 $appointmentController = new AppointmentController($this->db);
-                $appointmentController->update($appointmentId, $status);
-
-                header('Location: index.php?page=admin'); 
-                exit();
+                if ($appointmentController->updateStatus($appointmentId, $status)) {
+                    header('Location: index.php?page=admin'); 
+                    exit();
+                } else {
+                    die("Erreur lors de la mise à jour du statut du rendez-vous.");
+                }
             } else {
                 die("ID ou statut manquant lors de la mise à jour du rendez-vous.");
             }
         } else {
             die("Aucune donnée soumise pour la mise à jour du rendez-vous.");
+        }
+    }
+
+    // Délégation à AppointmentController pour obtenir les créneaux horaires disponibles
+    public function getAvailableTimeSlots() {
+        if (isset($_GET['date'])) {
+            $date = $_GET['date'];
+
+            // Instantiate AppointmentController
+            $appointmentController = new AppointmentController($this->db);
+
+            // Call the getTimeSlots method with the date parameter
+            $appointmentController->getTimeSlots($date);
+        } else {
+            echo "Aucune date spécifiée.";
         }
     }
 
