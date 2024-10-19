@@ -26,6 +26,11 @@ class Admin {
         return $this->appointmentModel->updateStatus($appointmentId, $status);
     }
 
+
+
+
+
+    
     // Récupère tous les patients via le modèle Patient
     public function getPatients() {
         return $this->patientModel->getAll();
@@ -51,45 +56,10 @@ class Admin {
         return $this->patientModel->delete($id);
     }
 
-    // Récupère tous les services via le modèle Service
-    public function getServices() {
-        return $this->serviceModel->getAll();
-    }
 
-    // Crée un service via le modèle Service
-    public function createService($data) {
-        return $this->serviceModel->create($data);
-    }
 
-    // Met à jour un service via le modèle Service
-    public function updateService($id, $data) {
-        return $this->serviceModel->update($id, $data);
-    }
 
-    // Supprime un service via le modèle Service
-    public function deleteService($id) {
-        return $this->serviceModel->delete($id);
-    }
 
-    // Récupère toutes les actualités via le modèle News
-    public function getNews() {
-        return $this->newsModel->getAll();
-    }
-
-    // Ajoute une actualité via le modèle News
-    public function createNews($data) {
-        return $this->newsModel->create($data);
-    }
-
-    // Met à jour une actualité via le modèle News
-    public function updateNews($id, $data) {
-        return $this->newsModel->update($id, $data);
-    }
-
-    // Supprime une actualité via le modèle News
-    public function deleteNews($id) {
-        return $this->newsModel->delete($id);
-    }
 
     // Récupère les horaires d'ouverture via le modèle Home
     public function getOpeningHours() {

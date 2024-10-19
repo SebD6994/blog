@@ -13,8 +13,9 @@ class News {
     }
 
     public function find($id) {
-        $stmt = $this->db->prepare("SELECT * FROM news WHERE id = ?");
-        $stmt->execute([$id]);
+        $stmt = $this->db->prepare("SELECT * FROM news WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
@@ -39,38 +40,6 @@ class News {
             throw new Exception("Erreur lors de la création de l'actualité: " . $e->getMessage());
         }
     }
-    
-    private function handleImageUpload($file) {
-        // Définir le dossier où les images seront stockées
-        $targetDir = "../assets/images/news/";
-        $targetFile = $targetDir . basename($file['name']);
-        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-    
-        // Vérifiez si le fichier est une image réelle ou une fausse image
-        $check = getimagesize($file['tmp_name']);
-        if ($check === false) {
-            throw new Exception("Le fichier téléchargé n'est pas une image.");
-        }
-    
-        // Vérifiez la taille du fichier (ex : max 2Mo)
-        if ($file['size'] > 2000000) {
-            throw new Exception("Désolé, votre fichier est trop grand.");
-        }
-    
-        // Autoriser certains formats de fichiers
-        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
-        if (!in_array($imageFileType, $allowedTypes)) {
-            throw new Exception("Désolé, seuls les fichiers JPG, JPEG, PNG & GIF sont autorisés.");
-        }
-    
-        // Essayez de déplacer le fichier téléchargé
-        if (move_uploaded_file($file['tmp_name'], $targetFile)) {
-            return $targetFile; // Retourne le chemin de l'image
-        } else {
-            throw new Exception("Désolé, une erreur est survenue lors du téléchargement de votre fichier.");
-        }
-    }
-    
 
     public function update($id, $data) {
         if (empty($data['title']) || empty($data['content'])) {
@@ -94,7 +63,6 @@ class News {
         }
     }
     
-
     public function delete($id) {
         try {
             // Begin a transaction
@@ -124,6 +92,37 @@ class News {
             // Rollback the transaction if an error occurs
             $this->db->rollBack();
             throw new Exception("Erreur lors de la suppression de l'actualité: " . $e->getMessage());
+        }
+    }
+
+    private function handleImageUpload($file) {
+        // Définir le dossier où les images seront stockées
+        $targetDir = "../assets/images/news/";
+        $targetFile = $targetDir . basename($file['name']);
+        $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+    
+        // Vérifiez si le fichier est une image réelle ou une fausse image
+        $check = getimagesize($file['tmp_name']);
+        if ($check === false) {
+            throw new Exception("Le fichier téléchargé n'est pas une image.");
+        }
+    
+        // Vérifiez la taille du fichier (ex : max 2Mo)
+        if ($file['size'] > 2000000) {
+            throw new Exception("Désolé, votre fichier est trop grand.");
+        }
+    
+        // Autoriser certains formats de fichiers
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+        if (!in_array($imageFileType, $allowedTypes)) {
+            throw new Exception("Désolé, seuls les fichiers JPG, JPEG, PNG & GIF sont autorisés.");
+        }
+    
+        // Essayez de déplacer le fichier téléchargé
+        if (move_uploaded_file($file['tmp_name'], $targetFile)) {
+            return $targetFile; // Retourne le chemin de l'image
+        } else {
+            throw new Exception("Désolé, une erreur est survenue lors du téléchargement de votre fichier.");
         }
     }
 }

@@ -34,5 +34,5 @@ function toggleCreateServiceForm() {
 
 // Fonction pour confirmer la suppression d'un service
 function confirmDelete(message) {
-    return confirm(message); // Affiche une boîte de dialogue de confirmation
+    return confirm(message);
 }

@@ -2,13 +2,28 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Vérification si l'utilisateur est connecté et son rôle
+if (isset($_SESSION['patient']['role'])) {
+    if ($_SESSION['patient']['role'] === 'admin') {
+        // Redirection vers la page admin
+        header("Location: index.php?page=admin_news");
+        exit();
+    } elseif ($_SESSION['patient']['role'] === 'user') {
+        // Redirection vers la page utilisateur
+        header("Location: index.php?page=news");
+        exit();
+    } else {
+        echo "Accès non autorisé.";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Actualités</title>
+    <title>Actualités</title>
     <link rel="stylesheet" href="../assets/css/style.css"> <!-- Chemin vers votre fichier CSS -->
 </head>
 <body>

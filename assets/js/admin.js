@@ -1,40 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Fonction pour basculer l'affichage des sections
-    function toggleSection(sectionTitle) {
-        const sectionsContainer = sectionTitle.nextElementSibling; // L'élément de contenu suivant
 
-        // Fermer toutes les autres sections
-        const allSections = document.querySelectorAll('.sections-container');
-        allSections.forEach(section => {
-            if (section !== sectionsContainer) {
-                section.style.display = 'none'; // Masquer les autres sections
-            }
-        });
-
-        // Ouvrir ou fermer la section cliquée
-        if (sectionsContainer.style.display === 'block') {
-            sectionsContainer.style.display = 'none'; // Masquer la section
-        } else {
-            sectionsContainer.style.display = 'block'; // Afficher la section
-
-            // Faire défiler jusqu'à la section ouverte
-            sectionsContainer.scrollIntoView({
-                behavior: 'smooth', // Animation fluide
-                block: 'start' // Aligner le début de la section en haut
-            });
-        }
-    }
-
-    // Ajoutez des écouteurs d'événements pour chaque titre de section
-    const sectionTitles = document.querySelectorAll('.section-title');
-    sectionTitles.forEach(title => {
-        title.addEventListener('click', function() {
-            console.log(`Toggling section for: ${title.textContent}`);
-            toggleSection(title);
-        });
-    });
-
-// Écoutez le clic sur le bouton d'ajout d'actualité
+    // Écoutez le clic sur le bouton d'ajout d'actualité
 const toggleNewsButton = document.getElementById('toggle-create-news-form');
 if (toggleNewsButton) {
     toggleNewsButton.addEventListener('click', toggleCreateNewsForm);
@@ -60,16 +26,6 @@ function toggleCreateNewsForm() {
         // Si le formulaire est masqué, détruire l'instance de TinyMCE
         tinymce.get('news_content')?.remove(); // Retirer l'éditeur
     }
-}
-
-// Fonction pour afficher le formulaire de création de service
-function toggleCreateServiceForm() {
-    const createServiceForm = document.getElementById('create-service-form'); // Formulaire d'ajout de service
-    const toggleButton = document.getElementById('toggle-create-service-form'); // Bouton pour afficher/masquer le formulaire
-
-    // Bascule l'affichage du formulaire
-    createServiceForm.style.display = (createServiceForm.style.display === 'none' || createServiceForm.style.display === '') ? 'block' : 'none';
-    toggleButton.textContent = (createServiceForm.style.display === 'block') ? 'Annuler' : 'Ajouter un Service'; // Changer le texte du bouton
 }
 
 // Fonction pour afficher le formulaire de modification (service ou news)

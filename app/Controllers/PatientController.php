@@ -78,10 +78,10 @@ public function index($errorMessage = null, $successMessage = null) {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'];
             $password = $_POST['password'];
-    
+
             // Vérifier si l'email et le mot de passe sont corrects
             $patient = $this->patientModel->authenticate($email, $password);
-    
+
             if ($patient) {
                 // Stocker l'ID du patient et ses données dans la session
                 $_SESSION['patient'] = [
@@ -92,9 +92,15 @@ public function index($errorMessage = null, $successMessage = null) {
                     'phone' => $patient->phone,
                     'role' => $patient->role
                 ];
-    
-                // Recharge la même page avec les informations mises à jour
-                $this->index(); // Charge la vue avec les nouvelles données de session
+
+                // Redirection en fonction du rôle
+                if ($patient->role === 'admin') {
+                    header('Location: index.php?page=admin_home'); // Rediriger vers la page d'accueil de l'administrateur
+                    exit();
+                } else {
+                    // Pour les patients, recharge la même page
+                    $this->index(); // Charge la vue avec les nouvelles données de session
+                }
             } else {
                 // Si la connexion échoue, afficher un message d'erreur
                 $errorMessage = "Email ou mot de passe incorrect.";
@@ -102,7 +108,6 @@ public function index($errorMessage = null, $successMessage = null) {
             }
         }
     }
-    
 
     // Vérifier si un utilisateur est connecté
     public function isLoggedIn() {

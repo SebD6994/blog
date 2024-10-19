@@ -6,6 +6,7 @@ class Home {
 
     public function __construct($dbConnection) {
         $this->dbConnection = $dbConnection;
+        $this->db = $dbConnection;
         $this->serviceModel = new Service($dbConnection); // Créer une instance du modèle Service
     }
 
@@ -57,4 +58,76 @@ class Home {
     
             return []; // Return an empty array if no hours found
         }
+
+    // Récupérer l'image de la bannière depuis la table settings
+    public function getBannerImage() {
+        $query = $this->db->prepare("SELECT image_path FROM settings WHERE description = 'banner_image'");
+        $query->execute();
+        $result = $query->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['image_path'] : null;
+    }
+
+    public function updateBanner($imagePath, $description) {
+        try {
+            // Démarrer une transaction
+            $this->db->beginTransaction();
+            
+            // Créer une nouvelle entrée pour la bannière
+            $stmtInsert = $this->db->prepare("INSERT INTO settings (description, image_path) VALUES (:description, :image_path)");
+            $stmtInsert->bindParam(':description', $description);
+            $stmtInsert->bindParam(':image_path', $imagePath);
+            $stmtInsert->execute();
+    
+            // Récupérer l'ID de l'ancienne entrée à supprimer
+            $stmtSelect = $this->db->prepare("SELECT id FROM settings WHERE description = 'banner_image'");
+            $stmtSelect->execute();
+            $oldEntry = $stmtSelect->fetch(PDO::FETCH_ASSOC);
+    
+            // Si une ancienne entrée existe, la supprimer
+            if ($oldEntry) {
+                $stmtDelete = $this->db->prepare("DELETE FROM settings WHERE id = :id");
+                $stmtDelete->bindParam(':id', $oldEntry['id']);
+                $stmtDelete->execute();
+            }
+    
+            // Valider la transaction
+            $this->db->commit();
+        } catch (Exception $e) {
+            // Annuler la transaction en cas d'erreur
+            $this->db->rollBack();
+            throw $e; // Relancer l'exception pour gestion ultérieure
+        }
+    }
+    
+
+    // Méthode pour gérer les images de la clinique
+    public function getClinicImages() {
+        // Sélectionnez également l'id de l'image
+        $query = $this->db->prepare("SELECT id, image_path, description FROM clinic_images ORDER BY id ASC");
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC); // Récupérer toutes les lignes sous forme de tableau associatif
+    }
+    
+        // Ajouter une nouvelle image de la clinique
+    public function addClinicImage($imagePath, $description = null) {
+        $query = $this->db->prepare("INSERT INTO clinic_images (image_path, description) VALUES (:image_path, :description)");
+        $query->bindParam(':image_path', $imagePath);
+        $query->bindParam(':description', $description);
+        return $query->execute();
+    }
+
+    public function updateClinicImage($id, $imagePath, $description) {
+        $stmt = $this->db->prepare("UPDATE clinic_images SET image_path = :image_path, description = :description WHERE id = :id");
+        $stmt->bindParam(':image_path', $imagePath);
+        $stmt->bindParam(':description', $description);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+    }
+
+    // Supprimer une image de la clinique
+    public function deleteClinicImage($imageId) {
+        $query = $this->db->prepare("DELETE FROM clinic_images WHERE id = :id");
+        $query->bindParam(':id', $imageId);
+        return $query->execute();
+    }
 }

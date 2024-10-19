@@ -10,8 +10,9 @@ require_once '../app/Controllers/PatientController.php';
 require_once '../app/Controllers/AppointmentController.php';
 require_once '../app/Controllers/ServiceController.php';
 require_once '../app/Controllers/NewsController.php';
-require_once '../app/Controllers/AdminController.php';
-require_once '../app/Controllers/Admin_serviceController.php'; // Include the Admin_serviceController
+require_once '../app/Controllers/Admin_homeController.php';
+require_once '../app/Controllers/Admin_serviceController.php';
+require_once '../app/Controllers/Admin_newController.php';
 
 $db = getConnection();
 
@@ -26,7 +27,9 @@ $controllers = [
     'appointments' => new AppointmentController($db),
     'services' => new ServiceController($db),
     'news' => new NewsController($db),
-    'admin_services' => new Admin_serviceController($db) // Add Admin_serviceController
+    'admin_home' => new Admin_homeController($db),
+    'admin_services' => new Admin_serviceController($db),
+    'admin_news' => new Admin_newController($db)
 ];
 
 // Vérification de la page et action demandée
@@ -54,11 +57,11 @@ switch ($page) {
             case 'update':
                 $controllers['patients']->update();
                 break;
-            case 'changePassword':
-                $controllers['patients']->changePassword();
-                break;
             case 'delete':
                 $controllers['patients']->delete($_GET['id']);
+                break;                
+            case 'changePassword':
+                $controllers['patients']->changePassword();
                 break;
             case 'index':
             default:
@@ -136,23 +139,6 @@ switch ($page) {
             case 'view':
                 $controllers['news']->view($_GET['id']);
                 break;
-            case 'create':
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $controllers['news']->create($_POST);
-                } else {
-                    $controllers['news']->createForm(); // Affiche le formulaire de création
-                }
-                break;
-            case 'update':
-                if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
-                    $controllers['news']->update($_POST['id'], $_POST);
-                } else {
-                    $controllers['news']->editForm($_GET['id']); // Affiche le formulaire d'édition
-                }
-                break;
-            case 'delete':
-                $controllers['news']->delete($_GET['id']);
-                break;
             case 'index':
             default:
                 $controllers['news']->index();
@@ -160,7 +146,7 @@ switch ($page) {
         }
         break;
 
-    case 'admin_services': // New case for Admin_serviceController
+    case 'admin_services': 
         switch ($action) {
             case 'create':
                 if ($_POST) {
@@ -181,5 +167,64 @@ switch ($page) {
                 break;
         }
         break;
+
+
+    case 'admin_news':
+            switch ($action) {
+                case 'create':
+                    if ($_POST) {
+                        $controllers['admin_news']->create();
+                    }
+                    break;
+                case 'update':
+                    if ($_POST) {
+                        $controllers['admin_news']->update($_POST['id']);
+                    }
+                    break;
+                case 'delete':
+                    $controllers['admin_news']->delete($_GET['id']);
+                    break;
+                case 'index':
+                default:
+                    $controllers['admin_news']->index();
+                    break;
+            }
+            break;
+            
+    case 'admin_home':
+        switch ($action) {
+            case 'updateOpeningHours':
+                if ($_POST) {
+                    $controllers['admin_home']->updateOpeningHours();
+                }
+                break;     
+            case 'updateBannerImage':
+                if ($_POST && isset($_FILES['new_banner'])) { // Vérifiez que le fichier de la bannière a été envoyé
+                    $controllers['admin_home']->updateBannerImage();
+                }
+                break;
+            break;
+        case 'addClinicImage':
+            if ($_POST) {
+                $controllers['admin_home']->addClinicImage();
+            }
+            break;
+        case 'updateClinicImage':
+            if ($_POST && isset($_FILES['new_image'])) { // Vérifiez que le fichier de la nouvelle image a été envoyé
+                $controllers['admin_home']->updateClinicImage();
+            }
+            break;
+        case 'deleteClinicImage':
+            if ($_POST) {
+                $controllers['admin_home']->deleteClinicImage();
+            }
+            break;
+        case 'index':
+            default:
+                $controllers['admin_home']->index();
+                break;
+        }
+        break;
 }
+
 ?>

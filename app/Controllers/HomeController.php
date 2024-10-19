@@ -1,6 +1,6 @@
 <?php
 
-require_once '../app/Models/Home.php'; // Inclure le modèle Home
+require_once '../app/Models/Home.php';
 
 class HomeController {
     private $dbConnection;
@@ -8,17 +8,15 @@ class HomeController {
 
     public function __construct($dbConnection) {
         $this->dbConnection = $dbConnection;
-        $this->homeModel = new Home($dbConnection); // Instanciation du modèle Home
+        $this->homeModel = new Home($dbConnection);
     }
 
     public function index() {
-        // Récupérer tous les services via le modèle Home
+        $bannerImagePath = $this->homeModel->getBannerImage();
         $services = $this->homeModel->getServices();
-        
-        // Récupérer tous les horaires d'ouverture via le modèle Home
         $openingHours = $this->homeModel->getOpeningHours();
+        $clinicImages = $this->homeModel->getClinicImages();
 
-        // Passer les services et les horaires à la vue
-        require '../app/Views/home.php'; // Charger la vue de la page d'accueil
+        require '../app/Views/home.php';
     }
 }

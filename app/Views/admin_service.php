@@ -86,7 +86,6 @@
                         <tr id="create-service-row">
                             <td colspan="4">
                                 <form action="index.php?page=admin_services&action=create" method="POST" enctype="multipart/form-data" class="edit-form">
-                                    <!-- Champ caché pour l'ID -->
                                     <input type="hidden" name="id" value="">
                                     <input type="text" name="name" placeholder="Nom du Service" class="form-input" required>
                                     <textarea name="description" placeholder="Description" class="form-textarea" required></textarea>

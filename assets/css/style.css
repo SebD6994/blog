@@ -47,6 +47,7 @@
         font-size: 0.9em;
     }
 
+
 /* === Header === */
         header {
             background-color: #2c9ba3;
@@ -92,11 +93,25 @@
             color: #43444459;
         }
 
+/* === Banner styles === */
+    .banner {
+        height: 400px; /* S'assure que la bannière a une hauteur définie */
+        overflow: hidden; /* Pour cacher tout débordement éventuel */
+    }
+
+    .banner-image {
+        width: 100%; /* L'image remplit toute la largeur de la bannière */
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        display: block; /* Évite les espaces indésirables sous l'image */
+    }
+
 /* === Main content styles === */
     main {
-        padding: 40px 20px;
-        max-width: 1200px;
-        margin: 0 auto;
+        padding: 20px 20px;
+        max-width: 1200px; /* Largeur maximale identique à celle de la bannière */
+        margin: 0 auto; /* Centre le contenu principal */
         background-color: var(--white);
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -111,8 +126,6 @@
         text-align: center;
         max-width: 40%;
         margin: 5px auto;
-        transition: background-color 0.3s, color 0.3s;
-        cursor: pointer;
     }
 
     .section-content {
@@ -152,6 +165,24 @@
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
+
+/* === Styles pour les tableaux === */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 40px;
+    }
+
+    th, td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background-color: var(--primary-color);
+        color: var(--white);
+    }    
 
 /* === Contenu des listes === */
     main ul {
@@ -251,26 +282,30 @@
         font-size: 1em;
     }
 
-/* === Styles pour la page admin === */
-    /* === Styles pour la section des rendez-vous === */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 40px;
-        }
+/* === Styles pour la page Home === */
 
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
 
-        th {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
+    /* Style de la section horaires */
+    .opening-hours-table {
+        width: auto; /* Laisse le tableau s'adapter au contenu */
+        table-layout: auto; /* Permet aux colonnes de s'adapter à leur contenu */
+        border-collapse: collapse; /* Pour une bordure uniforme */
+        margin: 0 auto;
+    }
 
-    /* === Styles pour la section des services dans l'admin === */
+    .opening-hours-table th,
+    .opening-hours-table td {
+        padding: 10px; /* Pour un bon espacement */
+        white-space: nowrap; /* Empêche le contenu de se casser à la ligne */
+        text-align: center;
+    }
+
+    .opening-hours-table th {
+        background-color: var(--primary-color); /* Couleur d'arrière-plan pour les en-têtes */
+        color: var(--white); /* Couleur du texte pour les en-têtes */
+    }
+
+/* Style de la page services */
         .edit-form {
             margin-top: 20px; /* Espace au-dessus du formulaire */
             padding: 20px; /* Padding interne pour le formulaire */
@@ -316,82 +351,6 @@
             margin: 0 5px; /* Espace horizontal entre les boutons */
         }
 
-
-    /* === Section Services et News dans l'admin (partage les mêmes styles) === */
-        .admin-page table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 40px;
-        }
-
-        .admin-page th, 
-        .admin-page td {
-            padding: 15px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        .admin-page th {
-            background-color: var(--primary-color);
-            color: var(--white);
-        }
-
-    /* Gère le formulaire de création et de mise à jour de manière similaire */
-        .admin-page .edit-form {
-            margin-top: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-
-        .admin-page .edit-form input[type="text"],
-        .admin-page .edit-form textarea {
-            width: 100%;
-            max-width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-    /* Style des boutons */
-        .admin-page .button-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .admin-page .button, 
-        .admin-page .delete-button, 
-        .admin-page .cta-button {
-            margin: 0 5px;
-        }
-
-    /* Style de la section horaires */
-        .opening-hours-table {
-            width: auto; /* Laisse le tableau s'adapter au contenu */
-            table-layout: auto; /* Permet aux colonnes de s'adapter à leur contenu */
-            border-collapse: collapse; /* Pour une bordure uniforme */
-            margin: 0 auto;
-        }
-
-        .opening-hours-table th,
-        .opening-hours-table td {
-            padding: 10px; /* Pour un bon espacement */
-            white-space: nowrap; /* Empêche le contenu de se casser à la ligne */
-            text-align: center;
-        }
-
-        .opening-hours-table th {
-            background-color: var(--primary-color); /* Couleur d'arrière-plan pour les en-têtes */
-            color: var(--white); /* Couleur du texte pour les en-têtes */
-        }
-
-
-/* Style de la page services */
         .service-item {
             display: flex; /* Utilisation de Flexbox pour la mise en page */
             align-items: center; /* Centre verticalement les éléments dans le conteneur */
@@ -494,6 +453,75 @@
         }
 
 
+/* === Carousel === */
+    .carousel {
+        position: relative;
+        max-width: 600px; /* Ajustez la largeur selon vos besoins */
+        height: 400px; /* Définir une hauteur fixe */
+        margin: auto;
+        overflow: hidden;
+    }
+
+    .carousel-inner {
+        display: flex;
+        transition: transform 0.5s ease;
+    }
+
+    .carousel-item {
+        min-width: 100%;
+        box-sizing: border-box;
+        display: none; /* Masquer toutes les images par défaut */
+    }
+
+    .carousel-item.active {
+        display: block; /* Afficher l'élément actif */
+    }
+
+    img {
+        width: 100%; /* Rendre l'image responsive */
+        height: 100%; /* Rendre l'image de la même hauteur que le conteneur */
+        object-fit: cover; /* Ajuster l'image pour qu'elle couvre le conteneur sans déformer */
+    }
+
+    .carousel-control {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .prev {
+        left: 10px;
+    }
+
+    .next {
+        right: 10px;
+    }
+
+    .carousel-indicators {
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .indicator {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        margin: 0 5px;
+        background-color: #ccc;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    .indicator.active {
+        background-color: #333;
+    }
+
+        
 
 /* === Responsivité === */
 @media (max-width: 768px) {

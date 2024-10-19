@@ -142,15 +142,5 @@ class AdminController {
         $this->newsController->delete($id); // Déléguer au NewsController
     }
 
-    // Méthode pour mettre à jour les horaires d'ouverture
-    public function updateOpeningHours() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['hours'])) {
-            $this->homeModel->updateOpeningHours($_POST);
-            $_SESSION['message'] = "Horaires d'ouverture mis à jour avec succès.";
-            header('Location: index.php?page=admin');
-            exit;
-        } else {
-            die("Données manquantes pour la mise à jour des horaires d'ouverture.");
-        }
-    }
+
 }
