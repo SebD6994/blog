@@ -3,6 +3,22 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Vérification si l'utilisateur est connecté et son rôle
+if (isset($_SESSION['patient']['role'])) {
+    if ($_SESSION['patient']['role'] === 'admin') {
+        // Redirection vers la page admin
+        header("Location: index.php?page=admin_services");
+        exit();
+    } elseif ($_SESSION['patient']['role'] === 'user') {
+        // Redirection vers la page utilisateur
+        header("Location: index.php?page=services");
+        exit();
+    } else {
+        echo "Accès non autorisé.";
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">

@@ -34,16 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Fonction pour afficher le formulaire de création de service
-    function toggleCreateServiceForm() {
-        const createServiceForm = document.getElementById('create-service-form'); // Formulaire d'ajout de service
-        const toggleButton = document.getElementById('toggle-create-service-form'); // Bouton pour afficher/masquer le formulaire
-
-        // Bascule l'affichage du formulaire
-        createServiceForm.style.display = (createServiceForm.style.display === 'none' || createServiceForm.style.display === '') ? 'block' : 'none';
-        toggleButton.textContent = (createServiceForm.style.display === 'block') ? 'Annuler' : 'Ajouter un Service'; // Changer le texte du bouton
-    }
-
 // Écoutez le clic sur le bouton d'ajout d'actualité
 const toggleNewsButton = document.getElementById('toggle-create-news-form');
 if (toggleNewsButton) {
@@ -70,6 +60,16 @@ function toggleCreateNewsForm() {
         // Si le formulaire est masqué, détruire l'instance de TinyMCE
         tinymce.get('news_content')?.remove(); // Retirer l'éditeur
     }
+}
+
+// Fonction pour afficher le formulaire de création de service
+function toggleCreateServiceForm() {
+    const createServiceForm = document.getElementById('create-service-form'); // Formulaire d'ajout de service
+    const toggleButton = document.getElementById('toggle-create-service-form'); // Bouton pour afficher/masquer le formulaire
+
+    // Bascule l'affichage du formulaire
+    createServiceForm.style.display = (createServiceForm.style.display === 'none' || createServiceForm.style.display === '') ? 'block' : 'none';
+    toggleButton.textContent = (createServiceForm.style.display === 'block') ? 'Annuler' : 'Ajouter un Service'; // Changer le texte du bouton
 }
 
 // Fonction pour afficher le formulaire de modification (service ou news)

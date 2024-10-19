@@ -118,22 +118,6 @@ class AdminController {
         }
     }
 
-    // Méthodes pour les actions des services
-    public function createService() {
-        $serviceController = new ServiceController($this->db);
-        $serviceController->create();
-    }
-
-    public function updateService($id) {
-        $serviceController = new ServiceController($this->db);
-        $serviceController->update($id);
-    }
-
-    public function deleteService($id) {
-        $serviceController = new ServiceController($this->db);
-        $serviceController->delete($id);
-    }
-
     // Méthodes pour les actions des actualités
     public function createNews() {
         session_start(); // Début de la session pour les messages d'erreur ou de succès

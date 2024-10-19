@@ -15,30 +15,28 @@ class PatientController {
     }
 
     // Afficher les informations du compte patient si connecté
-    public function index($errorMessage = null, $successMessage = null) {
-        $accountData = null;
-        $appointments = []; // Initialiser le tableau des rendez-vous
-    
-        if ($this->isLoggedIn()) {
-            $patientId = $_SESSION['patient']['id'];
-            $accountData = $this->patientModel->getPatientAccountData($patientId); // Récupérer les données du compte patient
-            
-            // Récupérer les rendez-vous du patient
-            $appointments = $this->patientModel->getAppointments($patientId); // Appeler la nouvelle méthode
-    
-            // Vérifier le rôle et rediriger si c'est un admin
-            if ($accountData['role'] === 'admin') {
-                header("Location: index.php?page=admin"); // Redirection vers la vue admin
-                exit();
-            }
-        } else {
-            // Si l'utilisateur n'est pas connecté, afficher un message d'erreur
-            $errorMessage = "Veuillez vous connecter.";
-        }
-    
-        // Charger la vue avec toutes les données nécessaires
-        require '../app/Views/patient.php'; 
+public function index($errorMessage = null, $successMessage = null) {
+    $accountData = null;
+    $appointments = []; // Initialiser le tableau des rendez-vous
+
+    if ($this->isLoggedIn()) {
+        $patientId = $_SESSION['patient']['id'];
+        $accountData = $this->patientModel->getPatientAccountData($patientId); // Récupérer les données du compte patient
+
+        // Récupérer les rendez-vous du patient
+        $appointments = $this->patientModel->getAppointments($patientId); // Appeler la nouvelle méthode
+
+        // On n'effectue aucune redirection même si l'utilisateur est un admin.
+        // Les informations de compte (y compris le rôle) seront affichées directement.
+    } else {
+        // Si l'utilisateur n'est pas connecté, afficher un message d'erreur
+        $errorMessage = "Veuillez vous connecter.";
     }
+
+    // Charger la vue avec toutes les données nécessaires
+    require '../app/Views/patient.php'; 
+}
+
 
     // Créer un patient (inscription)
     public function create() {
@@ -80,10 +78,10 @@ class PatientController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'];
             $password = $_POST['password'];
-
+    
             // Vérifier si l'email et le mot de passe sont corrects
             $patient = $this->patientModel->authenticate($email, $password);
-
+    
             if ($patient) {
                 // Stocker l'ID du patient et ses données dans la session
                 $_SESSION['patient'] = [
@@ -92,25 +90,19 @@ class PatientController {
                     'last_name' => $patient->last_name,
                     'email' => $patient->email,
                     'phone' => $patient->phone,
-                    'role' => $patient->role,
+                    'role' => $patient->role
                 ];
-
-                // Vérifier le rôle et rediriger en conséquence
-                if ($patient->role === 'admin') {
-                    header("Location: index.php?page=admin"); // Redirection vers la vue admin
-                    exit();
-                } else {
-                    // Rediriger vers la page patients après connexion
-                    header("Location: index.php?page=patients");
-                    exit();
-                }
+    
+                // Recharge la même page avec les informations mises à jour
+                $this->index(); // Charge la vue avec les nouvelles données de session
             } else {
                 // Si la connexion échoue, afficher un message d'erreur
                 $errorMessage = "Email ou mot de passe incorrect.";
-                $this->index($errorMessage); // Afficher la vue patients avec le message d'erreur
+                $this->index($errorMessage); // Afficher la vue avec le message d'erreur
             }
         }
     }
+    
 
     // Vérifier si un utilisateur est connecté
     public function isLoggedIn() {

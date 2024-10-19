@@ -11,6 +11,7 @@ require_once '../app/Controllers/AppointmentController.php';
 require_once '../app/Controllers/ServiceController.php';
 require_once '../app/Controllers/NewsController.php';
 require_once '../app/Controllers/AdminController.php';
+require_once '../app/Controllers/Admin_serviceController.php'; // Include the Admin_serviceController
 
 $db = getConnection();
 
@@ -25,7 +26,7 @@ $controllers = [
     'appointments' => new AppointmentController($db),
     'services' => new ServiceController($db),
     'news' => new NewsController($db),
-    'admin' => new AdminController($db)
+    'admin_services' => new Admin_serviceController($db) // Add Admin_serviceController
 ];
 
 // Vérification de la page et action demandée
@@ -34,6 +35,11 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 
 // Routage des pages en fonction du contrôleur et de l'action
 switch ($page) {
+    case 'home':
+    default:
+        $controllers['home']->index();
+        break;
+        
     case 'patients':
         switch ($action) {
             case 'login':
@@ -154,79 +160,26 @@ switch ($page) {
         }
         break;
 
-    case 'admin':
+    case 'admin_services': // New case for Admin_serviceController
         switch ($action) {
-            case 'updateAppointment':
+            case 'create':
                 if ($_POST) {
-                    $controllers['admin']->updateStatus($_POST['id'], $_POST['status']);
+                    $controllers['admin_services']->create();
                 }
                 break;
-            case 'deleteAppointment':
-                $controllers['admin']->deleteAppointment($_GET['id']);
-                break;
-
-            case 'createPatient':
+            case 'update':
                 if ($_POST) {
-                    $controllers['admin']->addPatient($_POST);
+                    $controllers['admin_services']->update($_POST['id']);
                 }
                 break;
-            case 'updatePatient':
-                if ($_POST) {
-                    $controllers['admin']->updatePatient($_POST['id'], $_POST);
-                }
+            case 'delete':
+                $controllers['admin_services']->delete($_GET['id']);
                 break;
-            case 'deletePatient':
-                $controllers['admin']->deletePatient($_GET['id']);
-                break;
-            case 'searchPatients':
-                if ($_GET && isset($_GET['search'])) {
-                    $controllers['admin']->searchPatients($_GET['search']);
-                }
-                break;
-
-            case 'createService':
-                if ($_POST) {
-                    $controllers['admin']->createService($_POST);
-                }
-                break;
-            case 'updateService':
-                if ($_POST && isset($_POST['id'])) {
-                    $controllers['admin']->updateService($_POST['id'], $_POST);
-                }
-                break;
-            case 'deleteService':
-                $controllers['admin']->deleteService($_GET['id']);
-                break;
-
-            case 'createNews':
-                if ($_POST) {
-                    $controllers['admin']->createNews($_POST);
-                }
-                break;
-            case 'updateNews':
-                if ($_POST && isset($_POST['id'])) {
-                    $controllers['admin']->updateNews($_POST['id'], $_POST);
-                }
-                break;
-            case 'deleteNews':
-                $controllers['admin']->deleteNews($_GET['id']);
-                break;
-
-            case 'updateOpeningHours':
-                if ($_POST) {
-                    $controllers['admin']->updateOpeningHours($_POST);
-                }
-                break;
-
             case 'index':
             default:
-                $controllers['admin']->index();
+                $controllers['admin_services']->index();
                 break;
         }
         break;
-
-    case 'home':
-    default:
-        $controllers['home']->index();
-        break;
 }
+?>
