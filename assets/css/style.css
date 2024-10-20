@@ -119,6 +119,9 @@
     }
 
 /* === Sections === */
+    .section {
+        margin-top: 30px;
+    }
     .section-title {
         background-color: var(--secondary-bg-color);
         border: 1px solid #ccc;
@@ -164,6 +167,10 @@
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .opening-hours-container {
+        display: block; /* Désactiver le mode flex pour le tableau */
+        margin: 0 auto; /* Centrer le contenu horizontalement */
     }
 
 /* === Styles pour les tableaux === */
@@ -286,6 +293,16 @@
 
 
     /* Style de la section horaires */
+    .content-wrapper {
+        max-width: 70%;
+        margin: 0 auto; /* Centrer le contenu horizontalement */
+    }
+
+    .opening-hours-section {
+        display: flex;
+        justify-content: center;
+    }
+
     .opening-hours-table {
         width: auto; /* Laisse le tableau s'adapter au contenu */
         table-layout: auto; /* Permet aux colonnes de s'adapter à leur contenu */

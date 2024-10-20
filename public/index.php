@@ -203,28 +203,32 @@ switch ($page) {
                     $controllers['admin_home']->updateBannerImage();
                 }
                 break;
-            break;
-        case 'addClinicImage':
+            case 'updateApropos': // Ajout de la mise à jour de la description À Propos
             if ($_POST) {
-                $controllers['admin_home']->addClinicImage();
+                $controllers['admin_home']->updateApropos(); // Appel de la méthode pour mettre à jour la description
             }
-            break;
-        case 'updateClinicImage':
-            if ($_POST && isset($_FILES['new_image'])) { // Vérifiez que le fichier de la nouvelle image a été envoyé
-                $controllers['admin_home']->updateClinicImage();
-            }
-            break;
-        case 'deleteClinicImage':
-            if ($_POST) {
-                $controllers['admin_home']->deleteClinicImage();
-            }
-            break;
-        case 'index':
-            default:
-                $controllers['admin_home']->index();
+            break; 
+            case 'addClinicImage':
+                if ($_POST) {
+                    $controllers['admin_home']->addClinicImage();
+                }
                 break;
-        }
-        break;
+            case 'updateClinicImage':
+                if ($_POST && isset($_FILES['new_image'])) { // Vérifiez que le fichier de la nouvelle image a été envoyé
+                    $controllers['admin_home']->updateClinicImage();
+                }
+                break;
+            case 'deleteClinicImage':
+                if ($_POST) {
+                    $controllers['admin_home']->deleteClinicImage();
+                }
+                break;
+            case 'index':
+                default:
+                    $controllers['admin_home']->index();
+                    break;
+            }
+            break;
 }
 
 ?>

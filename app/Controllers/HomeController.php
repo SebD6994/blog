@@ -16,6 +16,7 @@ class HomeController {
         $services = $this->homeModel->getServices();
         $openingHours = $this->homeModel->getOpeningHours();
         $clinicImages = $this->homeModel->getClinicImages();
+        $currentApropos = $this->homeModel->getApropos();
 
         require '../app/Views/home.php';
     }

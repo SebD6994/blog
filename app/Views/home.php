@@ -44,7 +44,15 @@ if (isset($_SESSION['patient']['role'])) {
 
 
     <h2>À propos du Cabinet</h2>
-        <p>Le Cabinet du Dr. Dupont propose divers services adaptés à vos besoins de santé. Nous nous engageons à vous fournir des soins de qualité dans un environnement convivial et professionnel.</p>
+        <p>
+            <?php 
+            if (isset($currentApropos['description'])) {
+                echo htmlspecialchars($currentApropos['description']);
+            } else {
+                echo "Aucune description disponible.";
+            }
+            ?>
+        </p>
 
         <div class="sections-container">
             <!-- Horaires Section -->

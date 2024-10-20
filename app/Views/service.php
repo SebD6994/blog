@@ -33,9 +33,7 @@ if (isset($_SESSION['patient']['role'])) {
     <?php include 'header.php'; ?>
 
         <main>
-            <h2>Services Proposés par le Dr. Dupont</h2>
-            <p>Le Dr. Dupont offre une large gamme de services dentaires pour répondre à vos besoins.</p>
-            
+            <h2>Services proposés par le cabinet</h2>            
             <ul>
             <?php foreach ($services as $index => $service): ?>
                 <li class="service-item <?php echo $index % 2 === 0 ? 'service-even' : 'service-odd'; ?>">

@@ -35,38 +35,39 @@ class Home {
         }
     }
 
-        // Generate 20-minute time slots based on opening hours
-        public function generateTimeSlots($day) {
-            $stmt = $this->dbConnection->prepare("SELECT * FROM opening_hours WHERE day_of_week = :day");
-            $stmt->bindParam(':day', $day);
-            $stmt->execute();
-            $hours = $stmt->fetch(PDO::FETCH_ASSOC);
+    // Generate 20-minute time slots based on opening hours
+    public function generateTimeSlots($day) {
+        $stmt = $this->dbConnection->prepare("SELECT * FROM opening_hours WHERE day_of_week = :day");
+        $stmt->bindParam(':day', $day);
+        $stmt->execute();
+        $hours = $stmt->fetch(PDO::FETCH_ASSOC);
     
-            if ($hours) {
-                $startTime = new DateTime($hours['start_time']);
-                $endTime = new DateTime($hours['end_time']);
-                $timeSlots = [];
+        if ($hours) {
+            $startTime = new DateTime($hours['start_time']);
+            $endTime = new DateTime($hours['end_time']);
+            $timeSlots = [];
     
-                // Create time slots
-                while ($startTime < $endTime) {
-                    $timeSlots[] = $startTime->format('H:i');
-                    $startTime->modify('+20 minutes'); // Increment by 20 minutes
-                }
-    
-                return $timeSlots;
+            // Create time slots
+            while ($startTime < $endTime) {
+                $timeSlots[] = $startTime->format('H:i');
+                $startTime->modify('+20 minutes'); // Increment by 20 minutes
             }
     
-            return []; // Return an empty array if no hours found
+            return $timeSlots;
         }
+    
+        return []; // Return an empty array if no hours found
+    }
 
-    // Récupérer l'image de la bannière depuis la table settings
+    // Récupérer l'image de la bannière
     public function getBannerImage() {
         $query = $this->db->prepare("SELECT image_path FROM settings WHERE description = 'banner_image'");
         $query->execute();
         $result = $query->fetch(PDO::FETCH_ASSOC);
         return $result ? $result['image_path'] : null;
     }
-
+    
+    // Mettre a jour l'image de la bannière
     public function updateBanner($imagePath, $description) {
         try {
             // Démarrer une transaction
@@ -99,8 +100,30 @@ class Home {
         }
     }
     
+    // Méthode pour récupérer la description à propos
+    public function getApropos() {
+        $stmt = $this->db->prepare("SELECT id, description FROM apropos ORDER BY created_at DESC LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Retourne un tableau contenant l'ID et la description, ou null si aucune donnée trouvée
+        return $result ? $result : null; 
+    }
 
-    // Méthode pour gérer les images de la clinique
+    // Méthode pour mettre à jour la description à propos
+    public function updateApropos($id, $newDescription) {
+        // Préparation de la requête de mise à jour
+        $stmt = $this->db->prepare("UPDATE apropos SET description = :description WHERE id = :id");
+        
+        // Liaison des paramètres
+        $stmt->bindParam(':description', $newDescription);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        
+        // Exécution de la requête
+        return $stmt->execute(); // Retourne true en cas de succès, false en cas d'échec
+    }
+
+    // Méthode pour recupérer les images de la clinique
     public function getClinicImages() {
         // Sélectionnez également l'id de l'image
         $query = $this->db->prepare("SELECT id, image_path, description FROM clinic_images ORDER BY id ASC");
@@ -108,22 +131,30 @@ class Home {
         return $query->fetchAll(PDO::FETCH_ASSOC); // Récupérer toutes les lignes sous forme de tableau associatif
     }
     
-        // Ajouter une nouvelle image de la clinique
+    // Ajouter une nouvelle image de la clinique
     public function addClinicImage($imagePath, $description = null) {
         $query = $this->db->prepare("INSERT INTO clinic_images (image_path, description) VALUES (:image_path, :description)");
         $query->bindParam(':image_path', $imagePath);
         $query->bindParam(':description', $description);
         return $query->execute();
     }
-
-    public function updateClinicImage($id, $imagePath, $description) {
-        $stmt = $this->db->prepare("UPDATE clinic_images SET image_path = :image_path, description = :description WHERE id = :id");
-        $stmt->bindParam(':image_path', $imagePath);
+    
+    // Mettre a jour une image de la clinique
+    public function updateClinicImage($id, $imagePath = null, $description) {
+        if ($imagePath) {
+            // Mise à jour de l'image et de la description
+            $stmt = $this->db->prepare("UPDATE clinic_images SET image_path = :image_path, description = :description WHERE id = :id");
+            $stmt->bindParam(':image_path', $imagePath);
+        } else {
+            // Si aucune image n'est fournie, ne mettre à jour que la description
+            $stmt = $this->db->prepare("UPDATE clinic_images SET description = :description WHERE id = :id");
+        }
+        
         $stmt->bindParam(':description', $description);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
     }
-
+    
     // Supprimer une image de la clinique
     public function deleteClinicImage($imageId) {
         $query = $this->db->prepare("DELETE FROM clinic_images WHERE id = :id");
