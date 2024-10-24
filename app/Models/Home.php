@@ -33,31 +33,7 @@ class Home {
             $stmt = $this->dbConnection->prepare("UPDATE opening_hours SET start_time = ?, end_time = ? WHERE day_of_week = ?");
             $stmt->execute([$startTime, $endTime, $dayOfWeek]);
         }
-    }
-
-    // Generate 20-minute time slots based on opening hours
-    public function generateTimeSlots($day) {
-        $stmt = $this->dbConnection->prepare("SELECT * FROM opening_hours WHERE day_of_week = :day");
-        $stmt->bindParam(':day', $day);
-        $stmt->execute();
-        $hours = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-        if ($hours) {
-            $startTime = new DateTime($hours['start_time']);
-            $endTime = new DateTime($hours['end_time']);
-            $timeSlots = [];
-    
-            // Create time slots
-            while ($startTime < $endTime) {
-                $timeSlots[] = $startTime->format('H:i');
-                $startTime->modify('+20 minutes'); // Increment by 20 minutes
-            }
-    
-            return $timeSlots;
-        }
-    
-        return []; // Return an empty array if no hours found
-    }
+    }    
 
     // Récupérer l'image de la bannière
     public function getBannerImage() {

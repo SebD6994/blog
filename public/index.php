@@ -11,6 +11,8 @@ require_once '../app/Controllers/AppointmentController.php';
 require_once '../app/Controllers/ServiceController.php';
 require_once '../app/Controllers/NewsController.php';
 require_once '../app/Controllers/Admin_homeController.php';
+require_once '../app/Controllers/Admin_patientController.php';
+require_once '../app/Controllers/Admin_appointmentController.php';
 require_once '../app/Controllers/Admin_serviceController.php';
 require_once '../app/Controllers/Admin_newController.php';
 
@@ -28,6 +30,8 @@ $controllers = [
     'services' => new ServiceController($db),
     'news' => new NewsController($db),
     'admin_home' => new Admin_homeController($db),
+    'admin_patient' => new Admin_patientController($db),
+    'admin_appointment' => new Admin_appointmentController($db),
     'admin_services' => new Admin_serviceController($db),
     'admin_news' => new Admin_newController($db)
 ];
@@ -88,13 +92,6 @@ switch ($page) {
             case 'delete':
                 if (isset($_POST['appointment_id'])) {
                     $controllers['appointments']->delete($_POST['appointment_id']);
-                }
-                break;
-            case 'slots':
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $controllers['appointments']->createSlot($_POST);
-                } else {
-                    $controllers['appointments']->viewSlots();
                 }
                 break;
             case 'getTimeSlots':
@@ -229,6 +226,61 @@ switch ($page) {
                     break;
             }
             break;
+    case 'admin_appointment':
+            switch ($action) {
+                case 'getAvailableSlots':
+                    $controllers['admin_appointment']->getAvailableSlots();
+                    break;
+                case 'create':
+                    if ($_POST) {
+                        $controllers['admin_appointment']->create();
+                    }
+                    break;
+                case 'update':
+                    if ($_POST) {
+                        $controllers['admin_appointment']->update();
+                    }
+                    break;
+                case 'delete':
+                    if ($_POST) {
+                        $controllers['admin_appointment']->delete();
+                    }
+                    break;
+                case 'search':
+                    $controllers['admin_appointment']->search();
+                    break;
+                case 'index':
+                default:
+                    $controllers['admin_appointment']->index();
+                    break;
+            }
+            break;
+    case 'admin_patient':
+                switch ($action) {
+                    case 'create':
+                        if ($_POST) {
+                            $controllers['admin_patient']->create();
+                        }
+                        break;
+                    case 'update':
+                        if ($_POST) {
+                            $controllers['admin_patient']->update();
+                        }
+                        break;
+                    case 'delete':
+                        if ($_POST) {
+                            $controllers['admin_patient']->delete();
+                        }
+                        break;
+                    case 'search':
+                        $controllers['admin_patient']->search();
+                        break;
+                    case 'index':
+                    default:
+                        $controllers['admin_patient']->index();
+                        break;
+                }
+                break;
 }
 
 ?>

@@ -10,11 +10,8 @@ if (isset($_SESSION['patient']['role'])) {
         header("Location: index.php?page=admin_news");
         exit();
     } elseif ($_SESSION['patient']['role'] === 'user') {
-        // Redirection vers la page utilisateur
-        header("Location: index.php?page=news");
-        exit();
-    } else {
-        echo "Accès non autorisé.";
+        // Pas de redirection pour l'utilisateur avec le rôle 'user'
+        // Vous pouvez ajouter un message ou un traitement spécifique ici si nécessaire
     }
 }
 ?>

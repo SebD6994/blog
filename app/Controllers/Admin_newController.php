@@ -37,7 +37,7 @@ class Admin_newController {
                     ]);
     
                     $_SESSION['message'] = "Nouvelle actualité créée avec succès."; // Message de succès
-                    header('Location: blog?page=admin_news');
+                    header('Location: index.php?page=admin_news');
                     exit();
                 } catch (InvalidArgumentException $e) {
                     $_SESSION['error'] = $e->getMessage();

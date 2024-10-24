@@ -3,17 +3,11 @@ class Admin {
     private $db;
     private $appointmentModel;
     private $patientModel;
-    private $serviceModel;
-    private $newsModel;
-    private $homeModel; // Ajout du modèle Home
 
     public function __construct($db) {
         $this->db = $db;
         $this->appointmentModel = new Appointment($db);
         $this->patientModel = new Patient($db);
-        $this->serviceModel = new Service($db);
-        $this->newsModel = new News($db);
-        $this->homeModel = new Home($db); // Initialisation du modèle Home
     }
 
     // Récupère tous les rendez-vous avec les informations du patient et du service
@@ -26,10 +20,7 @@ class Admin {
         return $this->appointmentModel->updateStatus($appointmentId, $status);
     }
 
-
-
-
-
+    
     
     // Récupère tous les patients via le modèle Patient
     public function getPatients() {
@@ -54,20 +45,5 @@ class Admin {
     // Supprime un patient via le modèle Patient
     public function deletePatient($id) {
         return $this->patientModel->delete($id);
-    }
-
-
-
-
-
-
-    // Récupère les horaires d'ouverture via le modèle Home
-    public function getOpeningHours() {
-        return $this->homeModel->getOpeningHours();
-    }
-
-    // Mettre à jour les horaires via Home
-    public function updateOpeningHours($data) {
-        return $this->homeModel->updateOpeningHours($data);
     }
 }

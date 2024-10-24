@@ -26,7 +26,7 @@
     <?php include 'header.php'; ?>
     <main>
 
-    <h2 class="section-title">Gestion de la Bannière</h2>
+    <h2>Gestion de la Bannière</h2>
     <!-- Afficher l'aperçu de la bannière actuelle -->
     <?php if ($bannerImagePath): ?>
         <div class="banner">
@@ -57,7 +57,7 @@
 
 <!-- Section pour mettre à jour le champ apropos -->
 <div class="section">
-    <h2 class="section-title">À Propos</h2>
+    <h2>À Propos</h2>
     <div class="edit-form">
         <form action="index.php?page=admin_home&action=updateApropos" method="POST">
             <!-- Champ caché pour l'ID -->
@@ -77,7 +77,7 @@
 
     <!-- Section des Horaires -->
         <div class="section ">
-            <h2 class="section-title">Horaires d'Ouverture</h2>
+            <h2>Horaires d'Ouverture</h2>
             <div class="sections-container opening-hours-container">
                 <form action="index.php?page=admin_home&action=updateOpeningHours" method="POST">
                     <table class="opening-hours-table">
@@ -105,7 +105,7 @@
         </div>
 
         <div class="section">
-        <h2 class="section-title">Images actuelles de la clinique</h2>
+        <h2>Images actuelles de la clinique</h2>
 <?php if (!empty($clinicImages)): ?>
     <table class="clinic-image-table">
         <thead>

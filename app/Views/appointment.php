@@ -1,3 +1,23 @@
+<?php 
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Vérification si l'utilisateur est connecté et son rôle
+if (isset($_SESSION['patient']['role'])) {
+    if ($_SESSION['patient']['role'] === 'admin') {
+        // Redirection vers la page admin
+        header("Location: index.php?page=admin_appointment");
+        exit();
+    } elseif ($_SESSION['patient']['role'] === 'user') {
+        // Pas de redirection pour l'utilisateur avec le rôle 'user'
+        // Vous pouvez ajouter un message ou un traitement spécifique ici si nécessaire
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>

@@ -17,8 +17,7 @@ class Appointment {
             SELECT a.id, 
                    CONCAT(p.first_name, ' ', p.last_name) AS patient_name, 
                    s.name AS service_name, 
-                   a.appointment_date, 
-                   a.status 
+                   a.appointment_date
             FROM appointments a
             LEFT JOIN patients p ON a.patient_id = p.id
             LEFT JOIN services s ON a.service_id = s.id
@@ -70,15 +69,6 @@ class Appointment {
         return $stmt->execute();
     }
 
-    // Mettre à jour le statut d'un rendez-vous
-    public function updateStatus($id, $status) {
-        $query = "UPDATE appointments SET status = :status WHERE id = :id";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':status', $status);
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
-    }
-
     // Supprimer un rendez-vous
     public function delete($id) {
         $query = "DELETE FROM appointments WHERE id = :id";
@@ -115,40 +105,21 @@ class Appointment {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Récupérer les créneaux horaires disponibles pour une date donnée
-    public function getAvailableTimeSlots($today) {
-        $startTime = new DateTime("$today 09:00");
-        $endTime = new DateTime("$today 16:40");
-        $interval = new DateInterval('PT20M'); // Créneaux de 20 minutes
-        $timeSlots = [
-            'booked' => [],
-            'available' => []
-        ];
-        
-        // Récupérer les rendez-vous déjà pris pour cette date
-        $query = "SELECT appointment_date FROM appointments WHERE DATE(appointment_date) = :date";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(':date', $today);
+    public function getTimeSlots($day) {
+        $stmt = $this->conn->prepare("SELECT slot_start FROM time_slots WHERE day_of_week = :day");
+        $stmt->bindParam(':day', $day);
         $stmt->execute();
-        $bookedAppointments = $stmt->fetchAll(PDO::FETCH_COLUMN); // Récupérer uniquement les dates de rendez-vous
         
-        // Créer une liste de créneaux horaires disponibles
-        while ($startTime <= $endTime) {
-            $slot = $startTime->format('H:i');
-            // Combiner la date et le slot pour la vérification
-            $combinedSlot = "$today $slot:00"; // Ajoutez les secondes pour correspondre à l'heure
-            
-            // Vérifier si le créneau est réservé
-            if (in_array($combinedSlot, $bookedAppointments)) {
-                $timeSlots['booked'][] = $slot; // Ajouter le créneau réservé
-            } else {
-                $timeSlots['available'][] = $slot; // Ajouter le créneau disponible
-            }
-            
-            $startTime->add($interval); // Ajouter 20 minutes
+        // Commencer à construire le HTML des options
+        $options = '<option value="">Sélectionnez un créneau</option>'; // Option par défaut
+        
+        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $slot) {
+            $options .= '<option value="' . htmlspecialchars($slot['slot_start']) . '">' . htmlspecialchars($slot['slot_start']) . '</option>';
         }
         
-        return $timeSlots; // Retourner les créneaux avec une structure contenant les réservés et les disponibles
+        return $options; // Retourner le HTML complet
     }
-}
+    
+    
+    }
 ?>

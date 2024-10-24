@@ -10,13 +10,10 @@ if (isset($_SESSION['patient']['role'])) {
         header("Location: index.php?page=admin_home");
         exit();
     } elseif ($_SESSION['patient']['role'] === 'user') {
-        // Redirection vers la page utilisateur
-        header("Location: index.php?page=home");
-        exit();
-    } else {
-        echo "Accès non autorisé.";
+        
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -112,7 +109,7 @@ if (isset($_SESSION['patient']['role'])) {
             </section>
         </div>
 
-        <h3>Visitez notre clinique</h3>
+        <h2>Visitez notre clinique</h2>
 
         <div id="clinicCarousel" class="carousel">
             <div class="carousel-inner">
@@ -140,9 +137,6 @@ if (isset($_SESSION['patient']['role'])) {
                 <?php endif; ?>
             </div>
         </div>
-
-
-
         <p>
             <a href="index.php?page=appointments" class="cta-button">Prendre rendez-vous</a>
         </p>

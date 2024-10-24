@@ -117,30 +117,4 @@ class AdminController {
             exit();
         }
     }
-
-    // Méthodes pour les actions des actualités
-    public function createNews() {
-        session_start(); // Début de la session pour les messages d'erreur ou de succès
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->newsController->create(); // Déléguer au NewsController
-        } else {
-            require '../app/Views/admin.php'; // Afficher le formulaire de création d'actualités
-        }
-    }
-
-    public function updateNews($id) {
-        session_start(); // Début de la session pour les messages d'erreur ou de succès
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->newsController->update($id); // Déléguer au NewsController
-        } else {
-            $newsItem = $this->adminModel->getNewsById($id); // Récupérer l'actualité à modifier
-            require '../app/Views/admin.php'; // Afficher le formulaire de mise à jour d'actualités
-        }
-    }
-
-    public function deleteNews($id) {
-        $this->newsController->delete($id); // Déléguer au NewsController
-    }
-
-
 }
