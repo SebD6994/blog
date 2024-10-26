@@ -1,7 +1,7 @@
 <?php
 
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'drdupont');
+define('DB_NAME', 'cabinet');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 
