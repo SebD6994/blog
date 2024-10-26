@@ -51,6 +51,31 @@ document.getElementById('searchForm').addEventListener('submit', function(e) {
     }
 });
 
+// Fonction pour afficher le formulaire de modification d'un patient spécifique
+function showEditForm(type, id) {
+    const editForm = document.getElementById(`edit-form-${type}-${id}`);
+    const row = document.getElementById(`row-${type}-${id}`);
+
+    // Masquer la ligne du patient
+    row.style.display = 'none';
+    
+    // Afficher le formulaire de modification
+    editForm.style.display = 'table-row'; // Affichage en tant que ligne de tableau
+}
+
+// Fonction pour masquer le formulaire de modification d'un patient spécifique
+function hideEditForm(type, id) {
+    const editForm = document.getElementById(`edit-form-${type}-${id}`);
+    const row = document.getElementById(`row-${type}-${id}`);
+
+    // Masquer le formulaire de modification
+    editForm.style.display = 'none';
+    
+    // Afficher à nouveau la ligne du patient
+    row.style.display = 'table-row'; // Affichage en tant que ligne de tableau
+}
+
+
 
 // Fonction pour la confirmation de suppression
 window.confirmDelete = function(message) {

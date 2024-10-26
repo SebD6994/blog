@@ -87,10 +87,10 @@
                 </td>
                 <td>
                     <select name="time" required>
-                        <option value="">Créneau</option>
-                        <?php foreach ($timeSlots as $slot): ?>
-                            <option value="<?= htmlspecialchars($slot['start']); ?>"><?= htmlspecialchars($slot['start']); ?> - <?= htmlspecialchars($slot['end']); ?></option>
-                        <?php endforeach; ?>
+                    <option value="">Créneau</option>
+                            <?php foreach ($timeSlots['available'] as $slot): ?>
+                                <option value="<?= htmlspecialchars($slot); ?>"><?= htmlspecialchars($slot); ?></option>
+                            <?php endforeach; ?>
                     </select>
                 </td>
                 <td>
@@ -169,7 +169,6 @@
         </table>
     </form>
 
-    <section class="sections-container" style="display: block;">
     <h2>Liste des Rendez-vous à venir</h2>
 
     <?php 
@@ -227,49 +226,41 @@
                     </tr>
 
                     <!-- Formulaire de modification -->
-<tr id="edit-form-appointment-<?= htmlspecialchars($appointment['id']); ?>" class="edit-form" style="display:none;">
-    <td>
-        <input type="date" name="date" id="edit-date-<?= htmlspecialchars($appointment['id']); ?>" value="<?= htmlspecialchars($dateTime->format('Y-m-d')); ?>" required>
-    </td>
-    <td>
-        <?php 
-        // Débogage : afficher le contenu de $timeSlots
-        var_dump($timeSlots); 
-        ?>
-        <select name="time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
-            <?php if (!empty($timeSlots['available'])): ?>
-                <?php foreach ($timeSlots['available'] as $slot): ?>
-                    <option value="<?= htmlspecialchars($slot['slot_start']); ?>"><?= htmlspecialchars($slot['slot_start']); ?></option>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <option value="">Aucun créneau disponible.</option>
-            <?php endif; ?>
-        </select>
-    </td>
-    <td>
-        <select name="service_id" required>
-            <option value="">Service</option>
-            <?php foreach ($services as $service): ?>
-                <option value="<?= htmlspecialchars($service['id']); ?>"><?= htmlspecialchars($service['name']); ?></option>
-            <?php endforeach; ?>
-        </select>
-    </td>
-    <td>
-        <?= !empty($appointment['patient_name']) ? htmlspecialchars($appointment['patient_name']) : '-'; ?>
-    </td>
-    <td>
-        <button type="submit" class="button" onclick="submitEditForm(<?= htmlspecialchars($appointment['id']); ?>)">Modifier</button>
-        <button type="button" class="button" onclick="hideEditForm('appointment', <?= htmlspecialchars($appointment['id']); ?>)">Annuler</button>
-    </td>
-</tr>
-
-
-
+                    <tr id="edit-form-appointment-<?= htmlspecialchars($appointment['id']); ?>" class="edit-form" style="display:none;">
+                        <td>
+                            <input type="date" name="date" id="edit-date-<?= htmlspecialchars($appointment['id']); ?>" value="<?= htmlspecialchars($dateTime->format('Y-m-d')); ?>" required>
+                        </td>
+                        <td> 
+                            <select name="time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
+                                <?php if (!empty($timeSlots['available'])): ?>
+                                    <?php foreach ($timeSlots['available'] as $slot): ?>
+                                        <option value="<?= htmlspecialchars($slot['slot_start']); ?>"><?= htmlspecialchars($slot['slot_start']); ?></option>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    <option value="">Aucun créneau disponible</option>
+                                <?php endif; ?>
+                            </select>
+                        </td>
+                        <td>
+                            <select name="service_id" required>
+                                <option value="">Service</option>
+                                <?php foreach ($services as $service): ?>
+                                    <option value="<?= htmlspecialchars($service['id']); ?>"><?= htmlspecialchars($service['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </td>
+                        <td>
+                            <?= !empty($appointment['patient_name']) ? htmlspecialchars($appointment['patient_name']) : '-'; ?>
+                        </td>
+                        <td>
+                            <button type="submit" class="button" onclick="submitEditForm(<?= htmlspecialchars($appointment['id']); ?>)">Modifier</button>
+                            <button type="button" class="button" onclick="hideEditForm('appointment', <?= htmlspecialchars($appointment['id']); ?>)">Annuler</button>
+                        </td>
+                    </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
         </tbody>
     </table>
-</section>
 
 
     </main>

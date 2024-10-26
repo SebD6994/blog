@@ -263,10 +263,12 @@ switch ($page) {
                         }
                         break;
                     case 'update':
-                        if ($_POST) {
-                            $controllers['admin_patient']->update();
+                        if ($_POST && isset($_POST['id'])) {
+                            $id = intval($_POST['id']); // Récupérer et convertir l'ID en entier
+                            $controllers['admin_patient']->update($id); // Passer l'ID à la méthode update
                         }
                         break;
+
                     case 'delete':
                         if ($_POST) {
                             $controllers['admin_patient']->delete();
