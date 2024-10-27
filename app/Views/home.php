@@ -3,18 +3,29 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Vérification si l'utilisateur est connecté et son rôle
+if (isset($_SESSION['success'])): ?>
+    <div class="success-message">
+        <?= htmlspecialchars($_SESSION['success']); ?>
+        <?php unset($_SESSION['success']); ?>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="error-message">
+        <?= htmlspecialchars($_SESSION['error']); ?>
+        <?php unset($_SESSION['error']); ?>
+    </div>
+<?php endif; ?>
+
+<?php 
 if (isset($_SESSION['patient']['role'])) {
     if ($_SESSION['patient']['role'] === 'admin') {
-        // Redirection vers la page admin
         header("Location: index.php?page=admin_home");
         exit();
-    } elseif ($_SESSION['patient']['role'] === 'user') {
-        
     }
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

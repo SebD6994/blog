@@ -11,7 +11,6 @@ class Appointment {
         return $this->conn;
     }
 
-    // Récupérer tous les rendez-vous, triés par date
     public function getAll() {
         $query = "
             SELECT a.id, 
@@ -21,19 +20,17 @@ class Appointment {
             FROM appointments a
             LEFT JOIN patients p ON a.patient_id = p.id
             LEFT JOIN services s ON a.service_id = s.id
-            ORDER BY a.appointment_date ASC  -- Tri par date croissante
+            ORDER BY a.appointment_date ASC
         ";
 
         $stmt = $this->conn->query($query);
-        return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : []; // Gestion des erreurs
+        return $stmt ? $stmt->fetchAll(PDO::FETCH_ASSOC) : [];
     }
 
-    // Créer un nouveau rendez-vous
     public function create($data) {
         $appointmentDateTime = new DateTime($data['appointment_date'] . ' ' . $data['appointment_time']);
         $now = new DateTime();
     
-        // Vérifier si la date du rendez-vous est dans le futur
         if ($appointmentDateTime <= $now) {
             throw new Exception("La date et l'heure du rendez-vous doivent être dans le futur.");
         }
@@ -47,14 +44,12 @@ class Appointment {
         $stmt->bindParam(':appointment_date', $appointmentDateTime->format('Y-m-d H:i:s'));
         $stmt->bindParam(':service_id', $data['service_id']);
         
-        // Exécution de la requête
         if (!$stmt->execute()) {
             throw new Exception("Erreur lors de la création du rendez-vous.");
         }
-        return true; // Confirmation de la création
+        return true;
     }
 
-    // Mettre à jour un rendez-vous
     public function update($id, $data) {
         $query = "
             UPDATE appointments 
@@ -69,7 +64,6 @@ class Appointment {
         return $stmt->execute();
     }
 
-    // Supprimer un rendez-vous
     public function delete($id) {
         $query = "DELETE FROM appointments WHERE id = :id";
         $stmt = $this->conn->prepare($query);
@@ -77,7 +71,6 @@ class Appointment {
         return $stmt->execute();
     }
 
-    // Récupérer les rendez-vous d'un patient par son ID, triés par date
     public function getAppointmentsByPatientId($patientId) {
         $query = "
             SELECT a.id, 
@@ -87,7 +80,7 @@ class Appointment {
             FROM appointments a
             LEFT JOIN services s ON a.service_id = s.id
             WHERE a.patient_id = :patient_id
-            ORDER BY a.appointment_date ASC  -- Tri par date croissante
+            ORDER BY a.appointment_date ASC
         ";
 
         $stmt = $this->conn->prepare($query);
@@ -96,7 +89,6 @@ class Appointment {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Récupérer un rendez-vous par son ID
     public function getById($id) {
         $query = "SELECT * FROM appointments WHERE id = :id";
         $stmt = $this->conn->prepare($query);
@@ -110,16 +102,13 @@ class Appointment {
         $stmt->bindParam(':day', $day);
         $stmt->execute();
         
-        // Commencer à construire le HTML des options
-        $options = '<option value="">Sélectionnez un créneau</option>'; // Option par défaut
+        $options = '<option value="">Sélectionnez un créneau</option>';
         
         foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $slot) {
             $options .= '<option value="' . htmlspecialchars($slot['slot_start']) . '">' . htmlspecialchars($slot['slot_start']) . '</option>';
         }
         
-        return $options; // Retourner le HTML complet
+        return $options;
     }
-    
-    
-    }
+}
 ?>

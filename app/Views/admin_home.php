@@ -1,16 +1,29 @@
-<?php if (isset($_SESSION['success'])): ?>
+<?php 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['success'])): ?>
     <div class="success-message">
         <?= htmlspecialchars($_SESSION['success']); ?>
-        <?php unset($_SESSION['success']); // Effacer le message après l'affichage ?>
+        <?php unset($_SESSION['success']); ?>
     </div>
 <?php endif; ?>
 
 <?php if (isset($_SESSION['error'])): ?>
     <div class="error-message">
         <?= htmlspecialchars($_SESSION['error']); ?>
-        <?php unset($_SESSION['error']); // Effacer le message après l'affichage ?>
+        <?php unset($_SESSION['error']); ?>
     </div>
 <?php endif; ?>
+
+<?php 
+if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'admin') {
+    header("Location: index.php?page=patients");
+    exit();
+}
+?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

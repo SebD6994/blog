@@ -17,31 +17,22 @@ class Admin_appointmentController {
     }
 
     public function index() {
-        // Récupérer toutes les rendez-vous pour l'affichage
         $appointments = $this->appointmentModel->getAll();
-    
-        // Charger les services
         $serviceModel = new Service($this->db);
         $services = $serviceModel->getAll();
-    
-        // Charger les patients
         $patientModel = new Patient($this->db);
         $patients = $patientModel->getAll();
-    
-        // Vérifier si une date est spécifiée pour récupérer les créneaux horaires
+
         if (isset($_GET['date'])) {
             $date = $_GET['date'];
-            $dayOfWeek = date('w', strtotime($date)); // 0 (dimanche) à 6 (samedi)
+            $dayOfWeek = date('w', strtotime($date));
             $timeSlots = $this->appointmentModel->getTimeSlots($dayOfWeek);
         } else {
-            $timeSlots = ['available' => [], 'booked' => []]; // Aucun créneau disponible par défaut
+            $timeSlots = ['available' => [], 'booked' => []];
         }
-    
-        // Charger la vue avec les rendez-vous et les créneaux disponibles
-        require '../app/Views/admin_appointment.php'; // Vue pour afficher les rendez-vous
+
+        require '../app/Views/admin_appointment.php';
     }
-    
-    
 
     public function getAvailableSlots() {
         if ($_SERVER['REQUEST_METHOD'] === 'GET') {
@@ -49,30 +40,20 @@ class Admin_appointmentController {
                 $date = $_GET['date'];
                 $dayOfWeek = date('w', strtotime($date));
                 $timeSlots = $this->appointmentModel->getTimeSlots($dayOfWeek);
-    
-                // Définir l'en-tête pour le type de contenu HTML
                 header('Content-Type: text/html');
-    
-                // Afficher les options
                 echo $timeSlots;
             } else {
-                // Si la date est manquante, renvoyer une option d'erreur
                 header('Content-Type: text/html');
                 echo '<option value="">La date est manquante.</option>';
             }
         } else {
-            // Si la méthode HTTP n'est pas GET, renvoyer une option d'erreur
             header('Content-Type: text/html');
             echo '<option value="">Méthode non autorisée.</option>';
         }
     }
-    
-    
-    
-    
+
     public function create() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Traiter les données du formulaire pour créer un rendez-vous
             $data = [
                 'patient_id' => $_POST['patient_id'] ?? null,
                 'service_id' => $_POST['service_id'] ?? null,
@@ -88,13 +69,11 @@ class Admin_appointmentController {
             }
         }
 
-        // Afficher la vue pour le formulaire de création de rendez-vous
         require '../app/Views/admin_appointment.php';
     }
 
     public function update() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Vérifier les données soumises
             if (isset($_POST['id'])) {
                 $appointmentId = $_POST['id'];
                 $data = [
@@ -115,11 +94,10 @@ class Admin_appointmentController {
             }
         }
 
-        // Récupérer les données du rendez-vous pour préremplir le formulaire
         if (isset($_GET['id'])) {
             $appointmentId = $_GET['id'];
             $appointment = $this->appointmentModel->getAppointmentById($appointmentId);
-            require '../app/Views/admin_appointment.php'; // Vue pour le formulaire de mise à jour
+            require '../app/Views/admin_appointment.php';
         } else {
             die("ID du rendez-vous manquant.");
         }
@@ -143,7 +121,7 @@ class Admin_appointmentController {
         if (isset($_GET['search']) && !empty(trim($_GET['search']))) {
             $searchTerm = trim($_GET['search']);
             $appointments = $this->appointmentModel->searchAppointments($searchTerm);
-            require '../app/Views/admin_appointments.php'; // Vue avec les résultats de recherche
+            require '../app/Views/admin_appointments.php';
         } else {
             header("Location: index.php?page=admin_appointment&action=search");
             exit();
