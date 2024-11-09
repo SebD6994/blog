@@ -95,17 +95,23 @@
 
 /* === Banner styles === */
     .banner {
-        height: 400px; /* S'assure que la bannière a une hauteur définie */
+        position: relative;
+        width: 100%; /* L'élément occupe toute la largeur de l'écran */
+        padding-bottom: 31.25%; /* 5/16 = 0.3125, soit 31.25% */
         overflow: hidden; /* Pour cacher tout débordement éventuel */
     }
 
     .banner-image {
-        width: 100%; /* L'image remplit toute la largeur de la bannière */
-        height: 100%;
-        object-fit: cover;
-        object-position: top;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%; /* L'image occupe toute la largeur de la bannière */
+        height: 100%; /* L'image occupe toute la hauteur de la bannière */
+        object-fit: cover; /* L'image couvre l'espace sans déformation */
+        object-position: center; /* Centrer l'image */
         display: block; /* Évite les espaces indésirables sous l'image */
     }
+
 
 /* === Main content styles === */
     main {
@@ -122,6 +128,13 @@
     .section {
         margin-top: 30px;
     }
+
+    @media (max-width: 768px) {
+        .section {
+            max-width: 95%; /* Largeur de 95% pour les écrans mobiles */
+        }
+    }
+
     .section-title {
         background-color: var(--secondary-bg-color);
         border: 1px solid #ccc;
@@ -190,6 +203,78 @@
         background-color: var(--primary-color);
         color: var(--white);
     }    
+
+    /* Pour les petits écrans */
+/* === Adaptation pour les petits écrans === */
+@media (max-width: 768px) {
+
+    /* Cache les en-têtes de colonnes et les cellules de tableau */
+    table, th, td {
+        display: block; /* Passe le tableau à un mode bloc */
+        width: 100%;
+    }
+
+    /* Supprimer les bordures entre les cellules pour un affichage plus clair */
+    th, td {
+        border: none;
+        padding-left: 50%; /* Pour l'alignement du texte à gauche */
+        position: relative;
+    }
+
+    /* Ajoute des titres pour chaque ligne de tableau pour mobile */
+    th {
+        position: absolute;
+        left: 0;
+        top: -9999px; /* Cache les en-têtes sur mobile, on les remplace par des labels dans le contenu */
+    }
+
+    td {
+        padding-left: 50%; /* Décale les données de tableau à droite */
+        text-align: left; /* Pour une lisibilité optimale */
+    }
+
+    td:before {
+        /* Utilisation de pseudo-élément pour ajouter des étiquettes à chaque ligne */
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: bold;
+        color: #333;
+    }
+
+    /* Ajoute un espacement entre les lignes de tableau pour mobile */
+    td {
+        border-top: 1px solid #ddd;
+        padding: 10px;
+    }
+    
+    /* Ajout d'une marge pour les premières colonnes de chaque ligne */
+    tr {
+        display: block;
+        margin-bottom: 15px;
+    }
+}
+
+/* === Pour la section horaires === */
+    .opening-hours-table th, .opening-hours-table td {
+        text-align: left;
+        padding: 10px;
+    }
+
+    /* === Autres ajustements de mise en page pour les petits écrans === */
+    @media (max-width: 768px) {
+        /* Modifier les éléments flexibles (comme les sections) */
+        .sections-container {
+            display: block; /* Passer à une mise en page en bloc */
+        }
+
+        .horaires, .services {
+            width: 100%; /* Prendre toute la largeur */
+            margin-bottom: 20px; /* Ajouter de l'espace entre les sections */
+        }
+    }
 
 /* === Contenu des listes === */
     main ul {
@@ -298,6 +383,12 @@
         margin: 0 auto; /* Centrer le contenu horizontalement */
     }
 
+    @media (max-width: 768px) {
+        .content-wrapper {
+            max-width: 95%; /* Largeur de 95% pour les écrans mobiles */
+        }
+    }
+    
     .opening-hours-section {
         display: flex;
         justify-content: center;
@@ -329,6 +420,7 @@
             border: 1px solid #ccc; /* Bordure pour le formulaire */
             border-radius: 8px; /* Coins arrondis */
             background-color: #f9f9f9; /* Fond légèrement grisé */
+            
         }
 
         .edit-form input[type="text"],

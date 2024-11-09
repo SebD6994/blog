@@ -96,8 +96,8 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                     <table class="opening-hours-table">
                         <tr>
                             <th class="column-day">Jour</th>
-                            <th class="column-open">Heure d'Ouverture</th>
-                            <th class="column-close">Heure de Fermeture</th>
+                            <th class="column-open">Ouverture</th>
+                            <th class="column-close">Fermeture</th>
                         </tr>
                         <?php 
                         $daysOfWeek = [1 => 'Lundi', 2 => 'Mardi', 3 => 'Mercredi', 4 => 'Jeudi', 5 => 'Vendredi', 6 => 'Samedi', 0 => 'Dimanche'];
@@ -112,60 +112,60 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                         </tr>
                         <?php endforeach; ?>
                     </table>
-                    <button type="submit" class="cta-button">Mettre à jour les Horaires</button>
+                    <button type="submit" class="cta-button">Mettre à jour</button>
                 </form>
             </div>
         </div>
 
         <div class="section">
-        <h2>Images actuelles de la clinique</h2>
-<?php if (!empty($clinicImages)): ?>
-    <table class="clinic-image-table">
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Description</th>
-                <th>Upload Nouvelle Image</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($clinicImages as $index => $image): ?>
-                <tr id="row-<?= $image['id']; ?>" class="<?= $index % 2 === 0 ? 'service-even' : 'service-odd'; ?>">
-                    <td>
-                        <img src="<?php echo htmlspecialchars($image['image_path']); ?>" alt="Image de la clinique" width="100" class="existing-image">
-                    </td>
-                    <td>
-                        <!-- Champ pour mettre à jour la description -->
-                        <form action="index.php?page=admin_home&action=updateClinicImage" method="POST" enctype="multipart/form-data" class="update-form">
-                            <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
-                            <input type="text" name="description" value="<?php echo htmlspecialchars($image['description']); ?>" class="form-input" required>
-                    </td>
-                    <td>
-                        <!-- Champ pour uploader une nouvelle image -->
-                        <input type="file" name="new_image" id="new_image_<?php echo $image['id']; ?>" accept="image/*" class="form-input">
-                    </td>
-                    <td>
-                        <div class="image-controls">
-                            <!-- Bouton Modifier qui soumet le formulaire -->
-                            <button type="submit" class="button">Modifier</button>
-                            </form> <!-- Fermeture du formulaire ici -->
-                            
-                            <!-- Formulaire pour supprimer l'image -->
-                            <form action="index.php?page=admin_home&action=deleteClinicImage" method="POST" class="delete-form" onsubmit="return confirmDelete();">
-                                <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
-                                <button type="submit" class="delete-button">Supprimer</button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-<?php else: ?>
-    <p>Aucune image pour le moment.</p>
-<?php endif; ?>
-</div>
+        <h2>Imagesde la clinique</h2>
+        <?php if (!empty($clinicImages)): ?>
+            <table class="clinic-image-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Description</th>
+                        <th>Nouvelle Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($clinicImages as $index => $image): ?>
+                        <tr id="row-<?= $image['id']; ?>" class="<?= $index % 2 === 0 ? 'service-even' : 'service-odd'; ?>">
+                            <td>
+                                <img src="<?php echo htmlspecialchars($image['image_path']); ?>" alt="Image de la clinique" width="100" class="existing-image">
+                            </td>
+                            <td>
+                                <!-- Champ pour mettre à jour la description -->
+                                <form action="index.php?page=admin_home&action=updateClinicImage" method="POST" enctype="multipart/form-data" class="update-form">
+                                    <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
+                                    <input type="text" name="description" value="<?php echo htmlspecialchars($image['description']); ?>" class="form-input" required>
+                            </td>
+                            <td>
+                                <!-- Champ pour uploader une nouvelle image -->
+                                <input type="file" name="new_image" id="new_image_<?php echo $image['id']; ?>" accept="image/*" class="form-input">
+                            </td>
+                            <td>
+                                <div class="image-controls">
+                                    <!-- Bouton Modifier qui soumet le formulaire -->
+                                    <button type="submit" class="button">Modifier</button>
+                                    </form> <!-- Fermeture du formulaire ici -->
+                                    
+                                    <!-- Formulaire pour supprimer l'image -->
+                                    <form action="index.php?page=admin_home&action=deleteClinicImage" method="POST" class="delete-form" onsubmit="return confirmDelete();">
+                                        <input type="hidden" name="image_id" value="<?php echo $image['id']; ?>">
+                                        <button type="submit" class="delete-button">Supprimer</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>Aucune image pour le moment.</p>
+        <?php endif; ?>
+        </div>
 
 
 
