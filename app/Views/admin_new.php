@@ -86,7 +86,7 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                                             <input type="file" id="edit_service_image_<?= $new['id']; ?>" name="image" accept="image/*">
 
                                             <div class="button-container">
-                                                <button type="submit" class="cta-button">Mettre à jour</button>
+                                                <button type="submit" class="button">Mettre à jour</button>
                                                 <button type="button" class="button" onclick="hideEditForm(<?= $new['id']; ?>)">Annuler</button>
                                             </div>
                                         </form>

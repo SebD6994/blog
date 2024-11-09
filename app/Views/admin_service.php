@@ -59,7 +59,7 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                                     <td><?= htmlspecialchars($service['description']); ?></td>
                                     <td>
                                         <?php if (!empty($service['image'])): ?>
-                                            <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service" width="100">
+                                            <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service">
                                         <?php else: ?>
                                             <p>Aucune image</p>
                                         <?php endif; ?>
@@ -85,7 +85,7 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                                                 <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service" class="existing-image">
                                                 <input type="hidden" name="existing_image" value="<?= htmlspecialchars($service['image']); ?>">
                                             <?php endif; ?>
-                                            <button type="submit" class="cta-button">Enregistrer les modifications</button>
+                                            <button type="submit" class="button">Enregistrer</button>
                                             <button type="button" class="button" onclick="hideEditForm('service', <?= $service['id']; ?>)">Annuler</button>
                                         </form>
                                     </td>

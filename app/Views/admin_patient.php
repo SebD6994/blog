@@ -120,13 +120,13 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="text" id="first_name" name="first_name" required></td>
-                        <td><input type="text" id="last_name" name="last_name" required></td>
-                        <td><input type="email" id="email" name="email" required></td>
-                        <td><input type="text" id="phone" name="phone" required></td>
+                        <td><input type="text" id="first_name" name="first_name" placeholder="Nom" required></td>
+                        <td><input type="text" id="last_name" name="last_name" placeholder="Prénom" required></td>
+                        <td><input type="email" id="email" name="email" placeholder="Email" required></td>
+                        <td><input type="text" id="phone" name="phone" placeholder="Téléphone" required></td>
                         <td>
-                            <input type="password" id="password" name="password" required>
-                            <input type="password" id="confirm_password" name="confirm_password" required>
+                            <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+                            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirmation" required>
                         </td>
                         <td>
                             <select name="role" required>
