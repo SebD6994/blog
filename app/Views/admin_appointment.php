@@ -42,7 +42,6 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
     <!-- Section des Rendez-vous -->
     <section class="sections-container" style="display: block;"> <!-- Make visible for demonstration -->
         <h2>Liste des Rendez-vous pour aujourd'hui</h2>
-        <section class="sections-container" style="display: block;">
         <?php 
         // Récupérer la date d'aujourd'hui
         $today = date('Y-m-d');
@@ -54,7 +53,7 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
         });
         ?>
 
-        <table class="appointments-table">
+        <table>
             <thead>
                 <tr>
                     <th>Date</th>
@@ -133,7 +132,7 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
     <!-- Formulaire de création de rendez-vous dans un tableau distinct -->
     <h2>Créer un Nouveau Rendez-vous</h2>
     <form action="index.php?page=admin&action=create" method="POST">
-        <table class="appointments-table">
+        <table>
             <thead>
                 <tr>
                     <th>Date</th>
@@ -195,7 +194,7 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
     });
     ?>
 
-    <table class="appointments-table">
+    <table>
         <thead>
             <tr>
                 <th>Date</th>

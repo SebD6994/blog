@@ -2,7 +2,7 @@
 :root {
     --main-bg-color: #f8f8f8;
     --primary-color: #2c9ba3;
-    --secondary-bg-color: #f0f8fa;
+    --secondary-bg-color: #e0e0e0;
     --text-color: #333;
     --white: #fff;
 }
@@ -38,6 +38,7 @@
 
     ul {
         padding-left: 20px;
+        padding-right: 20px;
     }
 
     ul li {
@@ -105,33 +106,36 @@ nav ul li a:hover {
     background-color: #1e7f86; /* Changement de fond au survol */
 }
 
-/* Version mobile */
-@media screen and (max-width: 980px) {
-    .header-container {
-        text-align: center; /* Centre le texte */
-    }
+        /* Version Tablette (taille d'écran entre 768px et 1024px) */
+        @media (max-width: 1024px) and (min-width: 768px) {
+            nav {
+                margin: 0 auto; /* Centré horizontalement */
+            }
+        }
 
-    nav {
-        width: 100%; /* La nav prend toute la largeur de l'écran */
-    }
+        /* Version Mobile (taille d'écran de moins de 768px) */
+        @media (max-width: 767px) {
+            .header-container {
+                align-items: flex-start; /* Aligne tout à gauche */
+                text-align: left; /* Aligne le texte du titre à gauche */
+            }
 
-    nav ul {
-        display: flex;
-        flex-wrap: nowrap; /* Les éléments du menu restent sur une seule ligne */
-        justify-content: start; /* Les éléments commencent au début du conteneur */
-        
-    }
+            nav {
+                width: 100%; /* La nav prend toute la largeur */
+                margin: 0; /* Enlève le centrage */
+            }
 
-    nav ul li {
-        flex-shrink: 0;
-        margin-right: 15px; /* Espacement horizontal */
+            nav ul {
+                justify-content: flex-start; /* Aligne les liens à gauche */
+                padding-right: 30px;
+            }
 
-    }
-}
+            nav ul li {
+                margin-right: 10px; /* Moins d'espace entre les éléments */
+            }
+        }
 
 
-
-        
 /* === Banner styles === */
     .banner {
         position: relative;
@@ -163,12 +167,14 @@ nav ul li a:hover {
         text-align: center;
     }
 
+
+
 /* === Sections === */
     .section {
         margin-top: 30px;
     }
 
-    @media (max-width: 980px) {
+    @media (max-width: 1024px) {
         .section {
             max-width: 95%; /* Largeur de 95% pour les écrans mobiles */
         }
@@ -187,7 +193,6 @@ nav ul li a:hover {
         margin-bottom: 20px;
         border: 1px solid #ddd;
         border-radius: 5px;
-        padding: 10px;
         background-color: #f9f9f9;
     }
 
@@ -198,28 +203,36 @@ nav ul li a:hover {
         text-align: center; /* Centre le texte à l'intérieur de la section */
     }
 
-    .appointments-table th,
-    .appointments-table td {
-        text-align: center; /* Centre le texte dans les cellules du tableau */
-        padding: 10px; /* Ajoute un peu d'espace autour du texte */
-        border: 1px solid #ddd; /* Optionnel : ajoute une bordure pour une meilleure visibilité */
-    }
-
     .sections-container {
         display: flex;
         justify-content: space-between;
         gap: 30px;
-        max-width: 70%;
+        width: 70%;
         margin: 0 auto;
+    }
+    
+    @media (max-width: 1024px) {
+        .section-container {
+            width: 100%; /* Largeur de 95% pour les écrans mobiles */
+        }
+        .form-style {
+            width: 100%;
+            margin: 0 auto;
+            justify-content: center;
+            align-content: center;
+        }
     }
 
     .horaires, .services {
-        flex: 1;
+        flex-direction: column;
+        justify-content: center;
+        margin: 0 auto;
         background-color: var(--secondary-bg-color);
-        padding: 20px;
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        width: 40%;
     }
+
     .opening-hours-container {
         display: block; /* Désactiver le mode flex pour le tableau */
         margin: 0 auto; /* Centrer le contenu horizontalement */
@@ -230,12 +243,14 @@ nav ul li a:hover {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 40px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     th, td {
         padding: 15px;
-        text-align: left;
-        border: 1px solid #ddd;
+        text-align: center;
+        background-color: var(--secondary-bg-color);
     }
 
     th {
@@ -243,75 +258,109 @@ nav ul li a:hover {
         color: var(--white);
     }    
 
-    /* Pour les petits écrans */
-/* === Adaptation pour les petits écrans === */
-@media (max-width: 980px) {
+    @media (max-width: 1024px) {
 
-    /* Cache les en-têtes de colonnes et les cellules de tableau */
-    table, th, td {
-        display: block; /* Passe le tableau à un mode bloc */
+    /* Adaptation de la section contenant la table */
+    .appointments-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
         width: 100%;
     }
 
-    /* Supprimer les bordures entre les cellules pour un affichage plus clair */
+    table, th, td {
+        display: flex; /* Passe le tableau en mode bloc */
+        justify-content: center;
+    }
+
     th, td {
-        border: none;
-        padding-left: 50%; /* Pour l'alignement du texte à gauche */
+        background-color: var(--secondary-bg-color);
+        position: relative;
+        text-align: center;
+    }
+
+    th {
+        background-color: var(--primary-color);
+        color: white;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    /* Cacher les en-têtes sur mobile et les remplacer par des pseudo-éléments dans les cellules */
+    th {
+        position: absolute;
+        left: -9999px; /* Cache les en-têtes de colonnes */
+    }
+
+    td {
         position: relative;
     }
 
-    /* Ajoute des titres pour chaque ligne de tableau pour mobile */
-    th {
-        position: absolute;
-        left: 0;
-        top: -9999px; /* Cache les en-têtes sur mobile, on les remplace par des labels dans le contenu */
-    }
-
-    td {
-        padding-left: 50%; /* Décale les données de tableau à droite */
-        text-align: left; /* Pour une lisibilité optimale */
-    }
-
+    /* Utilisation du pseudo-élément :before pour ajouter une étiquette descriptive avant chaque donnée */
     td:before {
-        /* Utilisation de pseudo-élément pour ajouter des étiquettes à chaque ligne */
-        content: attr(data-label);
+        content: attr(data-label); /* Utilise l'attribut data-label */
         position: absolute;
         left: 10px;
-        top: 50%;
-        transform: translateY(-50%);
+        top: 10px;
         font-weight: bold;
         color: #333;
+        text-transform: uppercase;
+        font-size: 0.9em;
     }
 
-    /* Ajoute un espacement entre les lignes de tableau pour mobile */
-    td {
-        border-top: 1px solid #ddd;
-        padding: 10px;
-    }
-    
-    /* Ajout d'une marge pour les premières colonnes de chaque ligne */
+    /* Espacement entre les lignes de tableau */
     tr {
         display: block;
         margin-bottom: 15px;
     }
 }
 
+
 /* === Pour la section horaires === */
     .opening-hours-table th, .opening-hours-table td {
         text-align: left;
-        padding: 10px;
     }
 
     /* === Autres ajustements de mise en page pour les petits écrans === */
-    @media (max-width: 980px) {
+    @media (max-width: 1024px) {
         /* Modifier les éléments flexibles (comme les sections) */
         .sections-container {
             display: block; /* Passer à une mise en page en bloc */
+            width: 100%;
         }
 
-        .horaires, .services {
-            width: 100%; /* Prendre toute la largeur */
+        .horaires {
+            width: 50%; /* Prendre toute la largeur */
             margin-bottom: 20px; /* Ajouter de l'espace entre les sections */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .services {
+            width: 50%;
+        }
+
+        .services li {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .horaires-list {
+            width: 100%;
+            padding: 0;
+        }
+
+        @media (max-width: 768px) {
+            .horaires {
+                width: 90%;
+            }
+            
+            .services {
+                width: 90%;
+            }  
         }
     }
 
@@ -387,8 +436,7 @@ nav ul li a:hover {
         margin: 0 auto; /* Centre le formulaire horizontalement */
     }
     .form-style {
-        background-color: var(--secondary-bg-color); /* Ou toute autre couleur */
-        padding: 20px;
+        background-color: var(--secondary-bg-color);
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         margin: 20px auto; /* Ajoute un espacement autour */
@@ -403,7 +451,7 @@ nav ul li a:hover {
     }
 
     .form-style input {
-        width: 100%;
+        width: 90%;
         padding: 10px;
         margin-bottom: 15px;
         border: 1px solid #ccc;
@@ -414,20 +462,6 @@ nav ul li a:hover {
     }
 
 /* === Styles pour la page Home === */
-
-
-    /* Style de la section horaires */
-    .content-wrapper {
-        max-width: 70%;
-        margin: 0 auto; /* Centrer le contenu horizontalement */
-    }
-
-    @media (max-width: 980px) {
-        .content-wrapper {
-            max-width: 95%; /* Largeur de 95% pour les écrans mobiles */
-        }
-    }
-    
     .opening-hours-section {
         display: flex;
         justify-content: center;
@@ -537,7 +571,7 @@ nav ul li a:hover {
 
 
         /* === Styles pour les services === */
-        @media (max-width: 980px) {
+        @media (max-width: 1024px) {
             /* Formulaire */
             .edit-form {
                 margin-top: 20px; 
@@ -675,7 +709,7 @@ nav ul li a:hover {
 
 
         /* === Styles pour les news === */
-        @media (max-width: 980px) {
+        @media (max-width: 1024px) {
             .news-item {
                 display: block; /* Passer à une disposition bloc en mobile */
                 margin-top: 40px;
@@ -759,7 +793,7 @@ nav ul li a:hover {
     .carousel {
         position: relative;
         max-width: 600px; /* Ajustez la largeur selon vos besoins */
-        height: 400px; /* Définir une hauteur fixe */
+        max-height: 400px; /* Définir une hauteur fixe */
         margin: auto;
         overflow: hidden;
     }

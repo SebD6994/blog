@@ -91,8 +91,8 @@ if (isset($_SESSION['patient']['role'])) {
                                 <div class="time">
                                     <?php 
                                     if (isset($openingHoursSorted[$day]) && 
-                                        $openingHoursSorted[$day]['start_time'] !== '00:00:00' && 
-                                        $openingHoursSorted[$day]['end_time'] !== '00:00:00'): 
+                                        $openingHoursSorted[$day]['start_time'] !== '00:00' && 
+                                        $openingHoursSorted[$day]['end_time'] !== '00:00'): 
                                         $startTime = date('H:i', strtotime($openingHoursSorted[$day]['start_time']));
                                         $endTime = date('H:i', strtotime($openingHoursSorted[$day]['end_time']));
                                         echo htmlspecialchars($startTime) . ' - ' . htmlspecialchars($endTime);

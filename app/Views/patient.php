@@ -78,7 +78,7 @@ if (isset($_SESSION['patient']['role'])) {
                 <label for="phone">Téléphone :</label>
                 <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($_SESSION['patient']['phone'] ?? ''); ?>" required>
 
-                <button type="submit">Mettre à jour les informations</button>
+                <button type="submit" class ="cta-button">Mettre à jour</button>
             </form>
         </div>
         </div>
@@ -87,7 +87,7 @@ if (isset($_SESSION['patient']['role'])) {
         <div class="sections-container">
             <section class="appointments-section">
                 <?php if (!empty($appointments)): ?>
-                    <table class="appointments-table">
+                    <table>
                         <thead>
                             <tr>
                                 <th>Date</th>
