@@ -39,7 +39,7 @@ if (isset($_SESSION['patient']['role'])) {
 
     <?php include 'header.php'; ?>
 
-    <main>
+    <main class ="patient-account">
 
     <?php if (isset($errorMessage)): ?>
         <div class="alert alert-danger"><?= htmlspecialchars($errorMessage) ?></div>

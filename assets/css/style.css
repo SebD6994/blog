@@ -8,16 +8,31 @@
 }
 
 /* === Styles généraux === */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    color: var(--text-color);
+    line-height: 1.6;
+    background-color: var(--main-bg-color);
+    padding-top: 120px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Ajustement pour les tablettes (1024px) */
+@media (max-width: 1024px) {
     body {
-        font-family: 'Arial', sans-serif;
-        color: var(--text-color);
-        line-height: 1.6;
-        background-color: var(--main-bg-color);
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow-x: hidden;
+        padding-top: 100px; /* Padding réduit */
     }
+}
 
     h1 {
         font-size: 1.8em;
@@ -55,6 +70,13 @@ header {
     width: 100%;
     background-color: var(--primary-color); /* Fond clair pour le header */
     padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 10px 20px;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
 }
 
 .header-container {
@@ -167,7 +189,9 @@ nav ul li a:hover {
         text-align: center;
     }
 
-
+    .patient-account {
+        height: calc(100% - 103px);
+    }
 
 /* === Sections === */
     .section {
@@ -782,6 +806,7 @@ nav ul li a:hover {
             padding: 20px;
             text-align: center;
             font-size: 0.9em;
+            margin-top: auto;
         }
 
         footer p {
