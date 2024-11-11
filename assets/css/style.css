@@ -841,6 +841,7 @@ nav ul li a:hover {
     img {
         width: 100%; /* Rendre l'image responsive */
         height: 100%; /* Rendre l'image de la même hauteur que le conteneur */
+        aspect-ratio: 16 / 9; /* Définit un ratio de 16:9 */
         object-fit: cover; /* Ajuster l'image pour qu'elle couvre le conteneur sans déformer */
     }
 
