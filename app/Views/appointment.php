@@ -39,16 +39,17 @@ if (isset($_SESSION['patient']['role'])) {
 
     <?php include 'header.php'; ?>
 
-    <main class ="patient-account">
+    <main>
 
     <?php if (isset($errorMessage)): ?>
         <div class="alert alert-danger"><?= htmlspecialchars($errorMessage) ?></div>
     <?php elseif (isset($successMessage)): ?>
         <div class="alert alert-success"><?= htmlspecialchars($successMessage) ?></div>
     <?php endif; ?>
+
         <?php if ($patientData): ?>
             <h2>Mes Rendez-vous</h2>
-            <div class="sections-container">
+
                 <section class="appointments-section">
                     <?php if (!empty($appointments)): ?>
                         <table class="appointments-table">
@@ -107,7 +108,7 @@ if (isset($_SESSION['patient']['role'])) {
                         <p>Aucun rendez-vous trouvé.</p>
                     <?php endif; ?>
                 </section>
-            </div>
+
 
             <h2>Ajouter un Rendez-vous</h2>
 
@@ -151,9 +152,38 @@ if (isset($_SESSION['patient']['role'])) {
                 <button type="submit" class="cta-button">Ajouter Rendez-vous</button>
             </form>
 
+
+
         <?php else: ?>
+            <section>
+                <!-- Bannière -->
+                <?php if (isset($bannerImagePath)): ?>
+                    <div class="banner">
+                        <img src="<?php echo htmlspecialchars($bannerImagePath); ?>" alt="Bannière de la clinique" class="banner-image">
+                    </div>
+                <?php else: ?>
+                    <p>Aucune bannière disponible.</p>
+                <?php endif; ?>
+
+                <!-- Services Section -->
+                <section class="services">
+                    <h3>Nos Services</h3>
+                    <ul class="services-list">
+                        <?php if (!empty($services)): ?>
+                            <?php foreach ($services as $service): ?>
+                                <li><?php echo htmlspecialchars($service['name']); ?></li>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <li>Aucun service disponible pour le moment.</li>
+                        <?php endif; ?>
+                    </ul>
+                </section>
+                <p>Nous vous accueillons avec sourire et professionnalisme dans notre cabinet dentaire.</p>
             <p><a href="index.php?page=patients" class="cta-button">Connectez-vous</a> pour prendre rendez-vous.</p>
+
+            </section>
         <?php endif; ?>
+                            
     </main>
 
     <?php include 'footer.php'; ?>

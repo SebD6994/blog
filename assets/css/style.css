@@ -11,7 +11,7 @@
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    height: 100vh;
     overflow-x: hidden;
 }
 
@@ -23,8 +23,8 @@ body {
     padding-top: 120px;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     box-sizing: border-box;
+    flex-grow: 1;
 }
 
 /* Ajustement pour les tablettes (1024px) */
@@ -177,16 +177,28 @@ nav ul li a:hover {
         display: block; /* Évite les espaces indésirables sous l'image */
     }
 
+    .admin-home {
+        width: 70%;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 1024px) {
+        .admin-home {
+            width: 100%;
+            margin: 0 auto;
+        }
+    }
+
 
 /* === Main content styles === */
     main {
-        padding: 20px 20px;
         max-width: 1200px; /* Largeur maximale identique à celle de la bannière */
         margin: 0 auto; /* Centre le contenu principal */
         background-color: var(--white);
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         text-align: center;
+        width: 100%;
     }
 
     .patient-account {
@@ -255,6 +267,10 @@ nav ul li a:hover {
         border-radius: 10px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         width: 40%;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        white-space: nowrap;
+        margin-top: 20px;
     }
 
     .opening-hours-container {
@@ -417,6 +433,7 @@ nav ul li a:hover {
         transition: background-color 0.3s ease;
         cursor: pointer;
         margin: 0 auto;
+        margin-bottom: 15px;
     }
 
     .button {
@@ -429,6 +446,7 @@ nav ul li a:hover {
         cursor: pointer;
         transition: background-color 0.3s ease;
         width: 100px;
+        margin-bottom: 5px;
     }
 
     .button:hover {
@@ -466,6 +484,7 @@ nav ul li a:hover {
         margin: 20px auto; /* Ajoute un espacement autour */
         max-width: 400px; /* Assure une largeur maximale constante */
         text-align: center; /* Aligne le texte à gauche */
+        width: 90%;
     }
 
     .form-style label {
@@ -805,7 +824,7 @@ nav ul li a:hover {
             color: var(--white);
             padding: 20px;
             text-align: center;
-            font-size: 0.9em;
+            font-size: 0.8em;
             margin-top: auto;
         }
 
@@ -821,6 +840,7 @@ nav ul li a:hover {
         max-height: 400px; /* Définir une hauteur fixe */
         margin: auto;
         overflow: hidden;
+        aspect-ratio: 16 / 9; /* Définit un ratio de 16:9 */
     }
 
     .carousel-inner {
@@ -841,7 +861,6 @@ nav ul li a:hover {
     img {
         width: 100%; /* Rendre l'image responsive */
         height: 100%; /* Rendre l'image de la même hauteur que le conteneur */
-        aspect-ratio: 16 / 9; /* Définit un ratio de 16:9 */
         object-fit: cover; /* Ajuster l'image pour qu'elle couvre le conteneur sans déformer */
     }
 

@@ -1,12 +1,15 @@
 <?php
 
 require_once '../app/Models/Patient.php';
+require_once '../app/Models/Home.php';
 
 class PatientController {
     private $patientModel;
+    private $homeModel;
 
     public function __construct($db) {
         $this->patientModel = new Patient($db);
+        $this->homeModel = new Home($db);
         
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -16,6 +19,7 @@ class PatientController {
     public function index($errorMessage = null, $successMessage = null) {
         $accountData = null;
         $appointments = [];
+        $bannerImagePath = $this->homeModel->getBannerImage();
 
         if ($this->isLoggedIn()) {
             $patientId = $_SESSION['patient']['id'];

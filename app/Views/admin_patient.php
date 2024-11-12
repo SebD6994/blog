@@ -74,26 +74,24 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                             <!-- Formulaire de modification caché pour chaque patient -->
                             <tr id="edit-form-patient-<?= htmlspecialchars($patient['id']); ?>" style="display: none;">
                                 <td>
-                                        <form action="index.php?page=admin_patient&action=update&id=<?= htmlspecialchars($patient['id']); ?>" method="post">
-                                    <td>
-                                            <input type="hidden" name="id" value="<?= htmlspecialchars($patient['id']); ?>">
-                                            <input type="text" name="first_name" value="<?= htmlspecialchars($patient['first_name']); ?>" required style="width: 100%;">
-                                    </td>
-                                    <td>
-                                            <input type="text" name="last_name" value="<?= htmlspecialchars($patient['last_name']); ?>" required style="width: 100%;">
-                                    </td>
-                                    <td>
-                                            <input type="email" name="email" value="<?= htmlspecialchars($patient['email']); ?>" required style="width: 100%;">
-                                    </td>
-                                    <td>
-                                            <input type="text" name="phone" value="<?= htmlspecialchars($patient['phone']); ?>" required style="width: 100%;">
-                                    </td>
-                                    <td>
-                                            <button type="submit" class="button">Enregistrer</button>
-                                            <button type="button" class="button" onclick="hideEditForm('patient', <?= htmlspecialchars($patient['id']); ?>)">Annuler</button>
-                                    </td>
-                                        </form>
+                                    <form action="index.php?page=admin_patient&action=update&id=<?= htmlspecialchars($patient['id']); ?>" method="post">
+                                        <input type="hidden" name="id" value="<?= htmlspecialchars($patient['id']); ?>">
+                                        <input type="text" name="first_name" value="<?= htmlspecialchars($patient['first_name']); ?>" required style="width: 100%;">
                                 </td>
+                                <td>
+                                    <input type="text" name="last_name" value="<?= htmlspecialchars($patient['last_name']); ?>" required style="width: 100%;">
+                                </td>
+                                <td>
+                                    <input type="email" name="email" value="<?= htmlspecialchars($patient['email']); ?>" required style="width: 100%;">
+                                </td>
+                                <td>
+                                    <input type="text" name="phone" value="<?= htmlspecialchars($patient['phone']); ?>" required style="width: 100%;">
+                                </td>
+                                <td>
+                                    <button type="submit" class="button">Enregistrer</button>
+                                    <button type="button" class="button" onclick="hideEditForm('patient', <?= htmlspecialchars($patient['id']); ?>)">Annuler</button>
+                                </td>
+                                    </form>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -107,7 +105,7 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
 
         <!-- Formulaire de création de patient dans un tableau distinct -->
         <h2>Créer un Nouveau Patient</h2>
-        <section class="sections-container" style="display: block;">
+        <section style="display: block;">
             <form action="index.php?page=admin_patient&action=create" method="POST">
             <table>
                 <thead>

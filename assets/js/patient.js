@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var editButton = document.getElementById('editButton');
     var editForm = document.getElementById('editForm');
-    var patientInfo = document.querySelector('.sections-container > div');  // Sélectionner la première div
+    var patientInfo = document.querySelector('.patient-info');  // Sélectionner la première div
     var cancelButton = document.getElementById('cancelButton');
     
     editButton.addEventListener('click', function() {

@@ -39,7 +39,7 @@ if (isset($_SESSION['patient']['role'])) {
     
     <?php include 'header.php'; ?>
 
-    <main class="patient-account">
+    <main>
     <?php if (isset($message)): ?>
         <div class="message">
             <?= htmlspecialchars($message); ?>
@@ -48,14 +48,14 @@ if (isset($_SESSION['patient']['role'])) {
 
     <?php if (isset($_SESSION['patient'])): ?>
         
-        <div class="sections-container">
+
         <div class="patient-info form-style">
             <h2>Mes Informations</h2>
             <p><strong>Prénom :</strong> <?= htmlspecialchars($_SESSION['patient']['first_name'] ?? 'N/A'); ?></p>
             <p><strong>Nom :</strong> <?= htmlspecialchars($_SESSION['patient']['last_name'] ?? 'N/A'); ?></p>
             <p><strong>Email :</strong> <?= htmlspecialchars($_SESSION['patient']['email'] ?? 'N/A'); ?></p>
             <p><strong>Téléphone :</strong> <?= htmlspecialchars($_SESSION['patient']['phone'] ?? 'N/A'); ?></p>
-            <button id="editButton" class="cta-button">Modifier mes informations</button>
+            <button id="editButton" class="button">Modifier</button>
         </div>
 
         <!-- Formulaire de modification caché par défaut -->
@@ -78,13 +78,12 @@ if (isset($_SESSION['patient']['role'])) {
                 <label for="phone">Téléphone :</label>
                 <input type="text" id="phone" name="phone" value="<?= htmlspecialchars($_SESSION['patient']['phone'] ?? ''); ?>" required>
 
-                <button type="submit" class ="cta-button">Mettre à jour</button>
+                <button type="submit" class ="button">Mettre à jour</button>
             </form>
         </div>
-        </div>
+ 
 
         <h2>Mes Rendez-vous</h2>
-        <div class="sections-container">
             <section class="appointments-section">
                 <?php if (!empty($appointments)): ?>
                     <table>
@@ -115,10 +114,18 @@ if (isset($_SESSION['patient']['role'])) {
                 <?php endif; ?>
                 <a href="index.php?page=appointments" class="cta-button">Modifier un rendez-vous</a>
             </section>
-        </div>
                 
-        <?php else: ?>
-            <div class="sections-container">
+        <?php else: ?>         
+
+                <!-- Bannière -->
+                <?php if (isset($bannerImagePath)): ?>
+                    <div class="banner">
+                        <img src="<?php echo htmlspecialchars($bannerImagePath); ?>" alt="Bannière de la clinique" class="banner-image">
+                    </div>
+                <?php else: ?>
+                    <p>Aucune bannière disponible.</p>
+                <?php endif; ?>
+                
             <div class="login-section form-style">
                 <h2>Connexion</h2>
                 <form action="index.php?page=patients&action=login" method="POST">
@@ -130,12 +137,9 @@ if (isset($_SESSION['patient']['role'])) {
 
                     <button type="submit" class="cta-button">Se connecter</button>
                 </form>
-
-                <p>Vous n'avez pas de compte ? <a href="#" id="show-register-form">Inscrivez-vous ici</a>.</p>
             </div>
-        </div>
 
-            <div id="register-form" class="form-style" style="display: none;">
+            <div id="register-form" class="form-style" style="display: block;">
                 <h2>Inscription</h2>
                 <form action="index.php?page=patients&action=create" method="POST">
                     <div class="form-row">
@@ -171,7 +175,6 @@ if (isset($_SESSION['patient']['role'])) {
                     <input type="hidden" name="role" value="user">
                     <button type="submit" class="cta-button">S'inscrire</button>
                 </form>
-                <p>Vous avez déjà un compte ? <a href="#" id="show-login-form">Connectez-vous ici</a></p>
             </div>
 
             <?php if (isset($_SESSION['successMessage'])): ?>

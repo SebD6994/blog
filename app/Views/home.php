@@ -39,7 +39,7 @@ if (isset($_SESSION['patient']['role'])) {
 
     <?php include 'header.php'; ?>
 
-    <main class="home">
+    <main>
 
     <!-- Bannière -->
     <?php if (isset($bannerImagePath)): ?>

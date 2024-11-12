@@ -3,16 +3,20 @@
 require_once '../app/Models/Appointment.php';
 require_once '../app/Models/Patient.php';
 require_once '../app/Models/Service.php';
+require_once '../app/Models/Home.php';
 
 class AppointmentController {
     private $appointmentModel;
     private $patientModel; 
     private $serviceModel;
+    private $homeModel;
+    
 
     public function __construct($db) {
         $this->appointmentModel = new Appointment($db);
         $this->patientModel = new Patient($db);
         $this->serviceModel = new Service($db);
+        $this->homeModel = new Home($db);
 
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -23,6 +27,7 @@ class AppointmentController {
         $patientId = $this->isLoggedIn() ? $_SESSION['patient']['id'] : null;
         $patientData = null;
         $appointments = [];
+        $bannerImagePath = $this->homeModel->getBannerImage();
 
         if ($patientId !== null) {
             $patientData = $this->patientModel->getById($patientId);
