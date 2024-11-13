@@ -280,7 +280,6 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                         </td>
                     </tr>
 
-                     <!-- Formulaire de modification caché -->
                     <!-- Formulaire de modification caché -->
                 <tr id="edit-row-appointment-<?= $appointment['id']; ?>" style="display:none;">
                     <td>

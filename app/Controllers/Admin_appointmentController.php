@@ -30,45 +30,70 @@ class Admin_appointmentController {
         require '../app/Views/admin_appointment.php';
     }
 
-    public function create() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            // Vérifier que l'utilisateur est bien connecté et que la requête est POST
-            if (!$this->isLoggedIn()) {
-                $_SESSION['error_message'] = "Vous devez être connecté pour créer un rendez-vous.";
-                header("Location: index.php?page=appointments"); // Redirection vers la page de création de rendez-vous
-                exit();
-            }
-    
-            // Récupérer les données du formulaire
-            $appointmentDate = $_POST['appointment_date'];
-            $selectedTimeSlot = $_POST['appointment_time'];
-            $selectedPatientId = $_POST['patient_id']; // Récupérer l'ID du patient sélectionné
-            $appointmentDateTimeString = $appointmentDate . ' ' . $selectedTimeSlot;
-    
-            // Appel à la méthode create du AppointmentController
-            $appointmentController = new AppointmentController();
-    
-            // Redéfinir la logique pour que l'ID du patient sélectionné soit utilisé
-            $_POST['patient_id'] = $selectedPatientId; // Remplacer l'ID du patient connecté par celui du formulaire
-    
-            // Appeler la méthode create de AppointmentController
-            $appointmentController->create();
-    
-            // Redirection après la création du rendez-vous
-            $_SESSION['success_message'] = "Rendez-vous créé avec succès.";
-            header("Location: index.php?page=appointments"); // Redirection vers la page des rendez-vous
+public function create() {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        
+        // Vérification du contenu de $_POST pour s'assurer que l'ID du patient est bien envoyé
+        var_dump($_POST); // Ajoute ceci pour voir tout ce qui est envoyé dans le formulaire
+        exit(); // Pour arrêter l'exécution et voir le contenu
+
+        if (!$this->isLoggedIn()) {
+            $_SESSION['error'] = "Vous devez être connecté pour créer un rendez-vous.";
+            header("Location: index.php?page=appointments");
             exit();
         }
-    
-        // Charger les services, patients et créneaux horaires
-        $services = $this->serviceModel->getAll();
-        $patients = $this->patientModel->getAll();  // Charger tous les patients
-        $timeSlots = $this->appointmentModel->getTimeSlots();  // Récupérer les créneaux horaires
-        $today = date('Y-m-d');
-    
-        // Passer les données nécessaires à la vue
-        require '../app/Views/admin_appointment.php';
+
+        // Récupérer les données du formulaire
+        $appointmentDate = $_POST['appointment_date'];
+        $selectedTimeSlot = $_POST['appointment_time'];
+        $selectedPatientId = $_POST['patient_id']; // Utilisation de l'ID du patient choisi par l'administrateur
+        $appointmentDateTimeString = $appointmentDate . ' ' . $selectedTimeSlot;
+        
+        // Création de l'objet DateTime pour vérifier la validité de la date et de l'heure
+        try {
+            $appointmentDateTime = new DateTime($appointmentDateTimeString);
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Format de date ou d'heure invalide.";
+            header("Location: index.php?page=appointments");
+            exit();
+        }
+
+        $now = new DateTime();
+        if ($appointmentDateTime <= $now) {
+            $_SESSION['error'] = "La date et l'heure du rendez-vous doivent être dans le futur.";
+            header("Location: index.php?page=appointments");
+            exit();
+        }
+
+        try {
+            // Créer le rendez-vous en utilisant l'ID du patient choisi par l'administrateur
+            $this->appointmentModel->create([
+                'appointment_date' => $appointmentDateTime->format('Y-m-d H:i:s'),
+                'service_id' => $_POST['service_id'],
+                'patient_id' => $selectedPatientId // Utilisation du patient sélectionné par l'administrateur
+            ]);
+
+            $_SESSION['success'] = "Rendez-vous créé avec succès.";
+            header("Location: index.php?page=appointments");
+            exit();
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header("Location: index.php?page=appointments");
+            exit();
+        }
     }
+
+    // Charger les services, patients et créneaux horaires
+    $services = $this->serviceModel->getAll();
+    $patients = $this->patientModel->getAll(); 
+    $timeSlotsData = $this->appointmentModel->getTimeSlots(); 
+    $today = date('Y-m-d');
+
+    require '../app/Views/Appointment.php';
+}
+
+    
+    
     
 
 
