@@ -98,12 +98,17 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                     <input type="date" name="date" id="date" value="<?= htmlspecialchars($today); ?>" required>
                 </td>
                 <td>
-                    <select name="time" required>
-                    <option value="">Créneau</option>
-                            <?php foreach ($timeSlots['available'] as $slot): ?>
-                                <option value="<?= htmlspecialchars($slot); ?>"><?= htmlspecialchars($slot); ?></option>
-                            <?php endforeach; ?>
-                    </select>
+                <select name="time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
+                            <?php if (!empty($timeSlots)): ?>
+                                <?php foreach ($timeSlots as $slot): ?>
+                                    <option value="<?= htmlspecialchars($slot['slot_start']); ?>">
+                                        <?= htmlspecialchars($slot['slot_start']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="">Aucun créneau disponible</option>
+                            <?php endif; ?>
+                        </select>
                 </td>
                 <td>
                     <select name="service_id" id="service_id" required>
@@ -259,10 +264,8 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                                 <option value="">Aucun créneau disponible</option>
                             <?php endif; ?>
                         </select>
-                        dddd
                         </td>
                         <td>
-                            dddd
                             <select name="service_id" required>
                                 <option value="">Service</option>
                                 <?php foreach ($services as $service): ?>

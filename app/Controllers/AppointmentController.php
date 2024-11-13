@@ -28,6 +28,7 @@ class AppointmentController {
         $patientData = null;
         $appointments = [];
         $bannerImagePath = $this->homeModel->getBannerImage();
+        $timeSlots = $this->appointmentModel->getTimeSlots();
 
         if ($patientId !== null) {
             $patientData = $this->patientModel->getById($patientId);
@@ -71,9 +72,7 @@ class AppointmentController {
 
         $services = $this->serviceModel->getAll();
         $today = date('Y-m-d'); 
-        $timeSlotsData = $this->appointmentModel->getAvailableTimeSlots($today);
-        $availableSlots = $timeSlotsData['available'];
-        $bookedSlots = $timeSlotsData['booked'];
+        $timeSlotsData = $this->appointmentModel->getAvailableTimeSlots();
 
         require '../app/Views/Appointment.php';
     }

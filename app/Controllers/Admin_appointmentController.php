@@ -30,12 +30,6 @@ class Admin_appointmentController {
         require '../app/Views/admin_appointment.php';
     }
 
-    public function getAvailableSlots() {
-        
-       
-       
-    }
-
     public function create() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data = [
