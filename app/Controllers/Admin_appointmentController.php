@@ -23,33 +23,17 @@ class Admin_appointmentController {
         $patientModel = new Patient($this->db);
         $patients = $patientModel->getAll();
 
-        if (isset($_GET['date'])) {
-            $date = $_GET['date'];
-            $dayOfWeek = date('w', strtotime($date));
-            $timeSlots = $this->appointmentModel->getTimeSlots($dayOfWeek);
-        } else {
-            $timeSlots = ['available' => [], 'booked' => []];
-        }
+        $timeSlots = $this->appointmentModel->getTimeSlots();
+      
+            
 
         require '../app/Views/admin_appointment.php';
     }
 
     public function getAvailableSlots() {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            if (isset($_GET['date'])) {
-                $date = $_GET['date'];
-                $dayOfWeek = date('w', strtotime($date));
-                $timeSlots = $this->appointmentModel->getTimeSlots($dayOfWeek);
-                header('Content-Type: text/html');
-                echo $timeSlots;
-            } else {
-                header('Content-Type: text/html');
-                echo '<option value="">La date est manquante.</option>';
-            }
-        } else {
-            header('Content-Type: text/html');
-            echo '<option value="">Méthode non autorisée.</option>';
-        }
+        
+       
+       
     }
 
     public function create() {

@@ -97,18 +97,11 @@ class Appointment {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function getTimeSlots($day) {
-        $stmt = $this->conn->prepare("SELECT slot_start FROM time_slots WHERE day_of_week = :day");
-        $stmt->bindParam(':day', $day);
+    public function getTimeSlots() {
+        $stmt = $this->conn->prepare("SELECT slot_start FROM time_slots");
         $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        $options = '<option value="">Sélectionnez un créneau</option>';
-        
-        foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $slot) {
-            $options .= '<option value="' . htmlspecialchars($slot['slot_start']) . '">' . htmlspecialchars($slot['slot_start']) . '</option>';
-        }
-        
-        return $options;
     }
 }
 ?>

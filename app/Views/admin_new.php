@@ -105,7 +105,7 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                             <td colspan="2">
                                 <form action="?page=admin_news&action=create" method="POST" class="edit-form" id="create-news-form" enctype="multipart/form-data">
                                     <input type="text" id="news_title" name="title" required style="width: 100%;">
-                                    <textarea id="news_content" name="content" required style="width: 100%;"></textarea>
+                                    <textarea id="news_content" name="content" style="width: 100%;"></textarea>
                                     <input type="file" id="service_image" name="image" accept="image/*">
                                     <div class="button-container">
                                         <button type="submit" class="cta-button">Publier</button>
@@ -120,9 +120,13 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
     </main>
 
     <?php include 'footer.php'; ?>
-
-    <script src="../assets/js/admin_news.js"></script>
     <script src="https://cdn.tiny.cloud/1/8pmzn31l5fg9pakc6iubiw3hvsowgx2qq1116dbvyo8sfn8b/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+      tinymce.init({
+        selector: '#news_content',
+      });
+    </script>
+    <script src="../assets/js/admin_news.js"></script>
 </body>
 
 </html>

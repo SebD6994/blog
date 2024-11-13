@@ -148,11 +148,16 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                         <input type="date" name="date" id="date" value="<?= htmlspecialchars($today); ?>" required>
                     </td>
                     <td>
-                        <select name="time" id="time" required>
-                            <option value="">Créneau</option>
-                            <?php foreach ($timeSlots['available'] as $slot): ?>
-                                <option value="<?= htmlspecialchars($slot); ?>"><?= htmlspecialchars($slot); ?></option>
-                            <?php endforeach; ?>
+                        <select name="time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
+                            <?php if (!empty($timeSlots)): ?>
+                                <?php foreach ($timeSlots as $slot): ?>
+                                    <option value="<?= htmlspecialchars($slot['slot_start']); ?>">
+                                        <?= htmlspecialchars($slot['slot_start']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="">Aucun créneau disponible</option>
+                            <?php endif; ?>
                         </select>
                     </td>
                     <td>
@@ -193,7 +198,6 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
         return $dateTime->format('Y-m-d') > $today;
     });
     ?>
-
     <table>
         <thead>
             <tr>
@@ -243,17 +247,22 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                             <input type="date" name="date" id="edit-date-<?= htmlspecialchars($appointment['id']); ?>" value="<?= htmlspecialchars($dateTime->format('Y-m-d')); ?>" required>
                         </td>
                         <td> 
-                            <select name="time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
-                                <?php if (!empty($timeSlots['available'])): ?>
-                                    <?php foreach ($timeSlots['available'] as $slot): ?>
-                                        <option value="<?= htmlspecialchars($slot['slot_start']); ?>"><?= htmlspecialchars($slot['slot_start']); ?></option>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <option value="">Aucun créneau disponible</option>
-                                <?php endif; ?>
-                            </select>
+                           
+                        <select name="time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
+                            <?php if (!empty($timeSlots)): ?>
+                                <?php foreach ($timeSlots as $slot): ?>
+                                    <option value="<?= htmlspecialchars($slot['slot_start']); ?>">
+                                        <?= htmlspecialchars($slot['slot_start']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="">Aucun créneau disponible</option>
+                            <?php endif; ?>
+                        </select>
+                        dddd
                         </td>
                         <td>
+                            dddd
                             <select name="service_id" required>
                                 <option value="">Service</option>
                                 <?php foreach ($services as $service): ?>
