@@ -116,7 +116,6 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                         <th>Téléphone</th>
                         <th>Mot de passe</th>
                         <th>Rôle</th>
-                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -135,12 +134,11 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                                 <option value="admin">Administrateur</option>
                             </select>
                         </td>
-                        <td>
-                            <button type="submit" class="button">Ajouter</button>
-                        </td>
+                            
                     </tr>
                 </tbody>
             </table>
+            <button type="submit" class="button">Ajouter</button>
             </form>
         </section>
         

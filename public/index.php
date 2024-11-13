@@ -228,9 +228,6 @@ switch ($page) {
             break;
     case 'admin_appointment':
             switch ($action) {
-                case 'getAvailableSlots':
-                    $controllers['admin_appointment']->getAvailableSlots();
-                    break;
                 case 'create':
                     if ($_POST) {
                         $controllers['admin_appointment']->create();

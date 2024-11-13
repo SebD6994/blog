@@ -42,8 +42,9 @@ class AppointmentController {
     public function create() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!$this->isLoggedIn()) {
-                echo "Vous devez être connecté pour créer un rendez-vous.";
-                return;
+                $_SESSION['error'] = "Vous devez être connecté pour créer un rendez-vous.";
+                header("Location: index.php?page=appointments"); // Redirection vers la page de création de rendez-vous
+                exit();
             }
     
             $appointmentDate = $_POST['appointment_date'];
@@ -53,15 +54,17 @@ class AppointmentController {
             try {
                 $appointmentDateTime = new DateTime($appointmentDateTimeString);
             } catch (Exception $e) {
-                echo "Format de date ou d'heure invalide.";
-                return;
+                $_SESSION['error'] = "Format de date ou d'heure invalide.";
+                header("Location: index.php?page=appointments"); // Redirection vers la page de création de rendez-vous
+                exit();
             }
     
             $now = new DateTime();
     
             if ($appointmentDateTime <= $now) {
-                echo "La date et l'heure du rendez-vous doivent être dans le futur.";
-                return;
+                $_SESSION['error'] = "La date et l'heure du rendez-vous doivent être dans le futur.";
+                header("Location: index.php?page=appointments"); // Redirection vers la page de création de rendez-vous
+                exit();
             }
     
             try {
@@ -70,21 +73,25 @@ class AppointmentController {
                     'service_id' => $_POST['service_id'],
                     'patient_id' => $_SESSION['patient']['id']
                 ]);
+                $_SESSION['success'] = "Rendez-vous créé avec succès.";
+                header("Location: index.php?page=appointments"); // Redirection après succès
+                exit();
             } catch (Exception $e) {
-                echo $e->getMessage();
-                return;
+                $_SESSION['error'] = $e->getMessage();
+                header("Location: index.php?page=appointments"); // Redirection en cas d'erreur
+                exit();
             }
-    
-            header('Location: index.php?page=patients&action=view');
-            exit();
         }
     
+        // Charger les services et les créneaux horaires disponibles
         $services = $this->serviceModel->getAll();
-        $today = date('Y-m-d'); 
+        $today = date('Y-m-d');
         $timeSlotsData = $this->appointmentModel->getTimeSlots();  // Assurez-vous que ce tableau contient les heures sous forme de chaînes, ex: "10:00", "11:30"
     
         require '../app/Views/Appointment.php';
     }
+    
+    
     
     
 

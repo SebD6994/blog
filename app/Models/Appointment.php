@@ -57,7 +57,8 @@ class Appointment {
         }
         
         return true;
-    }    
+    }
+    
     
 
     public function update($id, $data) {

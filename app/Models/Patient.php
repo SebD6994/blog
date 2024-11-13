@@ -113,15 +113,27 @@ class Patient {
     }
 
     public function delete($id) {
+        // Vérifier si le patient existe
         if (!$this->getById($id)) {
             return false;
         }
-
+    
+        // Supprimer d'abord les rendez-vous associés au patient
+        $query = "DELETE FROM appointments WHERE patient_id = :id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();  // Supprimer les rendez-vous associés
+    
+        // Supprimer ensuite le patient
         $query = "DELETE FROM patients WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':id', $id);
-        return $stmt->execute();
+        
+        return $stmt->execute();  // Supprimer le patient
     }
+    
+    
+    
 
     public function getAppointments($patientId) {
         $query = "
