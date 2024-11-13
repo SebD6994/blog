@@ -45,19 +45,28 @@ class AppointmentController {
                 echo "Vous devez être connecté pour créer un rendez-vous.";
                 return;
             }
-
-            $appointmentDateTime = $_POST['appointment_date'] . ' ' . $_POST['appointment_time'];
-            $appointmentDate = new DateTime($appointmentDateTime);
+    
+            $appointmentDate = $_POST['appointment_date'];
+            $selectedTimeSlot = $_POST['appointment_time'];
+            $appointmentDateTimeString = $appointmentDate . ' ' . $selectedTimeSlot;
+    
+            try {
+                $appointmentDateTime = new DateTime($appointmentDateTimeString);
+            } catch (Exception $e) {
+                echo "Format de date ou d'heure invalide.";
+                return;
+            }
+    
             $now = new DateTime();
-
-            if ($appointmentDate <= $now) {
+    
+            if ($appointmentDateTime <= $now) {
                 echo "La date et l'heure du rendez-vous doivent être dans le futur.";
                 return;
             }
-
+    
             try {
                 $this->appointmentModel->create([
-                    'appointment_date' => $appointmentDateTime,
+                    'appointment_date' => $appointmentDateTime->format('Y-m-d H:i:s'),
                     'service_id' => $_POST['service_id'],
                     'patient_id' => $_SESSION['patient']['id']
                 ]);
@@ -65,44 +74,52 @@ class AppointmentController {
                 echo $e->getMessage();
                 return;
             }
-
+    
             header('Location: index.php?page=patients&action=view');
             exit();
         }
-
+    
         $services = $this->serviceModel->getAll();
         $today = date('Y-m-d'); 
-        $timeSlotsData = $this->appointmentModel->getAvailableTimeSlots();
-
+        $timeSlotsData = $this->appointmentModel->getTimeSlots();  // Assurez-vous que ce tableau contient les heures sous forme de chaînes, ex: "10:00", "11:30"
+    
         require '../app/Views/Appointment.php';
     }
+    
+    
 
     public function update() {
         if (!$this->isLoggedIn()) {
             echo "Vous devez être connecté pour modifier un rendez-vous.";
             return;
         }
-
+    
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $appointmentId = $_POST['appointment_id'];
-            $appointmentDateTime = $_POST['appointment_date'] . ' ' . $_POST['appointment_time'];
+            $appointmentDate = $_POST['appointment_date']; // Récupérer la date
+            $selectedTimeSlot = $_POST['time']; // Récupérer l'heure sélectionnée (créneau)
+            $appointmentDateTimeString = $appointmentDate . ' ' . $selectedTimeSlot; // Combiner la date et l'heure pour une chaîne
+    
+            // Créer un objet DateTime pour valider et formater la date/heure
+            try {
+                $appointmentDateTime = new DateTime($appointmentDateTimeString);
+            } catch (Exception $e) {
+                echo "Format de date ou d'heure invalide.";
+                return;
+            }
+    
             $serviceId = $_POST['service_id'];
             $appointment = $this->appointmentModel->getById($appointmentId);
             $patientId = $_SESSION['patient']['id'];
-
+    
             if ($appointment && $appointment['patient_id'] == $patientId) {
-                $dateOnly = $_POST['appointment_date'];
-                $timeSlotsData = $this->appointmentModel->getAvailableTimeSlots($dateOnly);
-                if (!in_array($_POST['appointment_time'], $timeSlotsData['available'])) {
-                    echo "Ce créneau horaire n'est pas disponible.";
-                    return;
-                }
-
+                // Mettre à jour l'enregistrement dans la base de données
                 $this->appointmentModel->update($appointmentId, [
-                    'appointment_date' => $appointmentDateTime,
+                    'appointment_date' => $appointmentDateTime->format('Y-m-d H:i:s'), // Passer la date/heure formatée
                     'service_id' => $serviceId
                 ]);
-
+    
+                // Rediriger après la mise à jour
                 header('Location: index.php?page=appointments');
                 exit();
             } else {
@@ -110,6 +127,7 @@ class AppointmentController {
             }
         }
     }
+    
 
     public function delete() {
         if (!$this->isLoggedIn()) {

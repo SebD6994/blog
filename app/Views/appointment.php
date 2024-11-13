@@ -85,11 +85,15 @@ if (isset($_SESSION['patient']['role'])) {
                                             <form id="edit-form-<?= $appointment['id']; ?>" action="index.php?page=appointments&action=update" method="post">
                                                 <input type="hidden" name="appointment_id" value="<?= htmlspecialchars($appointment['id']); ?>">
 
+                                                <!-- Sélection de la date -->
                                                 <input type="date" name="appointment_date" value="<?= htmlspecialchars($dateTime->format('Y-m-d')); ?>" required class="form-input" onchange="updateEditTimeSlots(<?= $appointment['id']; ?>)">
+
+                                                <!-- Sélection de l'heure -->
                                                 <select name="time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
                                                     <?php if (!empty($timeSlots)): ?>
                                                         <?php foreach ($timeSlots as $slot): ?>
-                                                            <option value="<?= htmlspecialchars($slot['slot_start']); ?>">
+                                                            <option value="<?= htmlspecialchars($slot['slot_start']); ?>" 
+                                                                <?= $slot['slot_start'] == $heure ? 'selected' : ''; ?>>
                                                                 <?= htmlspecialchars($slot['slot_start']); ?>
                                                             </option>
                                                         <?php endforeach; ?>
@@ -98,6 +102,7 @@ if (isset($_SESSION['patient']['role'])) {
                                                     <?php endif; ?>
                                                 </select>
 
+                                                <!-- Sélection du service -->
                                                 <select name="service_id" required class="form-select">
                                                     <?php foreach ($services as $service): ?>
                                                         <option value="<?= htmlspecialchars($service['id']); ?>" <?= $service['id'] == $appointment['service_id'] ? 'selected' : ''; ?>>
@@ -106,11 +111,13 @@ if (isset($_SESSION['patient']['role'])) {
                                                     <?php endforeach; ?>
                                                 </select>
 
+                                                <!-- Boutons de soumission -->
                                                 <button type="submit" class="button">Enregistrer</button>
                                                 <button type="button" class="button" onclick="hideEditForm(<?= $appointment['id']; ?>)">Annuler</button>
                                             </form>
                                         </td>
                                     </tr>
+
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
@@ -154,7 +161,7 @@ if (isset($_SESSION['patient']['role'])) {
                 <input type="date" name="appointment_date" id="appointment_date" required onchange="updateTimeSlots()" min="<?= $today; ?>">
 
                 <label for="appointment_time">Heure</label>
-                <select name="time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
+                <select name="appointment_time" id="edit-time-slots-<?= htmlspecialchars($appointment['id']); ?>" required>
                             <?php if (!empty($timeSlots)): ?>
                                 <?php foreach ($timeSlots as $slot): ?>
                                     <option value="<?= htmlspecialchars($slot['slot_start']); ?>">

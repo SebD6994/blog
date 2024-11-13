@@ -28,13 +28,21 @@ class Appointment {
     }
 
     public function create($data) {
-        $appointmentDateTime = new DateTime($data['appointment_date'] . ' ' . $data['appointment_time']);
-        $now = new DateTime();
+        // Crée un objet DateTime en combinant la date et le time slot
+        try {
+            $appointmentDateTime = new DateTime($data['appointment_date'] . ' ' . $data['appointment_time']);
+        } catch (Exception $e) {
+            throw new Exception("La date ou l'heure du rendez-vous est invalide.");
+        }
     
+        $now = new DateTime();
+        
+        // Vérifie si la date et l'heure du rendez-vous sont dans le futur
         if ($appointmentDateTime <= $now) {
             throw new Exception("La date et l'heure du rendez-vous doivent être dans le futur.");
         }
-
+    
+        // Prépare et exécute la requête d'insertion
         $query = "
             INSERT INTO appointments (patient_id, appointment_date, service_id) 
             VALUES (:patient_id, :appointment_date, :service_id)
@@ -47,8 +55,10 @@ class Appointment {
         if (!$stmt->execute()) {
             throw new Exception("Erreur lors de la création du rendez-vous.");
         }
+        
         return true;
-    }
+    }    
+    
 
     public function update($id, $data) {
         $query = "
