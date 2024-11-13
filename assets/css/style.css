@@ -671,7 +671,6 @@ nav ul li a:hover {
 
             .service-image img {
                 width: 100%; /* L'image prend toute la largeur du conteneur */
-                max-width: 300px ;
                 height: auto;
                 display: block;
                 margin-left: auto;

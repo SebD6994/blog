@@ -59,11 +59,14 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                                     <td><?= htmlspecialchars($service['description']); ?></td>
                                     <td>
                                         <?php if (!empty($service['image'])): ?>
-                                            <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service">
+                                            <div class="service-image">
+                                                <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service">
+                                            </div>
                                         <?php else: ?>
                                             <p>Aucune image</p>
                                         <?php endif; ?>
                                     </td>
+
                                     <td>
                                         <button type="button" class="button" onclick="showEditForm('service', <?= $service['id']; ?>)">Modifier</button>
                                         <form action="index.php?page=admin_services&action=delete" method="post" style="display:inline;" onsubmit="return confirmDelete('Êtes-vous sûr de vouloir supprimer ce service ?');">
@@ -82,7 +85,9 @@ if (!isset($_SESSION['patient']['role']) || $_SESSION['patient']['role'] !== 'ad
                                             <textarea name="description" class="form-textarea" required><?= htmlspecialchars($service['description']); ?></textarea>
                                             <input type="file" name="image" class="form-input">
                                             <?php if (!empty($service['image'])): ?>
-                                                <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service" class="existing-image">
+                                                <div class="service-image">
+                                                    <img src="<?= htmlspecialchars($service['image']); ?>" alt="Image du service">
+                                                </div>
                                                 <input type="hidden" name="existing_image" value="<?= htmlspecialchars($service['image']); ?>">
                                             <?php endif; ?>
                                             <button type="submit" class="button">Enregistrer</button>
