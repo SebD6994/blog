@@ -123,7 +123,7 @@ class Admin_newController {
             throw new InvalidArgumentException("L'image est trop volumineuse. Taille maximum : 2MB.");
         }
 
-        $imagePath = '../public/assets/images/news/' . uniqid() . '.' . $fileExtension;
+        $imagePath = './assets/images/home/' . uniqid() . '.' . $fileExtension;
         if (!move_uploaded_file($imageFile['tmp_name'], $imagePath)) {
             throw new RuntimeException("Échec du téléchargement de l'image.");
         }
