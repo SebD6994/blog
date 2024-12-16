@@ -36,7 +36,7 @@ class Admin_homeController {
 
     public function updateBannerImage() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $uploadDir = '../assets/images/home/';
+            $uploadDir = '../public/assets/images/home/';
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
             $errors = [];
             $description = isset($_POST['description']) ? $_POST['description'] : '';
@@ -103,7 +103,7 @@ class Admin_homeController {
 
     public function addClinicImage() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['clinic_image'])) {
-            $uploadDir = '../assets/images/home/';
+            $uploadDir = '../public/assets/images/home/';
             $uploadFile = $uploadDir . basename($_FILES['clinic_image']['name']);
 
             if (move_uploaded_file($_FILES['clinic_image']['tmp_name'], $uploadFile)) {
@@ -119,7 +119,7 @@ class Admin_homeController {
 
     public function updateClinicImage() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $uploadDir = '../assets/images/home/';
+            $uploadDir = '../public/assets/images/home/';
             $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
             $errors = [];
             $imageId = $_POST['image_id'];

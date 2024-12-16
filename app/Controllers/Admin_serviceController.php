@@ -127,7 +127,7 @@ class Admin_serviceController {
             throw new InvalidArgumentException("L'image est trop volumineuse. Taille maximum : 2MB.");
         }
 
-        $imagePath = '../assets/images/services/' . uniqid() . '.' . $fileExtension;
+        $imagePath = '../public/assets/images/services/' . uniqid() . '.' . $fileExtension;
         if (!move_uploaded_file($imageFile['tmp_name'], $imagePath)) {
             throw new RuntimeException("Échec du téléchargement de l'image.");
         }

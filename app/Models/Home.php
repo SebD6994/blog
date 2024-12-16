@@ -3,6 +3,7 @@
 class Home {
     private $dbConnection;
     private $serviceModel;
+    private $db;
 
     public function __construct($dbConnection) {
         $this->dbConnection = $dbConnection;
@@ -90,7 +91,7 @@ class Home {
         return $query->execute();
     }
     
-    public function updateClinicImage($id, $imagePath = null, $description) {
+    public function updateClinicImage($id, $description, $imagePath = null) {
         if ($imagePath) {
             $stmt = $this->db->prepare("UPDATE clinic_images SET image_path = :image_path, description = :description WHERE id = :id");
             $stmt->bindParam(':image_path', $imagePath);
@@ -101,7 +102,7 @@ class Home {
         $stmt->bindParam(':description', $description);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
-    }
+    }    
     
     public function deleteClinicImage($imageId) {
         $query = $this->db->prepare("DELETE FROM clinic_images WHERE id = :id");

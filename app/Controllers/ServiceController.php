@@ -11,6 +11,6 @@ class ServiceController {
 
     public function index() {
         $services = $this->serviceModel->getAll();
-        require '../app/Views/Service.php';
+        require '../app/Views/service.php';
     }
 }

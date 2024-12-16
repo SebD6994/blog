@@ -1,9 +1,9 @@
 <?php
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'cabinet');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'mysql-detournay.alwaysdata.net');
+define('DB_NAME', 'detournay_drdupont');
+define('DB_USER', 'detournay');
+define('DB_PASS', 'DKkfpG3A');
 
 // Fonction pour établir une connexion à la base de données
 function getConnection() {

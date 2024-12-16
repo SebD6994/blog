@@ -36,7 +36,7 @@ class AppointmentController {
         }
 
         $services = $this->serviceModel->getAll();
-        require '../app/Views/Appointment.php';
+        require '../app/Views/appointment.php';
     }
 
     public function create() {

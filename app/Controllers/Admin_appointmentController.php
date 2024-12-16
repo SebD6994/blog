@@ -9,6 +9,7 @@ require_once '../app/Models/Home.php';
 class Admin_appointmentController {
     private $db;
     private $appointmentModel;
+    private $homeModel;
 
     public function __construct($db) {
         $this->db = $db;
@@ -91,11 +92,6 @@ public function create() {
 
     require '../app/Views/Appointment.php';
 }
-
-    
-    
-    
-
 
     // admin_appointmentcontroller.php
     public function update() {

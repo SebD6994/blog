@@ -1,10 +1,11 @@
 <?php
 
 require_once '../app/Models/Patient.php';
-require_once('../app/controllers/PatientController.php');
+require_once('../app/Controllers/PatientController.php');
 
 class Admin_patientController {
     private $patientModel;
+    private $patientController;
 
     public function __construct($db) {
         $this->patientModel = new Patient($db);
